@@ -291,6 +291,33 @@ button{font-family:inherit}
 #waitingRoomOverlay .waiting-spinner{width:60px;height:60px;border:4px solid rgba(138,180,248,.2);border-top-color:#8ab4f8;border-radius:50%;animation:spin 1s linear infinite;margin:20px 0}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* ==================== PRICING PLANS ==================== */
+#pricingSection{margin-top:20px;width:100%;max-width:560px}
+#pricingSection h3{font-size:16px;color:var(--accent);margin-bottom:14px;text-align:center}
+.pricing-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.pricing-card{background:var(--bg-tertiary);border:2px solid var(--border-color);border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.pricing-card:hover{border-color:var(--accent);transform:translateY(-3px)}
+.pricing-card.selected{border-color:var(--success);background:rgba(52,168,83,.15);box-shadow:0 0 20px rgba(52,168,83,.4)}
+.pricing-card.selected::after{content:'✓';position:absolute;top:6px;left:8px;background:var(--success);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.pricing-card .pc-duration{font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:6px}
+.pricing-card .pc-price{font-size:18px;font-weight:800;color:var(--accent);margin-bottom:4px}
+.pricing-card .pc-price small{font-size:11px;color:var(--text-secondary);font-weight:400}
+.pricing-card .pc-badge{position:absolute;top:-8px;right:8px;background:linear-gradient(135deg,#ffd700,#ff9800);color:#202124;font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px}
+#discountCodeBox{display:flex;gap:8px;margin-bottom:14px}
+#discountCodeBox input{flex:1;padding:11px 14px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-family:monospace;font-size:14px;text-align:center;letter-spacing:2px;direction:ltr;text-transform:uppercase}
+#discountCodeBox input:focus{outline:none;border-color:var(--warning)}
+#discountCodeBox button{padding:11px 18px;background:var(--warning);color:#202124;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+#discountCodeBox button:hover{opacity:.9}
+#discountStatus{font-size:12px;text-align:center;margin-bottom:10px;min-height:18px}
+#discountStatus.ok{color:var(--success)}
+#discountStatus.err{color:var(--danger)}
+#selectedPlanInfo{background:var(--bg-tertiary);border-radius:10px;padding:12px;margin-bottom:14px;text-align:center;font-size:13px;line-height:1.9}
+#selectedPlanInfo b{color:var(--accent)}
+#purchaseBtn{width:100%;padding:14px;background:linear-gradient(135deg,var(--success),#1e8e3e);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+#purchaseBtn:disabled{opacity:.5;cursor:not-allowed}
+#purchaseBtn:hover:not(:disabled){opacity:.9}
+@media (max-width:600px){.pricing-grid{grid-template-columns:1fr}}
+
 /* ==================== ADMIN PANEL ==================== */
 #adminPanelModal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:3000;padding:15px}
 #adminPanelModal.open{display:flex}
@@ -352,7 +379,7 @@ button{font-family:inherit}
 #adminGlobalBanner button{background:rgba(0,0,0,.15);border:none;color:#202124;font-size:18px;cursor:pointer;padding:4px 12px;border-radius:8px;font-weight:700}
 .admin-empty{text-align:center;color:var(--text-secondary);font-size:13px;padding:30px 10px}
 .role-badge-admin{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;background:linear-gradient(135deg,#ffd700,#ff9800);color:#202124}
-.role-badge-user{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;background:var(--bg-hover);color:var(--text-secondary)}
+.role-badge-user{padding:2px 10px;border-radius:10px;font-size:10px;font-weight:700;background:var(--bg-hover);color:var(--text-secondary)}
 
 @media (max-width:768px){
 .logo-text{font-size:36px}.logo-icon{width:52px;height:52px;font-size:32px}
@@ -392,19 +419,19 @@ button{font-family:inherit}
         </div>
         <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
             <label>ایمیل</label>
-            <input type="email" id="loginEmail" required />
+            <input type="email" id="loginEmail" required autocomplete="email" />
             <label>رمز عبور</label>
-            <input type="password" id="loginPassword" required />
+            <input type="password" id="loginPassword" required autocomplete="current-password" />
             <div class="auth-error" id="loginError"></div>
             <button type="submit" class="submit" id="loginBtn">ورود</button>
         </form>
         <form class="auth-form" id="registerForm" style="display:none;" onsubmit="handleRegister(event)">
             <label>نام و نام خانوادگی</label>
-            <input type="text" id="regName" required />
+            <input type="text" id="regName" required autocomplete="name" />
             <label>ایمیل</label>
-            <input type="email" id="regEmail" required />
+            <input type="email" id="regEmail" required autocomplete="email" />
             <label>رمز عبور</label>
-            <input type="password" id="regPassword" minlength="6" required />
+            <input type="password" id="regPassword" minlength="6" required autocomplete="new-password" />
             <label>🎟️ کد تخفیف (اختیاری)</label>
             <input type="text" id="regDiscountCode" placeholder="مثلاً LROOM-ABC123" style="direction:ltr;text-align:center;font-family:monospace;letter-spacing:2px;text-transform:uppercase;" />
             <button type="button" onclick="applyDiscountCode()" style="width:100%;padding:9px;margin-top:6px;background:var(--warning);color:#202124;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-family:inherit;font-size:12px;">✅ بررسی کد تخفیف</button>
@@ -420,11 +447,57 @@ button{font-family:inherit}
     <div class="expired-box">
         <h1>⛔ اعتبار شما تمام شده است</h1>
         <p class="user-name">کاربر گرامی <b id="expUserName">-</b></p>
-        <p style="color:var(--text-secondary);font-size:13px;">برای تمدید اشتراک، به آیدی زیر در پیام‌رسان <b>بله</b> پیام دهید:</p>
-        <div class="bale-note">
-            <div class="bale-id">@sobhan101095</div>
+        <p style="color:var(--text-secondary);font-size:13px;">برای ادامه استفاده، یکی از پلن‌های زیر را انتخاب کنید:</p>
+
+        <div id="pricingSection">
+            <h3>💳 پلن‌های اشتراک</h3>
+            <div class="pricing-grid" id="pricingGrid">
+                <div class="pricing-card" data-plan="1" data-days="30" data-price="10000" onclick="selectPlan(this)">
+                    <div class="pc-duration">۱ ماهه</div>
+                    <div class="pc-price">۱۰,۰۰۰ <small>تومان</small></div>
+                </div>
+                <div class="pricing-card" data-plan="3" data-days="90" data-price="40000" onclick="selectPlan(this)">
+                    <div class="pc-badge">🔥 محبوب</div>
+                    <div class="pc-duration">۳ ماهه</div>
+                    <div class="pc-price">۴۰,۰۰۰ <small>تومان</small></div>
+                </div>
+                <div class="pricing-card" data-plan="6" data-days="180" data-price="100000" onclick="selectPlan(this)">
+                    <div class="pc-duration">۶ ماهه</div>
+                    <div class="pc-price">۱۰۰,۰۰۰ <small>تومان</small></div>
+                </div>
+                <div class="pricing-card" data-plan="12" data-days="365" data-price="200000" onclick="selectPlan(this)">
+                    <div class="pc-badge">💎 بهترین</div>
+                    <div class="pc-duration">۱ ساله</div>
+                    <div class="pc-price">۲۰۰,۰۰۰ <small>تومان</small></div>
+                </div>
+            </div>
+
+            <div id="discountCodeBox">
+                <input type="text" id="expiredDiscountCode" placeholder="کد تخفیف..." />
+                <button onclick="checkExpiredDiscount()">✅ بررسی</button>
+            </div>
+            <div id="discountStatus"></div>
+
+            <div id="selectedPlanInfo">
+                <div>پلن انتخابی: <b id="selectedPlanText">—</b></div>
+                <div id="discountAppliedRow" style="display:none;color:var(--success);">🎁 تخفیف: <b id="discountAppliedText">—</b></div>
+                <div style="border-top:1px solid var(--border-color);margin-top:8px;padding-top:8px;font-size:15px;">
+                    مبلغ نهایی: <b id="finalPriceText" style="color:var(--success);font-size:18px;">—</b>
+                </div>
+            </div>
+
+            <button id="purchaseBtn" onclick="proceedToPurchase()" disabled>💳 ادامه و پرداخت</button>
+
+            <div class="bale-note" style="margin-top:16px;">
+                <div style="font-size:12px;color:var(--text-secondary);line-height:1.8;">
+                    پس از کلیک روی «ادامه و پرداخت»، به پیام‌رسان <b>بله</b> هدایت می‌شوید.<br>
+                    برای هماهنگی بیشتر به آیدی زیر پیام دهید:
+                </div>
+                <div class="bale-id">@sobhan101095</div>
+            </div>
         </div>
-        <button class="logout-btn" onclick="logout()">🚪 خروج از حساب</button>
+
+        <button class="logout-btn" onclick="logout()" style="margin-top:20px;">🚪 خروج از حساب</button>
     </div>
 </div>
 
@@ -443,7 +516,7 @@ button{font-family:inherit}
         <div class="menu-item" onclick="logout()">🚪 خروج</div>
     </div>
 </div>
-<button id="adminPanelBtnLobby" onclick="openAdminPanel()" style="display:none;width:auto;padding:8px 14px;font-size:13px;background:linear-gradient(135deg,#ffd700,#ff9800);color:#202124;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit;" title="پنل مدیریت">👑 ادمین</button>
+<button id="adminPanelBtnLobby" onclick="openAdminPanel()" style="display:none;width:auto;padding:8px 14px;font-size:13px;background:linear-gradient(135deg,#ffd700,#ff9800);color:#202124;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit;">👑 ادمین</button>
 <select class="device-selector" id="deviceSelect" onchange="changeDevice(this.value)">
 <option value="auto">🖥️ خودکار</option>
 <option value="phone">📱 گوشی</option>
@@ -536,7 +609,7 @@ button{font-family:inherit}
 <button class="teacher-action-btn" onclick="openAnnouncement()">📢 اعلان</button>
 </div>
 <div class="panel-body" style="border-top:1px solid var(--border-color);">
-<h4 style="font-size:12px;color:var(--accent);margin-bottom:8px;">⚙️ تنظیم کیفیت (برای اینترنت ضعیف)</h4>
+<h4 style="font-size:12px;color:var(--accent);margin-bottom:8px;">⚙️ تنظیم کیفیت</h4>
 <label style="font-size:11px;color:var(--text-secondary);display:block;margin-top:8px;">📹 کیفیت دوربین دانشجویان</label>
 <select id="qStudentCam" onchange="applyQualitySettings()" style="width:100%;padding:8px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-primary);font-family:inherit;font-size:12px;margin-top:4px;">
 <option value="low">🔴 کم (180p - 10fps)</option>
@@ -549,13 +622,12 @@ button{font-family:inherit}
 <option value="medium" selected>🟡 متوسط (1080p - 15fps)</option>
 <option value="high">🟢 زیاد (1080p - 30fps)</option>
 </select>
-<label style="font-size:11px;color:var(--text-secondary);display:block;margin-top:8px;">📽️ کیفیت ویدیو پروژکتور</label>
+<label style="font-size:11px;color:var(--text-secondary);display:block;margin-top:8px;">📽️ کیفیت پروژکتور</label>
 <select id="qProjector" onchange="applyQualitySettings()" style="width:100%;padding:8px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-primary);font-family:inherit;font-size:12px;margin-top:4px;">
 <option value="low">🔴 کم (480p)</option>
 <option value="medium" selected>🟡 متوسط (720p)</option>
 <option value="high">🟢 زیاد (1080p)</option>
 </select>
-<div style="font-size:10px;color:var(--text-muted);margin-top:8px;line-height:1.6;">💡 تغییرات فوراً به همه‌ی دانشجویان اعمال می‌شه.</div>
 </div>
 <div class="panel-body" style="border-top:1px solid var(--border-color);flex:1;"><div id="studentsList"></div></div>
 </div>
@@ -628,9 +700,7 @@ button{font-family:inherit}
 </div>
 </div>
 
-<div id="whiteboardModal">
-<div id="whiteboardContainer">
-<div id="whiteboardHeader"><h3>📝 تخته سفید</h3><button class="close-btn" onclick="closeWhiteboard()">✕</button></div>
+<div id="whiteboardModal"><div id="whiteboardContainer"><div id="whiteboardHeader"><h3>📝 تخته سفید</h3><button class="close-btn" onclick="closeWhiteboard()">✕</button></div>
 <div id="whiteboardTools">
 <span class="wb-tool-label">رنگ:</span>
 <button class="color-btn active" style="background:#000" onclick="setPenColor('#000000',this)"></button>
@@ -646,11 +716,9 @@ button{font-family:inherit}
 <button class="wb-action-btn" onclick="clearWhiteboard()">🗑️ پاک</button>
 </div>
 <div id="whiteboardCanvasWrapper"><canvas id="whiteboardCanvas"></canvas></div>
-</div>
-</div>
+</div></div>
 
-<div id="projectorModal">
-<div id="projectorContainer">
+<div id="projectorModal"><div id="projectorContainer">
 <div id="projectorHeader"><h3>📽️ ویدیو پروژکتور</h3><button class="close-btn" onclick="closeProjector()">✕</button></div>
 <div id="projectorTeacherTools" style="display:none;padding:8px 16px;background:var(--bg-secondary);border-bottom:1px solid var(--border-color);flex-wrap:wrap;gap:8px;align-items:center;">
 <input type="file" id="projectorFileInput" accept="video/*,image/*" style="display:none;" onchange="loadProjectorFile(event)" />
@@ -682,22 +750,17 @@ button{font-family:inherit}
 <canvas id="projectorCanvas"></canvas>
 </div>
 <div id="projectorSeekBar"><span id="projCurrentTime" style="font-size:12px;font-family:monospace;">00:00</span><input type="range" id="projectorSeek" min="0" max="100" value="0" step="0.1" style="flex:1;accent-color:var(--accent);" oninput="onProjectorSeekInput(this.value)" onchange="onProjectorSeekChange(this.value)" /><span id="projDuration" style="font-size:12px;font-family:monospace;">00:00</span></div>
-</div>
-</div>
+</div></div>
 
-<div id="screenShareModal">
-  <div id="screenShareContainer">
-    <div id="screenShareHeader">
-      <h3>🖥️ اشتراک صفحه</h3>
-      <span id="screenShareWho" style="font-size:12px;color:var(--text-secondary);"></span>
-      <button id="screenShareFullscreenBtn" onclick="toggleScreenShareFullscreen()">⛶ تمام صفحه</button>
-      <button class="close-btn" onclick="closeScreenShareModal()">✕</button>
-    </div>
-    <div id="screenShareWrapper">
-      <video id="screenShareVideo" autoplay playsinline></video>
-    </div>
-  </div>
+<div id="screenShareModal"><div id="screenShareContainer">
+<div id="screenShareHeader">
+<h3>🖥️ اشتراک صفحه</h3>
+<span id="screenShareWho" style="font-size:12px;color:var(--text-secondary);"></span>
+<button id="screenShareFullscreenBtn" onclick="toggleScreenShareFullscreen()">⛶ تمام صفحه</button>
+<button class="close-btn" onclick="closeScreenShareModal()">✕</button>
 </div>
+<div id="screenShareWrapper"><video id="screenShareVideo" autoplay playsinline></video></div>
+</div></div>
 
 <div id="kickModal" class="modal"><div class="modal-content"><h2>🚫 اخراج</h2><p id="kickReason">...</p><button onclick="leaveMeeting(true)">باشه</button></div></div>
 <div id="recordingModal" class="modal"><div class="modal-content"><h2>🎥 ضبط تمام شد</h2><p>آماده دانلود است.</p><button onclick="downloadRecording()">⬇️ دانلود</button><button class="secondary" onclick="discardRecording()">🗑️ حذف</button></div></div>
@@ -744,7 +807,6 @@ button{font-family:inherit}
   </div>
 </div>
 
-<!-- ==================== ADMIN PANEL ==================== -->
 <div id="adminPanelModal">
   <div id="adminPanelContainer">
     <div id="adminPanelHeader">
@@ -758,7 +820,6 @@ button{font-family:inherit}
       <button class="admin-tab" onclick="switchAdminTab('announce')">📢 اعلان همگانی</button>
     </div>
     <div id="adminPanelBody">
-
       <div class="admin-section active" id="adminSec-dashboard">
         <div class="admin-stat-grid" id="adminStatsGrid"></div>
         <div class="admin-card">
@@ -766,7 +827,6 @@ button{font-family:inherit}
           <div id="adminDashboardInfo"></div>
         </div>
       </div>
-
       <div class="admin-section" id="adminSec-users">
         <div class="admin-card">
           <h3>🔍 جستجو</h3>
@@ -774,13 +834,13 @@ button{font-family:inherit}
         </div>
         <div id="adminUsersList"></div>
       </div>
-
       <div class="admin-section" id="adminSec-discounts">
         <div class="admin-card">
           <h3>➕ ساخت کد تخفیف جدید</h3>
           <input class="admin-input" id="discCodeInput" placeholder="کد (خالی = خودکار)" style="direction:ltr;text-align:center;font-family:monospace;font-size:16px;letter-spacing:2px;" />
           <input class="admin-input" type="number" id="discDaysInput" placeholder="تعداد روز اعتبار" value="20" min="1" />
           <input class="admin-input" type="number" id="discLimitInput" placeholder="حداکثر تعداد استفاده (خالی = نامحدود)" min="1" />
+          <input class="admin-input" type="number" id="discPercentInput" placeholder="درصد تخفیف (۰ تا ۱۰۰)" min="0" max="100" value="0" />
           <button class="admin-btn" onclick="createDiscountCode()">🎟️ ساخت کد تخفیف</button>
         </div>
         <div class="admin-card">
@@ -788,13 +848,10 @@ button{font-family:inherit}
           <div id="adminDiscountsList"></div>
         </div>
       </div>
-
       <div class="admin-section" id="adminSec-announce">
         <div class="admin-card">
           <h3>📢 ارسال اعلان همگانی</h3>
-          <p style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;line-height:1.7;">
-            این اعلان به همه‌ی کاربران (حتی کسانی که آنلاین نیستند) نمایش داده می‌شود و در بالای صفحه‌ی Lobby و داخل کلاس ظاهر می‌شود.
-          </p>
+          <p style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;line-height:1.7;">این اعلان به همه‌ی کاربران (حتی کسانی که آنلاین نیستند) نمایش داده می‌شود.</p>
           <textarea class="admin-textarea" id="adminAnnounceText" placeholder="متن اعلان..."></textarea>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button class="admin-btn" onclick="sendGlobalAnnouncement()">📤 ارسال به همه</button>
@@ -806,7 +863,6 @@ button{font-family:inherit}
           <div id="adminAnnounceHistory"></div>
         </div>
       </div>
-
     </div>
   </div>
 </div>
@@ -823,12 +879,15 @@ button{font-family:inherit}
 <div id="reactionsContainer"></div>
 <div id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/livekit-client@2.5.7/dist/livekit-client.umd.min.js"></script>
 <script>
 /* ============================================================
-   Lroom - LiveKit + LocalStorage + Admin Panel
+   Lroom - Supabase + LiveKit
    ============================================================ */
 
+const SUPABASE_URL = 'https://sjtkkxlibxzcblrhwneb.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqdGtreGxpYnh6Y2Jscmh3bmViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5Njg3ODAsImV4cCI6MjEwNTU0NDc4MH0.vzYTnQNJ1RBr7dUY7xC6FpkS1fYhsNrxMMOd5iIdBww';
 const LIVEKIT_URL = 'wss://lroom-ga2waw3o.livekit.cloud';
 const LIVEKIT_API_KEY = 'APIRuoEKCKzj9S2';
 const LIVEKIT_API_SECRET = 'bSeODjRdhQPlnoSueldHwJoojaz3hrngLyDZPGSlc2S';
@@ -836,11 +895,12 @@ const ADMIN_EMAIL = 'mmastudio.s.m@gmail.com';
 const BALE_ID = '@sobhan101095';
 const DEFAULT_SUBSCRIPTION_DAYS = 20;
 
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 let currentUser = null;
 let livekitRoom = null;
 let localStream = null;
 let myName = '', myRole = '', roomId = '', myId = '', teacherId = '';
-let roomPassword = '';
 let selectedLobbyRole = 'teacher';
 let qualitySettings = { studentCam: 'medium', screenShare: 'medium', projector: 'medium' };
 const remoteParticipants = new Map();
@@ -882,24 +942,10 @@ let isWaitingForApproval = false;
 let pendingPermissionRequest = null;
 let currentScreenShareTrack = null;
 let currentScreenShareIdentity = null;
-
-// ==================== LOCAL STORAGE DB ====================
-function getUsers() {
-    try { return JSON.parse(localStorage.getItem('lroom_users') || '[]'); } catch (e) { return []; }
-}
-function saveUsers(users) { localStorage.setItem('lroom_users', JSON.stringify(users)); }
-function getSavedUser() {
-    try { return JSON.parse(localStorage.getItem('lroom_current') || 'null'); } catch (e) { return null; }
-}
-function saveSavedUser(u) { localStorage.setItem('lroom_current', JSON.stringify(u)); }
-
-function generateSessionCode() {
-    let counter = parseInt(localStorage.getItem('lroom_counter') || '1000') + 1;
-    const users = getUsers();
-    while (users.find(u => u.sessionCode === String(counter))) counter++;
-    localStorage.setItem('lroom_counter', String(counter));
-    return String(counter);
-}
+let adminActiveAnnouncement = null;
+let realtimeChannel = null;
+let selectedPlan = null;
+let expiredDiscount = null;
 
 // ==================== HELPERS ====================
 function sanitize(r) { return String(r || '').replace(/[^a-zA-Z0-9]/g, '') || 'default'; }
@@ -910,11 +956,11 @@ function escapeHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c
 function showToast(txt) {
     if (!txt) return;
     const to = document.getElementById('toast');
-    if (window._toastTimer) { clearTimeout(window._toastTimer); window._toastTimer = null; }
+    if (window._toastTimer) clearTimeout(window._toastTimer);
     to.textContent = txt;
     void to.offsetWidth;
     to.classList.add('show');
-    window._toastTimer = setTimeout(() => { to.classList.remove('show'); window._toastTimer = null; }, 3500);
+    window._toastTimer = setTimeout(() => to.classList.remove('show'), 3500);
 }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 function hasProjectorAccess() { return myRole === 'teacher' || isCoTeacher || myPermissions.projector; }
@@ -937,10 +983,8 @@ function toggleTheme() {
     document.body.classList.toggle('light-theme', currentTheme === 'light');
     localStorage.setItem('lroom_theme', currentTheme);
     const i = currentTheme === 'light' ? '☀️' : '🌙';
-    const t1 = document.getElementById('themeToggle');
-    const t2 = document.getElementById('themeToggleMeeting');
-    if (t1) t1.textContent = i;
-    if (t2) t2.textContent = i;
+    const t1 = document.getElementById('themeToggle'); if (t1) t1.textContent = i;
+    const t2 = document.getElementById('themeToggleMeeting'); if (t2) t2.textContent = i;
 }
 
 // ==================== JWT ====================
@@ -948,11 +992,7 @@ async function generateLiveKitToken(roomName, identity, name, isTeacher) {
     const now = Math.floor(Date.now() / 1000);
     const header = { alg: 'HS256', typ: 'JWT' };
     const payload = {
-        exp: now + 6 * 60 * 60,
-        iss: LIVEKIT_API_KEY,
-        sub: identity,
-        nbf: now - 10,
-        name: name,
+        exp: now + 6 * 60 * 60, iss: LIVEKIT_API_KEY, sub: identity, nbf: now - 10, name: name,
         video: { roomJoin: true, room: roomName, canPublish: true, canSubscribe: true, canPublishData: true },
         metadata: JSON.stringify({ role: isTeacher ? 'teacher' : 'student' }),
     };
@@ -975,7 +1015,7 @@ async function generateLiveKitToken(roomName, identity, name, isTeacher) {
     return `${data}.${sigB64}`;
 }
 
-// ==================== QUALITY SETTINGS ====================
+// ==================== QUALITY ====================
 function getStudentCamConstraints(level) {
     switch(level) {
         case 'low': return { width: { max: 320 }, height: { max: 180 }, frameRate: { max: 10 } };
@@ -993,22 +1033,8 @@ function getScreenShareCapture(level) {
 function getScreenSharePublish(level) {
     switch(level) {
         case 'low': return { simulcast: false, screenShareEncoding: { maxBitrate: 600000, maxFramerate: 10 } };
-        case 'high': return {
-            simulcast: true,
-            screenShareEncoding: { maxBitrate: 5000000, maxFramerate: 30 },
-            screenShareSimulcastLayers: [
-                { width: 1280, height: 720, encoding: { maxBitrate: 2000000, maxFramerate: 30 } },
-                { width: 1920, height: 1080, encoding: { maxBitrate: 5000000, maxFramerate: 30 } }
-            ]
-        };
-        default: return {
-            simulcast: true,
-            screenShareEncoding: { maxBitrate: 2500000, maxFramerate: 15 },
-            screenShareSimulcastLayers: [
-                { width: 1280, height: 720, encoding: { maxBitrate: 1200000, maxFramerate: 15 } },
-                { width: 1920, height: 1080, encoding: { maxBitrate: 2500000, maxFramerate: 15 } }
-            ]
-        };
+        case 'high': return { simulcast: true, screenShareEncoding: { maxBitrate: 5000000, maxFramerate: 30 }, screenShareSimulcastLayers: [{ width: 1280, height: 720, encoding: { maxBitrate: 2000000, maxFramerate: 30 } }, { width: 1920, height: 1080, encoding: { maxBitrate: 5000000, maxFramerate: 30 } }] };
+        default: return { simulcast: true, screenShareEncoding: { maxBitrate: 2500000, maxFramerate: 15 }, screenShareSimulcastLayers: [{ width: 1280, height: 720, encoding: { maxBitrate: 1200000, maxFramerate: 15 } }, { width: 1920, height: 1080, encoding: { maxBitrate: 2500000, maxFramerate: 15 } }] };
     }
 }
 function getProjectorMaxSize(level) {
@@ -1025,19 +1051,6 @@ function applyQualitySettings() {
     qualitySettings.projector = document.getElementById('qProjector').value;
     broadcast({ type: 'quality-settings', settings: qualitySettings, from: myId });
     showToast('⚙️ کیفیت به‌روز شد');
-    if (isSharing) {
-        (async () => {
-            try {
-                const lp = livekitRoom?.localParticipant;
-                if (lp) {
-                    await lp.setScreenShareEnabled(false);
-                    isSharing = false;
-                    document.getElementById('btnScreen').classList.remove('on');
-                    setTimeout(() => toggleScreen(), 400);
-                }
-            } catch (e) {}
-        })();
-    }
 }
 function receiveQualitySettings(settings) {
     if (!settings) return;
@@ -1046,325 +1059,64 @@ function receiveQualitySettings(settings) {
     qualitySettings.projector = settings.projector || 'medium';
     if (myRole === 'student' || isCoTeacher) {
         const vt = localStream?.getVideoTracks()[0];
-        if (vt) {
-            const c = getStudentCamConstraints(qualitySettings.studentCam);
-            vt.applyConstraints(c).catch(() => {});
-        }
+        if (vt) { const c = getStudentCamConstraints(qualitySettings.studentCam); vt.applyConstraints(c).catch(() => {}); }
     }
 }
 
-// ==================== ADMIN PANEL ====================
-let adminDiscounts = [];
-let adminAnnouncements = [];
-let adminActiveAnnouncement = null;
-
-function isAdminUser() { return currentUser && currentUser.role === 'admin'; }
-
-function loadAdminData() {
-    try { adminDiscounts = JSON.parse(localStorage.getItem('lroom_discounts') || '[]'); } catch(e) { adminDiscounts = []; }
-    try { adminAnnouncements = JSON.parse(localStorage.getItem('lroom_announcements') || '[]'); } catch(e) { adminAnnouncements = []; }
-    try { adminActiveAnnouncement = JSON.parse(localStorage.getItem('lroom_active_announcement') || 'null'); } catch(e) { adminActiveAnnouncement = null; }
+// ==================== PRICING ====================
+function selectPlan(el) {
+    document.querySelectorAll('.pricing-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedPlan = { plan: el.dataset.plan, days: parseInt(el.dataset.days), price: parseInt(el.dataset.price), label: el.querySelector('.pc-duration').textContent };
+    updatePlanInfo();
+    document.getElementById('purchaseBtn').disabled = false;
+    if (expiredDiscount) updatePlanInfo();
 }
-function saveAdminDiscounts() { localStorage.setItem('lroom_discounts', JSON.stringify(adminDiscounts)); }
-function saveAdminAnnouncements() { localStorage.setItem('lroom_announcements', JSON.stringify(adminAnnouncements)); }
-function saveActiveAnnouncement() { localStorage.setItem('lroom_active_announcement', JSON.stringify(adminActiveAnnouncement)); }
-
-function openAdminPanel() {
-    if (!isAdminUser()) { showToast('⛔ فقط ادمین'); return; }
-    loadAdminData();
-    document.getElementById('adminPanelModal').classList.add('open');
-    switchAdminTab('dashboard');
+function updatePlanInfo() {
+    if (!selectedPlan) return;
+    document.getElementById('selectedPlanText').textContent = `${selectedPlan.label} - ${selectedPlan.price.toLocaleString('fa-IR')} تومان`;
+    let finalPrice = selectedPlan.price;
+    const discountRow = document.getElementById('discountAppliedRow');
+    if (expiredDiscount) {
+        const discountAmount = Math.round(selectedPlan.price * (expiredDiscount.discount_percent / 100));
+        finalPrice = selectedPlan.price - discountAmount;
+        document.getElementById('discountAppliedText').textContent = `${expiredDiscount.discount_percent}% (${discountAmount.toLocaleString('fa-IR')} تومان کم شد)`;
+        discountRow.style.display = 'block';
+    } else { discountRow.style.display = 'none'; }
+    document.getElementById('finalPriceText').textContent = `${finalPrice.toLocaleString('fa-IR')} تومان`;
 }
-function closeAdminPanel() { document.getElementById('adminPanelModal').classList.remove('open'); }
-function switchAdminTab(tab) {
-    const tabs = ['dashboard','users','discounts','announce'];
-    document.querySelectorAll('.admin-tab').forEach((el, i) => {
-        el.classList.toggle('active', tabs[i] === tab);
-    });
-    document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-    const sec = document.getElementById('adminSec-' + tab);
-    if (sec) sec.classList.add('active');
-    if (tab === 'dashboard') renderAdminDashboard();
-    else if (tab === 'users') renderAdminUsers();
-    else if (tab === 'discounts') renderAdminDiscounts();
-    else if (tab === 'announce') renderAdminAnnouncements();
-}
-
-function renderAdminDashboard() {
-    const users = getUsers();
-    const now = new Date();
-    const activeUsers = users.filter(u => u.subscriptionEnd && new Date(u.subscriptionEnd) > now).length;
-    const expiredUsers = users.length - activeUsers;
-    const admins = users.filter(u => u.role === 'admin').length;
-    const usedDiscounts = adminDiscounts.filter(d => (d.usedBy || []).length > 0).length;
-
-    const grid = document.getElementById('adminStatsGrid');
-    grid.innerHTML = `
-      <div class="admin-stat-box"><div class="num">${users.length}</div><div class="lbl">👥 کل کاربران</div></div>
-      <div class="admin-stat-box"><div class="num" style="color:var(--success)">${activeUsers}</div><div class="lbl">✅ فعال</div></div>
-      <div class="admin-stat-box"><div class="num" style="color:var(--danger)">${expiredUsers}</div><div class="lbl">⛔ منقضی</div></div>
-      <div class="admin-stat-box"><div class="num" style="color:#ffd700">${admins}</div><div class="lbl">👑 ادمین</div></div>
-      <div class="admin-stat-box"><div class="num" style="color:var(--accent)">${adminDiscounts.length}</div><div class="lbl">🎟️ کد تخفیف</div></div>
-      <div class="admin-stat-box"><div class="num" style="color:var(--warning)">${usedDiscounts}</div><div class="lbl">📌 استفاده‌شده</div></div>
-    `;
-
-    const info = document.getElementById('adminDashboardInfo');
-    const totalDays = users.reduce((sum, u) => {
-        if (!u.subscriptionEnd) return sum;
-        const d = Math.ceil((new Date(u.subscriptionEnd) - now) / 86400000);
-        return sum + Math.max(0, d);
-    }, 0);
-    info.innerHTML = `
-      <div class="stat-row"><span class="label">📅 مجموع روزهای اعتبار باقی‌مانده</span><span class="value">${totalDays} روز</span></div>
-      <div class="stat-row"><span class="label">🆕 آخرین کاربر ثبت‌نام‌شده</span><span class="value">${users.length ? escapeHtml(users[users.length-1].name) : '-'}</span></div>
-      <div class="stat-row"><span class="label">📢 اعلان فعال</span><span class="value">${adminActiveAnnouncement ? 'دارد' : 'ندارد'}</span></div>
-    `;
-}
-
-function renderAdminUsers() {
-    const users = getUsers();
-    const q = (document.getElementById('adminUserSearch')?.value || '').trim().toLowerCase();
-    const filtered = q ? users.filter(u => (u.name||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q)) : users;
-    const list = document.getElementById('adminUsersList');
-    if (filtered.length === 0) { list.innerHTML = '<div class="admin-empty">کاربری یافت نشد</div>'; return; }
-    const now = new Date();
-    list.innerHTML = filtered.map(u => {
-        const end = u.subscriptionEnd ? new Date(u.subscriptionEnd) : null;
-        const daysLeft = end ? Math.ceil((end - now) / 86400000) : 0;
-        const isAdmin = u.role === 'admin';
-        const statusText = isAdmin ? '👑 ادمین' : (daysLeft > 0 ? `✅ ${daysLeft} روز مانده` : '⛔ منقضی');
-        const statusColor = isAdmin ? '#ffd700' : (daysLeft > 0 ? 'var(--success)' : 'var(--danger)');
-        return `<div class="admin-user-row">
-          <div class="admin-user-avatar ${isAdmin ? 'admin' : ''}">${escapeHtml((u.name||'?')[0].toUpperCase())}</div>
-          <div class="admin-user-info">
-            <div class="admin-user-name">${escapeHtml(u.name)} ${isAdmin ? '<span class="role-badge-admin">ADMIN</span>' : '<span class="role-badge-user">USER</span>'}</div>
-            <div class="admin-user-email">${escapeHtml(u.email)}</div>
-            <div class="admin-user-meta">وضعیت: <b style="color:${statusColor}">${statusText}</b>${u.sessionCode ? ` • کد جلسه: <b>${escapeHtml(u.sessionCode)}</b>` : ''}</div>
-          </div>
-          <div class="admin-user-actions">
-            <button class="add-days" onclick="adminAddDays('${u.id}', 30)">+۳۰ روز</button>
-            <button class="add-days" onclick="adminAddDays('${u.id}', 10)">+۱۰</button>
-            <button class="sub-days" onclick="adminAddDays('${u.id}', -10)">−۱۰</button>
-            <button class="reset-pass" onclick="adminResetPassword('${u.id}')">🔑 رمز</button>
-            <button class="del-user" onclick="adminDeleteUser('${u.id}')">🗑️</button>
-          </div>
-        </div>`;
-    }).join('');
-}
-
-function adminAddDays(userId, days) {
-    if (!isAdminUser()) return;
-    const users = getUsers();
-    const idx = users.findIndex(u => u.id === userId);
-    if (idx < 0) return showToast('کاربر یافت نشد');
-    const u = users[idx];
-    if (u.role === 'admin') return showToast('👑 ادمین نیازی به اعتبار ندارد');
-    const now = new Date();
-    let base = u.subscriptionEnd && new Date(u.subscriptionEnd) > now ? new Date(u.subscriptionEnd) : now;
-    base.setDate(base.getDate() + days);
-    u.subscriptionEnd = base.toISOString();
-    users[idx] = u;
-    saveUsers(users);
-    if (currentUser && currentUser.id === userId) {
-        currentUser = u; saveSavedUser(u);
-        document.getElementById('userBadgeDays').textContent = `(${Math.ceil((base - now)/86400000)} روز مانده)`;
-    }
-    renderAdminUsers();
-    showToast(days > 0 ? `✅ ${days} روز اضافه شد` : `⚠️ ${Math.abs(days)} روز کم شد`);
-}
-
-function adminResetPassword(userId) {
-    if (!isAdminUser()) return;
-    const np = prompt('رمز عبور جدید:');
-    if (!np || np.length < 6) return showToast('رمز باید حداقل ۶ کاراکتر');
-    const users = getUsers();
-    const idx = users.findIndex(u => u.id === userId);
-    if (idx < 0) return;
-    users[idx].password = np;
-    saveUsers(users);
-    if (currentUser && currentUser.id === userId) { currentUser = users[idx]; saveSavedUser(users[idx]); }
-    showToast('🔑 رمز تغییر کرد');
-}
-
-function adminDeleteUser(userId) {
-    if (!isAdminUser()) return;
-    const users = getUsers();
-    const u = users.find(x => x.id === userId);
-    if (!u) return;
-    if (u.role === 'admin') return showToast('⛔ نمی‌توان ادمین را حذف کرد');
-    if (currentUser && currentUser.id === userId) return showToast('⛔ نمی‌توانید خودتان را حذف کنید');
-    if (!confirm(`حذف کاربر "${u.name}"؟`)) return;
-    const filtered = users.filter(x => x.id !== userId);
-    saveUsers(filtered);
-    renderAdminUsers();
-    showToast('🗑️ کاربر حذف شد');
-}
-
-function generateDiscountCode() {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    let code = 'LROOM-';
-    for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
-    return code;
-}
-
-function createDiscountCode() {
-    if (!isAdminUser()) return;
-    const codeInput = document.getElementById('discCodeInput');
-    const daysInput = document.getElementById('discDaysInput');
-    const limitInput = document.getElementById('discLimitInput');
-    let code = (codeInput.value || '').trim().toUpperCase();
-    const days = parseInt(daysInput.value) || 20;
-    const limit = parseInt(limitInput.value) || 0;
-    if (!code) code = generateDiscountCode();
-    if (days < 1) return showToast('⚠️ حداقل ۱ روز');
-    if (adminDiscounts.find(d => d.code === code)) return showToast('⚠️ این کد قبلاً ساخته شده');
-    const disc = {
-        code, days,
-        limit: limit || 0,
-        usedBy: [],
-        createdAt: new Date().toISOString(),
-        createdBy: currentUser.name,
-    };
-    adminDiscounts.push(disc);
-    saveAdminDiscounts();
-    codeInput.value = '';
-    limitInput.value = '';
-    renderAdminDiscounts();
-    showToast(`🎟️ کد ساخته شد: ${code}`);
-}
-
-function renderAdminDiscounts() {
-    const list = document.getElementById('adminDiscountsList');
-    if (adminDiscounts.length === 0) { list.innerHTML = '<div class="admin-empty">کد تخفیفی ساخته نشده</div>'; return; }
-    list.innerHTML = adminDiscounts.slice().reverse().map(d => {
-        const usedCount = (d.usedBy || []).length;
-        const isExpired = d.limit > 0 && usedCount >= d.limit;
-        const statusClass = isExpired ? 'expired' : 'active';
-        const statusText = isExpired ? '⛔ تمام شده' : (d.limit > 0 ? `✅ ${d.limit - usedCount} استفاده باقی` : '✅ نامحدود');
-        return `<div class="discount-row">
-          <div class="discount-code">${escapeHtml(d.code)}</div>
-          <div class="discount-info">
-            <div class="di-days">🎁 ${d.days} روز اعتبار</div>
-            <div class="di-status ${statusClass}">${statusText} • استفاده‌شده: ${usedCount}</div>
-            <div class="di-status" style="font-size:10px;color:var(--text-muted);">ساخته: ${new Date(d.createdAt).toLocaleDateString('fa-IR')}</div>
-          </div>
-          <div style="display:flex;gap:4px;flex-wrap:wrap;">
-            <button class="admin-btn secondary" style="padding:6px 10px;font-size:11px;" onclick="copyDiscountCode('${d.code}')">📋</button>
-            <button class="admin-btn danger" style="padding:6px 10px;font-size:11px;" onclick="deleteDiscountCode('${d.code}')">🗑️</button>
-          </div>
-        </div>`;
-    }).join('');
-}
-
-function copyDiscountCode(code) {
-    navigator.clipboard.writeText(code).then(() => showToast('📋 کپی شد: ' + code)).catch(() => prompt('کد:', code));
-}
-function deleteDiscountCode(code) {
-    if (!isAdminUser()) return;
-    if (!confirm(`حذف کد ${code}؟`)) return;
-    adminDiscounts = adminDiscounts.filter(d => d.code !== code);
-    saveAdminDiscounts();
-    renderAdminDiscounts();
-    showToast('🗑️ حذف شد');
-}
-
-function applyDiscountCode() {
-    const input = document.getElementById('regDiscountCode');
-    if (!input) return;
+async function checkExpiredDiscount() {
+    const input = document.getElementById('expiredDiscountCode');
+    const status = document.getElementById('discountStatus');
     const code = (input.value || '').trim().toUpperCase();
-    if (!code) return showToast('⚠️ کد را وارد کنید');
-    loadAdminData();
-    const disc = adminDiscounts.find(d => d.code === code);
-    if (!disc) return showToast('❌ کد نامعتبر');
-    if (disc.limit > 0 && (disc.usedBy||[]).length >= disc.limit) return showToast('⛔ این کد تمام شده');
-    window._pendingDiscount = disc;
-    showToast(`✅ کد معتبر! ${disc.days} روز اعتبار`);
-}
-
-function sendGlobalAnnouncement() {
-    if (!isAdminUser()) return;
-    const txt = (document.getElementById('adminAnnounceText').value || '').trim();
-    if (!txt) return showToast('⚠️ متن اعلان را وارد کنید');
-    const ann = {
-        id: 'ann_' + Date.now(),
-        text: txt,
-        from: currentUser.name,
-        at: new Date().toISOString(),
-    };
-    adminAnnouncements.push(ann);
-    saveAdminAnnouncements();
-    adminActiveAnnouncement = ann;
-    saveActiveAnnouncement();
-    document.getElementById('adminAnnounceText').value = '';
-    renderAdminAnnouncements();
-    showGlobalBanner(ann);
-    showToast('📢 اعلان به همه ارسال شد');
-}
-
-function clearGlobalAnnouncement() {
-    if (!isAdminUser()) return;
-    if (!confirm('اعلان فعال حذف شود؟')) return;
-    adminActiveAnnouncement = null;
-    saveActiveAnnouncement();
-    hideGlobalBanner();
-    renderAdminAnnouncements();
-    showToast('🗑️ اعلان حذف شد');
-}
-
-function renderAdminAnnouncements() {
-    const list = document.getElementById('adminAnnounceHistory');
-    if (adminAnnouncements.length === 0) { list.innerHTML = '<div class="admin-empty">اعلانی ارسال نشده</div>'; return; }
-    list.innerHTML = adminAnnouncements.slice().reverse().map(a => `
-      <div class="announcement-row">
-        <div class="an-text">${escapeHtml(a.text)}</div>
-        <div class="an-meta">👤 <b>${escapeHtml(a.from)}</b> • ${new Date(a.at).toLocaleString('fa-IR')}</div>
-      </div>
-    `).join('');
-}
-
-function showGlobalBanner(ann) {
-    if (!ann) return;
-    const b = document.getElementById('adminGlobalBanner');
-    const t = document.getElementById('adminGlobalBannerText');
-    const m = document.getElementById('adminGlobalBannerMeta');
-    if (!b) return;
-    t.textContent = '📢 ' + ann.text;
-    m.textContent = 'از طرف مدیریت • ' + new Date(ann.at).toLocaleString('fa-IR');
-    b.classList.add('show');
-}
-function hideGlobalBanner() {
-    const b = document.getElementById('adminGlobalBanner');
-    if (b) b.classList.remove('show');
-}
-function dismissGlobalBanner() {
-    if (adminActiveAnnouncement) sessionStorage.setItem('lroom_banner_dismissed', adminActiveAnnouncement.id);
-    hideGlobalBanner();
-}
-
-setInterval(() => {
+    status.className = ''; status.textContent = '';
+    if (!code) { status.textContent = '⚠️ کد را وارد کنید'; status.className = 'err'; return; }
+    status.textContent = '⏳ در حال بررسی...';
     try {
-        const active = JSON.parse(localStorage.getItem('lroom_active_announcement') || 'null');
-        const current = adminActiveAnnouncement;
-        if (active && (!current || active.id !== current.id)) {
-            adminActiveAnnouncement = active;
-            if (sessionStorage.getItem('lroom_banner_dismissed') !== active.id) {
-                showGlobalBanner(active);
-            }
-        } else if (!active && current) {
-            adminActiveAnnouncement = null;
-            hideGlobalBanner();
-        }
-    } catch(e) {}
-}, 5000);
-
-function updateAdminButtons() {
-    const show = isAdminUser();
-    const b1 = document.getElementById('adminPanelBtnLobby');
-    const b2 = document.getElementById('adminPanelBtnMeeting');
-    const m1 = document.getElementById('adminMenuBtn');
-    if (b1) b1.style.display = show ? 'inline-block' : 'none';
-    if (b2) b2.style.display = show ? 'inline-block' : 'none';
-    if (m1) m1.style.display = show ? 'flex' : 'none';
+        const { data: disc, error } = await sb.from('discount_codes').select('*').eq('code', code).maybeSingle();
+        if (error || !disc) { status.textContent = '❌ کد تخفیف نامعتبر است'; status.className = 'err'; expiredDiscount = null; updatePlanInfo(); return; }
+        if (disc.max_uses > 0 && (disc.used_by || []).length >= disc.max_uses) { status.textContent = '⛔ این کد تخفیف تمام شده است'; status.className = 'err'; expiredDiscount = null; updatePlanInfo(); return; }
+        const percent = disc.discount_percent || (disc.days >= 30 ? 20 : (disc.days >= 10 ? 10 : 5));
+        expiredDiscount = { code: disc.code, days: disc.days, discount_percent: percent, raw: disc };
+        status.textContent = `✅ کد معتبر! ${percent}% تخفیف اعمال شد`;
+        status.className = 'ok';
+        updatePlanInfo();
+        showToast(`🎁 ${percent}% تخفیف اعمال شد`);
+    } catch (e) { status.textContent = '❌ خطا در بررسی کد'; status.className = 'err'; expiredDiscount = null; }
+}
+function proceedToPurchase() {
+    if (!selectedPlan) { showToast('⚠️ ابتدا یک پلن انتخاب کنید'); return; }
+    const finalPrice = expiredDiscount ? selectedPlan.price - Math.round(selectedPlan.price * (expiredDiscount.discount_percent / 100)) : selectedPlan.price;
+    let msg = `📦 درخواست خرید اشتراک Lroom\n\n`;
+    msg += `👤 نام: ${currentUser?.name || '-'}\n`;
+    msg += `📧 ایمیل: ${currentUser?.email || '-'}\n`;
+    msg += `📅 پلن: ${selectedPlan.label}\n`;
+    msg += `💰 مبلغ: ${finalPrice.toLocaleString('fa-IR')} تومان\n`;
+    if (expiredDiscount) msg += `🎁 کد تخفیف: ${expiredDiscount.code} (${expiredDiscount.discount_percent}% تخفیف)\n`;
+    msg += `\nلطفاً برای تکمیل خرید راهنمایی کنید.`;
+    navigator.clipboard.writeText(msg).then(() => showToast('📋 متن سفارش کپی شد')).catch(() => {});
+    const confirmed = confirm(`📦 خلاصه سفارش:\n\nپلن: ${selectedPlan.label}\nمبلغ نهایی: ${finalPrice.toLocaleString('fa-IR')} تومان\n${expiredDiscount ? 'کد تخفیف: ' + expiredDiscount.code + '\n' : ''}\n✅ متن سفارش کپی شد.\nآیا می‌خواهید به پیام‌رسان بله بروید؟`);
+    if (confirmed) { window.open('https://web.bale.ai/', '_blank'); showToast('📤 متن سفارش در بله برای @sobhan101095 بفرستید'); }
 }
 
 // ==================== AUTH ====================
@@ -1376,99 +1128,132 @@ function switchAuthTab(tab) {
     document.getElementById('loginError').classList.remove('show');
     document.getElementById('regError').classList.remove('show');
 }
-
-function handleRegister(e) {
+async function handleRegister(e) {
     e.preventDefault();
     const name = document.getElementById('regName').value.trim();
     const email = document.getElementById('regEmail').value.trim().toLowerCase();
     const password = document.getElementById('regPassword').value;
+    const discCode = (document.getElementById('regDiscountCode')?.value || '').trim().toUpperCase();
     const errEl = document.getElementById('regError');
     const okEl = document.getElementById('regSuccess');
     const btn = document.getElementById('regBtn');
-    errEl.classList.remove('show');
-    okEl.classList.remove('show');
-    if (password.length < 6) {
-        errEl.textContent = 'رمز عبور باید حداقل ۶ کاراکتر باشد';
-        errEl.classList.add('show');
-        return;
-    }
-    btn.disabled = true;
-    btn.textContent = '...';
+    errEl.classList.remove('show'); okEl.classList.remove('show');
+    if (password.length < 6) { errEl.textContent = 'رمز عبور باید حداقل ۶ کاراکتر باشد'; errEl.classList.add('show'); return; }
+    btn.disabled = true; btn.textContent = '⏳ در حال ثبت‌نام...';
     try {
-        const users = getUsers();
-        if (users.find(u => u.email === email)) throw new Error('این ایمیل قبلاً ثبت‌نام شده است');
-        const endDate = new Date();
-        endDate.setDate(endDate.getDate() + DEFAULT_SUBSCRIPTION_DAYS);
-        const newUser = {
-            id: 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-            email, password, name,
-            role: email === ADMIN_EMAIL ? 'admin' : 'user',
-            sessionCode: null,
-            subscriptionEnd: endDate.toISOString(),
-            createdAt: new Date().toISOString(),
-        };
-        users.push(newUser);
-        saveUsers(users);
-        // اعمال کد تخفیف
-        if (window._pendingDiscount) {
-            const disc = window._pendingDiscount;
-            const end2 = new Date(newUser.subscriptionEnd);
-            end2.setDate(end2.getDate() + disc.days);
-            newUser.subscriptionEnd = end2.toISOString();
-            const users2 = getUsers();
-            const idx2 = users2.findIndex(u => u.id === newUser.id);
-            if (idx2 >= 0) { users2[idx2] = newUser; saveUsers(users2); }
-            loadAdminData();
-            const didx = adminDiscounts.findIndex(d => d.code === disc.code);
-            if (didx >= 0) {
-                adminDiscounts[didx].usedBy = adminDiscounts[didx].usedBy || [];
-                adminDiscounts[didx].usedBy.push({ userId: newUser.id, at: new Date().toISOString() });
-                saveAdminDiscounts();
-            }
-            window._pendingDiscount = null;
+        let disc = null;
+        if (discCode) {
+            const { data: d } = await sb.from('discount_codes').select('*').eq('code', discCode).maybeSingle();
+            if (!d) throw new Error('کد تخفیف نامعتبر است');
+            if (d.max_uses > 0 && d.used_count >= d.max_uses) throw new Error('این کد تخفیف تمام شده است');
+            disc = d;
         }
-        okEl.textContent = '✅ ثبت‌نام موفق! حالا وارد شوید.';
+        const { data: authData, error: authErr } = await sb.auth.signUp({ email, password, options: { data: { name } } });
+        if (authErr) {
+            if (authErr.message.toLowerCase().includes('email not confirmed')) throw new Error('تأیید ایمیل در Supabase فعال است. باید خاموشش کنی.');
+            throw new Error(authErr.message);
+        }
+        if (!authData.user) throw new Error('خطا در ساخت حساب');
+        if (!authData.session) throw new Error('تأیید ایمیل در Supabase فعال است. در پنل Supabase → Authentication → Providers → Email → Confirm email را خاموش کن.');
+        await new Promise(r => setTimeout(r, 1500));
+        let { data: prof } = await sb.from('profiles').select('*').eq('id', authData.user.id).maybeSingle();
+        if (!prof) {
+            const endDate = new Date(); endDate.setDate(endDate.getDate() + DEFAULT_SUBSCRIPTION_DAYS);
+            await sb.from('profiles').insert({
+                id: authData.user.id, email: authData.user.email, name: name,
+                role: email.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'admin' : 'user',
+                subscription_end: endDate.toISOString(),
+            });
+            const r2 = await sb.from('profiles').select('*').eq('id', authData.user.id).maybeSingle();
+            prof = r2.data;
+        }
+        if (disc && prof) {
+            const base = prof.subscription_end ? new Date(prof.subscription_end) : new Date();
+            base.setDate(base.getDate() + disc.days);
+            await sb.from('profiles').update({ subscription_end: base.toISOString() }).eq('id', authData.user.id);
+            await sb.from('discount_codes').update({ used_count: disc.used_count + 1, used_by: [...(disc.used_by || []), authData.user.id] }).eq('id', disc.id);
+        }
+        try { await sb.auth.signOut(); } catch (e) {}
+        okEl.textContent = `✅ ثبت‌نام موفق! ${disc ? `${disc.days} روز اعتبار اضافه شد.` : ''} حالا وارد شوید.`;
         okEl.classList.add('show');
-        setTimeout(() => {
-            switchAuthTab('login');
-            document.getElementById('loginEmail').value = email;
-        }, 2000);
+        setTimeout(() => { switchAuthTab('login'); document.getElementById('loginEmail').value = email; }, 2500);
     } catch (err) {
-        errEl.textContent = err.message;
+        errEl.textContent = '❌ ' + (err.message || 'خطا در ثبت‌نام');
         errEl.classList.add('show');
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'ثبت‌نام';
-    }
+    } finally { btn.disabled = false; btn.textContent = 'ثبت‌نام'; }
 }
-
-function handleLogin(e) {
+async function handleLogin(e) {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value.trim().toLowerCase();
     const password = document.getElementById('loginPassword').value;
     const errEl = document.getElementById('loginError');
+    const btn = document.getElementById('loginBtn');
     errEl.classList.remove('show');
+    btn.disabled = true; btn.textContent = '⏳ در حال ورود...';
     try {
-        const users = getUsers();
-        const u = users.find(x => x.email === email && x.password === password);
-        if (!u) throw new Error('ایمیل یا رمز عبور اشتباه است');
-        currentUser = u;
-        saveSavedUser(u);
+        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) {
+            if (error.message.toLowerCase().includes('email not confirmed')) throw new Error('حساب شما تأیید نشده. با ادمین تماس بگیرید.');
+            throw new Error(error.message);
+        }
+        if (!data.user) throw new Error('کاربر یافت نشد');
+        let { data: profile } = await sb.from('profiles').select('*').eq('id', data.user.id).maybeSingle();
+        if (!profile) {
+            const endDate = new Date(); endDate.setDate(endDate.getDate() + DEFAULT_SUBSCRIPTION_DAYS);
+            await sb.from('profiles').insert({
+                id: data.user.id, email: data.user.email,
+                name: data.user.user_metadata?.name || 'کاربر',
+                role: data.user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'admin' : 'user',
+                subscription_end: endDate.toISOString(),
+            });
+            const r2 = await sb.from('profiles').select('*').eq('id', data.user.id).maybeSingle();
+            profile = r2.data;
+        }
+        if (!profile) throw new Error('خطا در ساخت پروفایل');
+        currentUser = { id: profile.id, email: profile.email, name: profile.name, role: profile.role, sessionCode: profile.session_code, subscriptionEnd: profile.subscription_end };
         checkAndShow();
+        initRealtime();
+        loadActiveAnnouncement();
     } catch (err) {
-        errEl.textContent = err.message;
+        errEl.textContent = '❌ ' + (err.message || 'ایمیل یا رمز عبور اشتباه است');
         errEl.classList.add('show');
-    }
+    } finally { btn.disabled = false; btn.textContent = 'ورود'; }
 }
-
+async function applyDiscountCode() {
+    const input = document.getElementById('regDiscountCode'); if (!input) return;
+    const code = (input.value || '').trim().toUpperCase();
+    if (!code) return showToast('⚠️ کد را وارد کنید');
+    const { data: d, error } = await sb.from('discount_codes').select('*').eq('code', code).maybeSingle();
+    if (error || !d) return showToast('❌ کد نامعتبر');
+    if (d.max_uses > 0 && d.used_count >= d.max_uses) return showToast('⛔ این کد تمام شده');
+    showToast(`✅ کد معتبر! ${d.days} روز اعتبار`);
+}
+async function logout() {
+    try { await sb.auth.signOut(); } catch (e) {}
+    sessionStorage.removeItem('lroom_admin_auth');
+    currentUser = null;
+    if (realtimeChannel) { try { sb.removeChannel(realtimeChannel); } catch(e){} }
+    if (livekitRoom) { try { livekitRoom.disconnect(); } catch (e) {} }
+    if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+    location.reload();
+}
 function copySessionCode() {
     const code = currentUser?.sessionCode;
     if (!code) return showToast('⚠️ کد جلسه موجود نیست');
-    navigator.clipboard.writeText(code)
-        .then(() => showToast('📋 کد جلسه کپی شد: ' + code))
-        .catch(() => prompt('کد جلسه شما:', code));
+    navigator.clipboard.writeText(code).then(() => showToast('📋 کد جلسه کپی شد: ' + code)).catch(() => prompt('کد جلسه شما:', code));
 }
-
+async function ensureSessionCode() {
+    if (currentUser.sessionCode) return currentUser.sessionCode;
+    let code;
+    for (let i = 0; i < 10; i++) {
+        code = String(1000 + Math.floor(Math.random() * 9000));
+        const { data } = await sb.from('profiles').select('id').eq('session_code', code).maybeSingle();
+        if (!data) break;
+    }
+    await sb.from('profiles').update({ session_code: code }).eq('id', currentUser.id);
+    currentUser.sessionCode = code;
+    return code;
+}
 function setLobbyRole(role) {
     selectedLobbyRole = role;
     const btnT = document.getElementById('roleBtnTeacher');
@@ -1476,43 +1261,27 @@ function setLobbyRole(role) {
     const teacherBox = document.getElementById('teacherSessionBox');
     const studentBox = document.getElementById('studentJoinBox');
     const hint = document.getElementById('lobbyHint');
-
     if (role === 'teacher') {
-        btnT.classList.add('active');
-        btnS.classList.remove('active');
-        teacherBox.style.display = 'block';
-        studentBox.style.display = 'none';
+        btnT.classList.add('active'); btnS.classList.remove('active');
+        teacherBox.style.display = 'block'; studentBox.style.display = 'none';
         hint.textContent = '💡 کد جلسه خود را برای دانشجویان بفرستید تا وارد شوند.';
-        if (!currentUser.sessionCode) {
-            currentUser.sessionCode = generateSessionCode();
-            const users = getUsers();
-            const idx = users.findIndex(u => u.id === currentUser.id);
-            if (idx >= 0) { users[idx] = currentUser; saveUsers(users); }
-            saveSavedUser(currentUser);
-        }
-        const codeEl = document.getElementById('userSessionCodeDisplay');
-        if (codeEl) codeEl.textContent = currentUser.sessionCode;
+        (async () => { const code = await ensureSessionCode(); const el = document.getElementById('userSessionCodeDisplay'); if (el) el.textContent = code; })();
     } else {
-        btnT.classList.remove('active');
-        btnS.classList.add('active');
-        teacherBox.style.display = 'none';
-        studentBox.style.display = 'block';
+        btnT.classList.remove('active'); btnS.classList.add('active');
+        teacherBox.style.display = 'none'; studentBox.style.display = 'block';
         hint.textContent = '💡 کد جلسه را از مدرس خود بگیرید و وارد کنید.';
     }
 }
-
 function checkAndShow() {
     if (!currentUser) return;
     document.getElementById('authScreen').style.display = 'none';
     document.getElementById('expiredScreen').style.display = 'none';
     document.getElementById('lobby').style.display = 'none';
-
     const isAdmin = currentUser.role === 'admin';
     const end = currentUser.subscriptionEnd ? new Date(currentUser.subscriptionEnd) : null;
     const now = new Date();
     const isExpired = end && end < now;
     const daysLeft = end ? Math.ceil((end - now) / (1000 * 60 * 60 * 24)) : 0;
-
     if (isAdmin || !isExpired) {
         document.getElementById('lobby').style.display = 'flex';
         document.getElementById('userBadgeName').textContent = currentUser.name;
@@ -1524,9 +1293,17 @@ function checkAndShow() {
     } else {
         document.getElementById('expiredScreen').style.display = 'flex';
         document.getElementById('expUserName').textContent = currentUser.name;
+        // reset pricing state
+        selectedPlan = null; expiredDiscount = null;
+        document.querySelectorAll('.pricing-card').forEach(c => c.classList.remove('selected'));
+        const ds = document.getElementById('discountStatus'); if (ds) { ds.textContent = ''; ds.className = ''; }
+        const inp = document.getElementById('expiredDiscountCode'); if (inp) inp.value = '';
+        const spt = document.getElementById('selectedPlanText'); if (spt) spt.textContent = '—';
+        const fpt = document.getElementById('finalPriceText'); if (fpt) fpt.textContent = '—';
+        const dar = document.getElementById('discountAppliedRow'); if (dar) dar.style.display = 'none';
+        const pb = document.getElementById('purchaseBtn'); if (pb) pb.disabled = true;
     }
 }
-
 async function startPreview() {
     try {
         if (!localStream) {
@@ -1535,9 +1312,7 @@ async function startPreview() {
                     video: { width: { ideal: 640 }, height: { ideal: 360 }, facingMode: 'user' },
                     audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
                 });
-            } catch (e) {
-                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            }
+            } catch (e) { localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true }); }
             localStream.getAudioTracks().forEach(t => t.enabled = false);
             localStream.getVideoTracks().forEach(t => t.enabled = false);
         }
@@ -1547,36 +1322,24 @@ async function startPreview() {
         document.getElementById('previewCamBtn').classList.add('off');
     } catch (e) { console.error(e); }
 }
-
-function logout() {
-    currentUser = null;
-    localStorage.removeItem('lroom_current');
-    if (livekitRoom) { try { livekitRoom.disconnect(); } catch (e) {} }
-    if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
-    location.reload();
-}
-
 function toggleUserMenu() { document.getElementById('userMenu').classList.toggle('open'); }
 document.addEventListener('click', (e) => {
     const menu = document.getElementById('userMenu');
     const badge = document.getElementById('userBadge');
     if (menu && badge && !badge.contains(e.target)) menu.classList.remove('open');
 });
-
 function showSubscriptionInfo() {
     if (!currentUser) return;
     const end = currentUser.subscriptionEnd ? new Date(currentUser.subscriptionEnd) : null;
     const now = new Date();
     const daysLeft = end ? Math.ceil((end - now) / (1000 * 60 * 60 * 24)) : 0;
-    if (currentUser.role === 'admin') alert('👑 شما ادمین هستید و دسترسی نامحدود دارید.\n\n🎛️ برای مدیریت کاربران، کد تخفیف و اعلان‌ها روی دکمه «👑 ادمین» کلیک کنید.');
+    if (currentUser.role === 'admin') alert('👑 شما ادمین هستید و دسترسی نامحدود دارید.');
     else if (daysLeft > 0) {
         let msg = `✅ اعتبار شما تا ${end.toLocaleDateString('fa-IR')} فعال است.\n\n⏳ ${daysLeft} روز باقی‌مانده.`;
         if (currentUser.sessionCode) msg += `\n\n🔑 کد جلسه شما: ${currentUser.sessionCode}`;
         alert(msg);
-    }
-    else alert(`⛔ اعتبار شما به پایان رسیده.\n\nبرای تمدید به پیام‌رسان بله مراجعه کنید:\n${BALE_ID}`);
+    } else alert(`⛔ اعتبار شما به پایان رسیده.\n\nبرای تمدید، یکی از پلن‌ها را از صفحه اصلی انتخاب کنید.`);
 }
-
 function togglePreviewMic() {
     const b = document.getElementById('previewMicBtn');
     const tr = localStream?.getAudioTracks()[0];
@@ -1588,46 +1351,238 @@ function togglePreviewCam() {
     if (tr) { tr.enabled = !tr.enabled; b.classList.toggle('off', !tr.enabled); b.textContent = tr.enabled ? '📹' : '📷'; }
 }
 
-// ==================== JOIN MEETING ====================
+// ==================== ADMIN PANEL ====================
+function isAdminUser() { return currentUser && currentUser.role === 'admin'; }
+function openAdminPanel() { if (!isAdminUser()) { showToast('⛔ فقط ادمین'); return; } document.getElementById('adminPanelModal').classList.add('open'); switchAdminTab('dashboard'); }
+function closeAdminPanel() { document.getElementById('adminPanelModal').classList.remove('open'); }
+function switchAdminTab(tab) {
+    const tabs = ['dashboard','users','discounts','announce'];
+    document.querySelectorAll('.admin-tab').forEach((el, i) => el.classList.toggle('active', tabs[i] === tab));
+    document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+    const sec = document.getElementById('adminSec-' + tab); if (sec) sec.classList.add('active');
+    if (tab === 'dashboard') renderAdminDashboard();
+    else if (tab === 'users') renderAdminUsers();
+    else if (tab === 'discounts') renderAdminDiscounts();
+    else if (tab === 'announce') renderAdminAnnouncements();
+}
+async function renderAdminDashboard() {
+    const { data: users } = await sb.from('profiles').select('*');
+    const { data: discs } = await sb.from('discount_codes').select('*');
+    const { data: anns } = await sb.from('announcements').select('*').eq('is_active', true).maybeSingle();
+    const allUsers = users || []; const allDiscs = discs || [];
+    const now = new Date();
+    const activeUsers = allUsers.filter(u => u.subscription_end && new Date(u.subscription_end) > now).length;
+    const expiredUsers = allUsers.length - activeUsers;
+    const admins = allUsers.filter(u => u.role === 'admin').length;
+    const usedDiscounts = allDiscs.filter(d => (d.used_by || []).length > 0).length;
+    document.getElementById('adminStatsGrid').innerHTML = `
+      <div class="admin-stat-box"><div class="num">${allUsers.length}</div><div class="lbl">👥 کل کاربران</div></div>
+      <div class="admin-stat-box"><div class="num" style="color:var(--success)">${activeUsers}</div><div class="lbl">✅ فعال</div></div>
+      <div class="admin-stat-box"><div class="num" style="color:var(--danger)">${expiredUsers}</div><div class="lbl">⛔ منقضی</div></div>
+      <div class="admin-stat-box"><div class="num" style="color:#ffd700">${admins}</div><div class="lbl">👑 ادمین</div></div>
+      <div class="admin-stat-box"><div class="num" style="color:var(--accent)">${allDiscs.length}</div><div class="lbl">🎟️ کد تخفیف</div></div>
+      <div class="admin-stat-box"><div class="num" style="color:var(--warning)">${usedDiscounts}</div><div class="lbl">📌 استفاده‌شده</div></div>
+    `;
+    const totalDays = allUsers.reduce((sum, u) => { if (!u.subscription_end) return sum; const d = Math.ceil((new Date(u.subscription_end) - now) / 86400000); return sum + Math.max(0, d); }, 0);
+    document.getElementById('adminDashboardInfo').innerHTML = `
+      <div class="stat-row"><span class="label">📅 مجموع روزهای اعتبار</span><span class="value">${totalDays} روز</span></div>
+      <div class="stat-row"><span class="label">🆕 آخرین کاربر</span><span class="value">${allUsers.length ? escapeHtml(allUsers[allUsers.length-1].name) : '-'}</span></div>
+      <div class="stat-row"><span class="label">📢 اعلان فعال</span><span class="value">${anns ? 'دارد' : 'ندارد'}</span></div>
+    `;
+}
+async function renderAdminUsers() {
+    const q = (document.getElementById('adminUserSearch')?.value || '').trim();
+    let query = sb.from('profiles').select('*').order('created_at', { ascending: false });
+    if (q) query = query.or(`name.ilike.%${q}%,email.ilike.%${q}%`);
+    const { data: users, error } = await query;
+    const list = document.getElementById('adminUsersList');
+    if (error || !users) { list.innerHTML = '<div class="admin-empty">خطا</div>'; return; }
+    if (users.length === 0) { list.innerHTML = '<div class="admin-empty">کاربری یافت نشد</div>'; return; }
+    const now = new Date();
+    list.innerHTML = users.map(u => {
+        const end = u.subscription_end ? new Date(u.subscription_end) : null;
+        const daysLeft = end ? Math.ceil((end - now) / 86400000) : 0;
+        const isAdmin = u.role === 'admin';
+        const statusText = isAdmin ? '👑 ادمین' : (daysLeft > 0 ? `✅ ${daysLeft} روز مانده` : '⛔ منقضی');
+        const statusColor = isAdmin ? '#ffd700' : (daysLeft > 0 ? 'var(--success)' : 'var(--danger)');
+        return `<div class="admin-user-row">
+          <div class="admin-user-avatar ${isAdmin ? 'admin' : ''}">${escapeHtml((u.name||'?')[0].toUpperCase())}</div>
+          <div class="admin-user-info">
+            <div class="admin-user-name">${escapeHtml(u.name)} ${isAdmin ? '<span class="role-badge-admin">ADMIN</span>' : '<span class="role-badge-user">USER</span>'}</div>
+            <div class="admin-user-email">${escapeHtml(u.email)}</div>
+            <div class="admin-user-meta">وضعیت: <b style="color:${statusColor}">${statusText}</b>${u.session_code ? ` • کد: <b>${escapeHtml(u.session_code)}</b>` : ''}</div>
+          </div>
+          <div class="admin-user-actions">
+            <button class="add-days" onclick="adminAddDays('${u.id}', 30)">+۳۰</button>
+            <button class="add-days" onclick="adminAddDays('${u.id}', 10)">+۱۰</button>
+            <button class="sub-days" onclick="adminAddDays('${u.id}', -10)">−۱۰</button>
+            <button class="del-user" onclick="adminDeleteUser('${u.id}', '${escapeHtml(u.name)}')">🗑️</button>
+          </div>
+        </div>`;
+    }).join('');
+}
+async function adminAddDays(userId, days) {
+    if (!isAdminUser()) return;
+    const { data: u } = await sb.from('profiles').select('subscription_end, role').eq('id', userId).single();
+    if (!u) return showToast('یافت نشد');
+    if (u.role === 'admin') return showToast('👑 ادمین نیازی ندارد');
+    const now = new Date();
+    let base = u.subscription_end && new Date(u.subscription_end) > now ? new Date(u.subscription_end) : now;
+    base.setDate(base.getDate() + days);
+    await sb.from('profiles').update({ subscription_end: base.toISOString() }).eq('id', userId);
+    renderAdminUsers();
+    showToast(days > 0 ? `✅ ${days} روز اضافه شد` : `⚠️ ${Math.abs(days)} روز کم شد`);
+}
+async function adminDeleteUser(userId, name) {
+    if (!isAdminUser()) return;
+    if (currentUser.id === userId) return showToast('⛔ نمی‌توانید خودتان را حذف کنید');
+    if (!confirm(`حذف کاربر "${name}"؟`)) return;
+    await sb.from('profiles').delete().eq('id', userId);
+    renderAdminUsers();
+    showToast('🗑️ حذف شد');
+}
+function generateDiscountCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = 'LROOM-';
+    for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+    return code;
+}
+async function createDiscountCode() {
+    if (!isAdminUser()) return;
+    const codeInput = document.getElementById('discCodeInput');
+    const daysInput = document.getElementById('discDaysInput');
+    const limitInput = document.getElementById('discLimitInput');
+    const percentInput = document.getElementById('discPercentInput');
+    let code = (codeInput.value || '').trim().toUpperCase();
+    const days = parseInt(daysInput.value) || 20;
+    const limit = parseInt(limitInput.value) || 0;
+    const percent = parseInt(percentInput?.value) || 0;
+    if (!code) code = generateDiscountCode();
+    if (days < 1) return showToast('⚠️ حداقل ۱ روز');
+    const { error } = await sb.from('discount_codes').insert({ code, days, max_uses: limit || 0, discount_percent: percent, created_by: currentUser.id });
+    if (error) {
+        if (error.code === '23505') return showToast('⚠️ این کد وجود دارد');
+        return showToast('❌ ' + error.message);
+    }
+    codeInput.value = ''; limitInput.value = ''; if (percentInput) percentInput.value = '0';
+    renderAdminDiscounts();
+    showToast(`🎟️ کد ساخته شد: ${code}`);
+}
+async function renderAdminDiscounts() {
+    const { data: discs } = await sb.from('discount_codes').select('*').order('created_at', { ascending: false });
+    const list = document.getElementById('adminDiscountsList');
+    if (!discs || discs.length === 0) { list.innerHTML = '<div class="admin-empty">کدی ساخته نشده</div>'; return; }
+    list.innerHTML = discs.map(d => {
+        const usedCount = (d.used_by || []).length;
+        const isExpired = d.max_uses > 0 && usedCount >= d.max_uses;
+        const statusClass = isExpired ? 'expired' : 'active';
+        const statusText = isExpired ? '⛔ تمام' : (d.max_uses > 0 ? `✅ ${d.max_uses - usedCount} باقی` : '✅ نامحدود');
+        return `<div class="discount-row">
+          <div class="discount-code">${escapeHtml(d.code)}</div>
+          <div class="discount-info">
+            <div class="di-days">🎁 ${d.days} روز ${d.discount_percent ? `• ${d.discount_percent}% تخفیف` : ''}</div>
+            <div class="di-status ${statusClass}">${statusText} • استفاده: ${usedCount}</div>
+          </div>
+          <div style="display:flex;gap:4px;">
+            <button class="admin-btn secondary" style="padding:6px 10px;font-size:11px;" onclick="copyDiscountCode('${d.code}')">📋</button>
+            <button class="admin-btn danger" style="padding:6px 10px;font-size:11px;" onclick="deleteDiscountCode('${d.code}')">🗑️</button>
+          </div>
+        </div>`;
+    }).join('');
+}
+function copyDiscountCode(code) { navigator.clipboard.writeText(code).then(() => showToast('📋 کپی شد')).catch(() => prompt('کد:', code)); }
+async function deleteDiscountCode(code) { if (!isAdminUser()) return; if (!confirm(`حذف کد ${code}؟`)) return; await sb.from('discount_codes').delete().eq('code', code); renderAdminDiscounts(); showToast('🗑️ حذف شد'); }
+async function sendGlobalAnnouncement() {
+    if (!isAdminUser()) return;
+    const txt = (document.getElementById('adminAnnounceText').value || '').trim();
+    if (!txt) return showToast('⚠️ متن اعلان را وارد کنید');
+    await sb.from('announcements').update({ is_active: false }).eq('is_active', true);
+    const { error } = await sb.from('announcements').insert({ text: txt, from_name: currentUser.name, is_active: true });
+    if (error) return showToast('❌ ' + error.message);
+    document.getElementById('adminAnnounceText').value = '';
+    renderAdminAnnouncements();
+    showToast('📢 ارسال شد');
+}
+async function clearGlobalAnnouncement() {
+    if (!isAdminUser()) return;
+    if (!confirm('حذف اعلان فعال؟')) return;
+    await sb.from('announcements').update({ is_active: false }).eq('is_active', true);
+    hideGlobalBanner();
+    renderAdminAnnouncements();
+    showToast('🗑️ حذف شد');
+}
+async function renderAdminAnnouncements() {
+    const { data: anns } = await sb.from('announcements').select('*').order('created_at', { ascending: false }).limit(30);
+    const list = document.getElementById('adminAnnounceHistory');
+    if (!anns || anns.length === 0) { list.innerHTML = '<div class="admin-empty">اعلانی ارسال نشده</div>'; return; }
+    list.innerHTML = anns.map(a => `
+      <div class="announcement-row">
+        <div class="an-text">${escapeHtml(a.text)} ${a.is_active ? '<span style="color:var(--success);font-size:10px;">(فعال)</span>' : ''}</div>
+        <div class="an-meta">👤 <b>${escapeHtml(a.from_name || '-')}</b> • ${new Date(a.created_at).toLocaleString('fa-IR')}</div>
+      </div>
+    `).join('');
+}
+function showGlobalBanner(ann) {
+    if (!ann) return;
+    const b = document.getElementById('adminGlobalBanner');
+    const t = document.getElementById('adminGlobalBannerText');
+    const m = document.getElementById('adminGlobalBannerMeta');
+    if (!b) return;
+    t.textContent = '📢 ' + ann.text;
+    m.textContent = 'از طرف مدیریت • ' + new Date(ann.created_at || ann.at).toLocaleString('fa-IR');
+    b.classList.add('show');
+}
+function hideGlobalBanner() { const b = document.getElementById('adminGlobalBanner'); if (b) b.classList.remove('show'); }
+function dismissGlobalBanner() { if (adminActiveAnnouncement) sessionStorage.setItem('lroom_banner_dismissed', adminActiveAnnouncement.id); hideGlobalBanner(); }
+function updateAdminButtons() {
+    const show = isAdminUser();
+    const b1 = document.getElementById('adminPanelBtnLobby');
+    const b2 = document.getElementById('adminPanelBtnMeeting');
+    const m1 = document.getElementById('adminMenuBtn');
+    if (b1) b1.style.display = show ? 'inline-block' : 'none';
+    if (b2) b2.style.display = show ? 'inline-block' : 'none';
+    if (m1) m1.style.display = show ? 'flex' : 'none';
+}
+function initRealtime() {
+    if (realtimeChannel) { try { sb.removeChannel(realtimeChannel); } catch(e){} }
+    realtimeChannel = sb.channel('lroom-realtime')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'announcements' }, (payload) => {
+            if (payload.new && payload.new.is_active) {
+                adminActiveAnnouncement = payload.new;
+                if (sessionStorage.getItem('lroom_banner_dismissed') !== payload.new.id) showGlobalBanner(payload.new);
+            } else if (payload.eventType === 'UPDATE' && payload.new && !payload.new.is_active) hideGlobalBanner();
+        })
+        .subscribe();
+}
+async function loadActiveAnnouncement() {
+    const { data } = await sb.from('announcements').select('*').eq('is_active', true).order('created_at', { ascending: false }).limit(1).maybeSingle();
+    if (data && sessionStorage.getItem('lroom_banner_dismissed') !== data.id) {
+        adminActiveAnnouncement = data;
+        setTimeout(() => showGlobalBanner(data), 1000);
+    }
+}
+
+// ==================== JOIN ====================
 async function joinMeeting() {
     if (!currentUser) return showToast('⚠️ ابتدا وارد شوید');
     myName = currentUser.name;
     myRole = selectedLobbyRole;
-
-    if (myRole === 'teacher') {
-        if (!currentUser.sessionCode) {
-            currentUser.sessionCode = generateSessionCode();
-            const users = getUsers();
-            const idx = users.findIndex(u => u.id === currentUser.id);
-            if (idx >= 0) { users[idx] = currentUser; saveUsers(users); }
-            saveSavedUser(currentUser);
-        }
-        roomId = sanitize(currentUser.sessionCode);
-        roomPassword = currentUser.sessionCode;
-    } else {
+    if (myRole === 'teacher') { const code = await ensureSessionCode(); roomId = sanitize(code); }
+    else {
         const studentCode = document.getElementById('joinRoomCode').value.trim();
         if (!studentCode) return showToast('⚠️ کد جلسه را وارد کنید');
         roomId = sanitize(studentCode);
-        roomPassword = studentCode;
     }
-
     const btn = document.getElementById('joinBtn');
-    btn.disabled = true;
-    btn.textContent = '⏳ در حال اتصال...';
+    btn.disabled = true; btn.textContent = '⏳ در حال اتصال...';
     showToast('⏳ در حال اتصال...');
-
     try {
-        myId = myRole === 'teacher'
-            ? `teacher-${roomId}`
-            : `student-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+        myId = myRole === 'teacher' ? `teacher-${roomId}` : `student-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
         teacherId = `teacher-${roomId}`;
-
         const mediaPromise = startPreview();
         const tokenPromise = generateLiveKitToken(roomId, myId, myName, myRole === 'teacher');
-
         livekitRoom = new LivekitClient.Room({
-            adaptiveStream: true,
-            dynacast: true,
+            adaptiveStream: true, dynacast: true,
             videoCaptureDefaults: { resolution: { width: 480, height: 270, frameRate: 20 } },
             audioCaptureDefaults: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
             publishDefaults: {
@@ -1636,9 +1591,7 @@ async function joinMeeting() {
                     { width: 320, height: 180, encoding: { maxBitrate: 150000, maxFramerate: 15 } },
                     { width: 640, height: 360, encoding: { maxBitrate: 500000, maxFramerate: 24 } },
                 ],
-                videoCodec: 'vp8',
-                dtx: true,
-                red: true,
+                videoCodec: 'vp8', dtx: true, red: true,
                 degradationPreference: 'maintain-framerate',
                 screenShareEncoding: { maxBitrate: 3000000, maxFramerate: 15 },
                 screenShareSimulcastLayers: [
@@ -1646,43 +1599,18 @@ async function joinMeeting() {
                     { width: 1920, height: 1080, encoding: { maxBitrate: 3000000, maxFramerate: 15 } },
                 ],
             },
-            connectOptions: {
-                autoSubscribe: true,
-                maxRetries: 3,
-                peerConnectionTimeout: 5000,
-                websocketTimeout: 5000,
-            },
-            reconnectPolicy: {
-                nextRetryDelayInMs: (ctx) => {
-                    if (ctx.retryCount < 3) return 300;
-                    if (ctx.retryCount < 8) return 1500;
-                    return 4000;
-                },
-            },
+            connectOptions: { autoSubscribe: true, maxRetries: 3, peerConnectionTimeout: 5000, websocketTimeout: 5000 },
+            reconnectPolicy: { nextRetryDelayInMs: (ctx) => ctx.retryCount < 3 ? 300 : (ctx.retryCount < 8 ? 1500 : 4000) },
         });
-
         setupLiveKitEvents();
-
         const [, token] = await Promise.all([mediaPromise, tokenPromise]);
-
-        if (!localStream) {
-            btn.disabled = false;
-            btn.textContent = 'ورود به جلسه';
-            return showToast('⚠️ دسترسی به دوربین/میکروفون داده نشد');
-        }
-
+        if (!localStream) { btn.disabled = false; btn.textContent = 'ورود به جلسه'; return showToast('⚠️ دسترسی به دوربین/میکروفون داده نشد'); }
         showToast('🌐 در حال اتصال به سرور...');
-
-        const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('اتصال طول کشید - اینترنت را چک کنید')), 12000)
-        );
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('اتصال طول کشید')), 12000));
         await Promise.race([livekitRoom.connect(LIVEKIT_URL, token), timeoutPromise]);
-
         showMeetingUI();
         showToast('✅ متصل شدید');
-
         const lp = livekitRoom.localParticipant;
-
         if (myRole === 'teacher') {
             (async () => {
                 try {
@@ -1702,48 +1630,34 @@ async function joinMeeting() {
                 sendData({ type: 'hello', name: myName, role: myRole, micOn: isMicOn, camOn: isCamOn, isWaiting: false });
             })();
         } else {
-            isMicOn = false;
-            isCamOn = false;
-            myPermissions.mic = false;
-            myPermissions.cam = false;
-            myPermissions.whiteboard = false;
-            myPermissions.projector = false;
-
+            isMicOn = false; isCamOn = false;
+            myPermissions.mic = false; myPermissions.cam = false;
+            myPermissions.whiteboard = false; myPermissions.projector = false;
             isWaitingForApproval = true;
             document.getElementById('waitingRoomOverlay').style.display = 'flex';
-
             livekitRoom.remoteParticipants.forEach(p => {
                 if (p.identity && p.identity.startsWith('teacher-')) {
                     const el = document.getElementById('waitingTeacherName');
                     if (el) el.textContent = '👨‍🏫 ' + (p.name || p.identity);
                 }
             });
-
-            setTimeout(() => {
-                sendData({ type: 'hello', name: myName, role: myRole, micOn: false, camOn: false, isWaiting: true });
-            }, 100);
+            setTimeout(() => { sendData({ type: 'hello', name: myName, role: myRole, micOn: false, camOn: false, isWaiting: true }); }, 100);
         }
     } catch (err) {
         console.error('Join error:', err);
-        let msg = err.message || 'خطای ناشناخته';
-        if (msg.includes('Timeout') || msg.includes('طول کشید')) msg = 'اتصال کند بود - اینترنت یا VPN را چک کنید';
-        showToast('❌ ' + msg);
-        btn.disabled = false;
-        btn.textContent = 'ورود به جلسه';
+        showToast('❌ ' + (err.message || 'خطای ناشناخته'));
+        btn.disabled = false; btn.textContent = 'ورود به جلسه';
         try { if (livekitRoom) await livekitRoom.disconnect(); } catch (e) {}
         livekitRoom = null;
     }
 }
-
 function showMeetingUI() {
     document.getElementById('lobby').style.display = 'none';
     document.getElementById('meeting').classList.add('active');
     document.getElementById('roomName').textContent = roomId;
-
     const b = document.getElementById('roleBadge');
     b.textContent = myRole === 'teacher' ? '👨‍🏫 مدرس' : '👨‍🎓 دانشجو';
     b.classList.toggle('teacher', myRole === 'teacher');
-
     if (myRole === 'teacher') {
         document.getElementById('btnWaitingPanel').style.display = 'inline-block';
         document.getElementById('btnTeacherPanel').style.display = 'inline-block';
@@ -1756,29 +1670,19 @@ function showMeetingUI() {
         document.getElementById('btnAnnouncement').style.display = 'inline-block';
         document.getElementById('btnExportCSV').style.display = 'block';
         document.getElementById('btnClearAtt').style.display = 'block';
-    } else {
-        document.getElementById('btnFilesHeader').style.display = 'inline-block';
-    }
+    } else { document.getElementById('btnFilesHeader').style.display = 'inline-block'; }
     updateAdminButtons();
-
     addMyVideo();
-    updateMicUI();
-    updateCamUI();
+    updateMicUI(); updateCamUI();
     startAttendanceTracking(myId, myName, myRole, true);
     initUserStats(myId, myName, myRole);
     startClassTimer();
     setupVoiceDetection();
     startQualityCheck();
     updateParticipantsPanel();
-
-    if (!bellAudioCtx) {
-        try { bellAudioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
-    }
-
+    if (!bellAudioCtx) { try { bellAudioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
     document.title = `Lroom | ${roomId}`;
 }
-
-// ==================== LIVEKIT EVENTS ====================
 function setupLiveKitEvents() {
     const R = LivekitClient.RoomEvent;
     livekitRoom.on(R.ParticipantConnected, (p) => {
@@ -1794,16 +1698,12 @@ function setupLiveKitEvents() {
         qualityCache.delete(p.identity);
         waitingList.delete(p.identity);
         updateWaitingPanel();
-        const s = stats.userStats.get(p.identity);
-        if (s) s.isOnline = false;
+        const s = stats.userStats.get(p.identity); if (s) s.isOnline = false;
         if (attendanceLog.has(p.identity)) attendanceLog.get(p.identity).leftAt = new Date();
         updateParticipantCount(); updateAttendanceUI(); updateTeacherPanel(); updateParticipantsPanel(); updatePrivateRecipientList();
     });
     livekitRoom.on(R.TrackSubscribed, (track, pub, p) => {
-        if (track.kind === LivekitClient.Track.Kind.Video && pub.source === LivekitClient.Track.Source.ScreenShare) {
-            showScreenShareModal(track, p.name || p.identity, p.identity);
-            return;
-        }
+        if (track.kind === LivekitClient.Track.Kind.Video && pub.source === LivekitClient.Track.Source.ScreenShare) { showScreenShareModal(track, p.name || p.identity, p.identity); return; }
         if (track.kind === LivekitClient.Track.Kind.Audio) {
             const el = track.attach();
             el.autoplay = true; el.style.display = 'none'; el.dataset.identity = p.identity;
@@ -1836,7 +1736,6 @@ function setupLiveKitEvents() {
     livekitRoom.on(R.Reconnecting, () => showToast('🔄 اتصال مجدد...'));
     livekitRoom.on(R.Reconnected, () => showToast('✅ متصل شد'));
 }
-
 function sendData(data, destinations) {
     if (!livekitRoom) return;
     const payload = new TextEncoder().encode(JSON.stringify(data));
@@ -1846,16 +1745,12 @@ function sendData(data, destinations) {
 }
 function broadcast(data) { sendData(data); }
 function sendTo(id, data) { sendData(data, [id]); }
-
-// ==================== SCREEN SHARE BIG VIEW ====================
 function showScreenShareModal(track, name, identity) {
     const modal = document.getElementById('screenShareModal');
     const video = document.getElementById('screenShareVideo');
     const who = document.getElementById('screenShareWho');
     if (!modal || !video) return;
-    if (currentScreenShareTrack && currentScreenShareTrack !== track) {
-        try { currentScreenShareTrack.detach().forEach(el => el.remove()); } catch (e) {}
-    }
+    if (currentScreenShareTrack && currentScreenShareTrack !== track) { try { currentScreenShareTrack.detach().forEach(el => el.remove()); } catch (e) {} }
     currentScreenShareTrack = track;
     currentScreenShareIdentity = identity;
     try { video.srcObject = new MediaStream([track.mediaStreamTrack]); } catch (e) {}
@@ -1863,16 +1758,12 @@ function showScreenShareModal(track, name, identity) {
     modal.classList.add('open');
 }
 function closeScreenShareModal() {
-    const modal = document.getElementById('screenShareModal');
-    if (modal) modal.classList.remove('open');
-    const video = document.getElementById('screenShareVideo');
-    if (video) video.srcObject = null;
-    currentScreenShareTrack = null;
-    currentScreenShareIdentity = null;
+    const modal = document.getElementById('screenShareModal'); if (modal) modal.classList.remove('open');
+    const video = document.getElementById('screenShareVideo'); if (video) video.srcObject = null;
+    currentScreenShareTrack = null; currentScreenShareIdentity = null;
 }
 function toggleScreenShareFullscreen() {
-    const wrapper = document.getElementById('screenShareWrapper');
-    if (!wrapper) return;
+    const wrapper = document.getElementById('screenShareWrapper'); if (!wrapper) return;
     if (!document.fullscreenElement) wrapper.requestFullscreen?.().catch(() => {});
     else document.exitFullscreen?.().catch(() => {});
 }
@@ -1902,19 +1793,11 @@ function handleIncomingData(data, senderId) {
                 if (isRecording) sendTo(senderId, { type: 'recording-started' });
                 if (currentPoll) sendTo(senderId, { type: 'poll-new', poll: currentPoll });
                 if (breakoutGroups) sendTo(senderId, { type: 'breakout-groups', groups: breakoutGroups });
-                if (sharedFiles.length > 0) sendTo(senderId, { type: 'files-sync', files: sharedFiles.map(f => ({ id: f.id, name: f.name, size: f.size, from: f.from, data: f.data })) });
                 sendTo(senderId, { type: 'quality-settings', settings: qualitySettings, from: myId });
             }
             if (myRole === 'student' && data.role === 'teacher') {
                 sendTo(senderId, { type: 'request-my-permissions' });
                 sendTo(senderId, { type: 'request-quality-settings' });
-                livekitRoom.remoteParticipants.forEach(rp => {
-                    rp.trackPublications.forEach(pub => {
-                        if (pub.source === LivekitClient.Track.Source.ScreenShare && pub.track) {
-                            showScreenShareModal(pub.track, rp.name || rp.identity, rp.identity);
-                        }
-                    });
-                });
             }
             const nameEl = document.querySelector(`#video-${senderId} .name`);
             if (nameEl) nameEl.textContent = data.name;
@@ -1926,9 +1809,7 @@ function handleIncomingData(data, senderId) {
             document.getElementById('waitingRoomOverlay').style.display = 'none';
             document.querySelectorAll('audio[data-identity]').forEach(el => el.muted = false);
             showToast('✅ به کلاس خوش آمدید');
-            setTimeout(() => {
-                sendData({ type: 'hello', name: myName, role: myRole, micOn: isMicOn, camOn: isCamOn, isWaiting: false });
-            }, 300);
+            setTimeout(() => { sendData({ type: 'hello', name: myName, role: myRole, micOn: isMicOn, camOn: isCamOn, isWaiting: false }); }, 300);
             break;
         }
         case 'deny': {
@@ -1938,14 +1819,8 @@ function handleIncomingData(data, senderId) {
             setTimeout(() => leaveMeeting(true), 1500);
             break;
         }
-        case 'quality-settings':
-            receiveQualitySettings(data.settings);
-            if (myRole === 'student') showToast('⚙️ مدرس کیفیت را تغییر داد');
-            break;
-        case 'request-quality-settings':
-            if (myRole !== 'teacher') break;
-            sendTo(senderId, { type: 'quality-settings', settings: qualitySettings, from: myId });
-            break;
+        case 'quality-settings': receiveQualitySettings(data.settings); if (myRole === 'student') showToast('⚙️ کیفیت تغییر کرد'); break;
+        case 'request-quality-settings': if (myRole === 'teacher') sendTo(senderId, { type: 'quality-settings', settings: qualitySettings, from: myId }); break;
         case 'permission-request': if (myRole === 'student') showPermissionRequestModal(data.permission); break;
         case 'permission-accepted': {
             if (myRole !== 'teacher' && !isCoTeacher) break;
@@ -1997,29 +1872,16 @@ function handleIncomingData(data, senderId) {
             myPermissions.cam = data.permissions.cam;
             myPermissions.whiteboard = data.permissions.whiteboard;
             myPermissions.projector = data.permissions.projector;
-            if (data.permissions.coTeacher !== undefined) {
-                isCoTeacher = data.permissions.coTeacher;
-                const b = document.getElementById('roleBadge');
-                if (isCoTeacher) {
-                    b.textContent = '🎖️ هم‌مدرس';
-                    b.classList.remove('teacher'); b.classList.add('coteacher');
-                    document.getElementById('btnActivityTimer').style.display = 'inline-block';
-                    document.getElementById('btnAnnouncement').style.display = 'inline-block';
-                    document.getElementById('btnPollHeader').style.display = 'inline-block';
-                    document.getElementById('btnBreakoutHeader').style.display = 'inline-block';
-                    document.getElementById('btnCertHeader').style.display = 'inline-block';
-                    document.getElementById('btnTeacherPanel').style.display = 'inline-block';
-                    document.getElementById('teacherPanel').classList.add('open');
-                }
-            }
+            if (data.permissions.coTeacher !== undefined) isCoTeacher = data.permissions.coTeacher;
             updateMicUI(); updateCamUI(); updateProjectorToolsVisibility(); updateParticipantsPanel();
             break;
         case 'coteacher-status':
             if (myRole !== 'student') break;
             isCoTeacher = data.enabled;
+            showToast(isCoTeacher ? '✅ به هم‌مدرس ارتقا یافتید' : '🔒 از هم‌مدرس حذف شدید');
             const b2 = document.getElementById('roleBadge');
             if (isCoTeacher) {
-                b2.textContent = '🎖️ هم‌مدرس'; b2.classList.remove('teacher'); b2.classList.add('coteacher');
+                b2.textContent = '🎖️ هم‌مدرس'; b2.classList.add('coteacher');
                 document.getElementById('btnActivityTimer').style.display = 'inline-block';
                 document.getElementById('btnAnnouncement').style.display = 'inline-block';
                 document.getElementById('btnPollHeader').style.display = 'inline-block';
@@ -2027,96 +1889,43 @@ function handleIncomingData(data, senderId) {
                 document.getElementById('btnCertHeader').style.display = 'inline-block';
                 document.getElementById('btnTeacherPanel').style.display = 'inline-block';
                 document.getElementById('teacherPanel').classList.add('open');
-                showToast('✅ به هم‌مدرس ارتقا یافتید');
-            } else {
-                b2.textContent = '👨‍🎓 دانشجو'; b2.classList.remove('coteacher');
-                showToast('🔒 از هم‌مدرس حذف شدید');
-            }
+            } else { b2.textContent = '👨‍🎓 دانشجو'; b2.classList.remove('coteacher'); }
             updateParticipantsPanel();
             break;
         case 'permission-granted':
             if (myRole !== 'student') break;
             myPermissions[data.permission] = true;
-            if (data.permission === 'mic') {
-                const btn = document.getElementById('btnMic');
-                if (btn) { btn.classList.remove('waiting'); btn.disabled = false; }
-                actuallyToggleMic();
-            } else if (data.permission === 'cam') {
-                const btn = document.getElementById('btnCam');
-                if (btn) { btn.classList.remove('waiting'); btn.disabled = false; }
-                actuallyToggleCam();
-            } else if (data.permission === 'projector') updateProjectorToolsVisibility();
+            if (data.permission === 'mic') { const btn = document.getElementById('btnMic'); if (btn) { btn.classList.remove('waiting'); btn.disabled = false; } actuallyToggleMic(); }
+            else if (data.permission === 'cam') { const btn = document.getElementById('btnCam'); if (btn) { btn.classList.remove('waiting'); btn.disabled = false; } actuallyToggleCam(); }
             showToast('✅ تأیید شد');
             break;
-        case 'permission-denied':
-            if (myRole !== 'student') break;
-            const btnD = data.permission === 'mic' ? document.getElementById('btnMic') : data.permission === 'cam' ? document.getElementById('btnCam') : null;
-            if (btnD) { btnD.classList.remove('waiting'); btnD.disabled = false; }
-            showToast('❌ رد شد');
-            break;
-        case 'permission-revoked':
-            if (myRole !== 'student') break;
-            myPermissions[data.permission] = false;
-            showToast('🔒 لغو شد');
-            updateMicUI(); updateCamUI(); updateProjectorToolsVisibility();
-            break;
+        case 'permission-denied': if (myRole === 'student') { const b = data.permission === 'mic' ? document.getElementById('btnMic') : document.getElementById('btnCam'); if (b) { b.classList.remove('waiting'); b.disabled = false; } showToast('❌ رد شد'); } break;
+        case 'permission-revoked': if (myRole === 'student') { myPermissions[data.permission] = false; showToast('🔒 لغو شد'); updateMicUI(); updateCamUI(); } break;
         case 'force-mute':
-            if (isMicOn) {
-                isMicOn = false;
-                const lp = livekitRoom?.localParticipant;
-                const pub = lp?.getTrackPublication(LivekitClient.Track.Source.Microphone);
-                if (pub) pub.mute();
-            }
-            updateMicUI(); updateParticipantsPanel(); showToast('🔇 میکروفون قطع');
-            broadcast({ type: 'mic', on: false });
+            if (isMicOn) { isMicOn = false; const lp = livekitRoom?.localParticipant; const pub = lp?.getTrackPublication(LivekitClient.Track.Source.Microphone); if (pub) pub.mute(); }
+            updateMicUI(); updateParticipantsPanel(); showToast('🔇 میکروفون قطع'); broadcast({ type: 'mic', on: false });
             break;
         case 'force-camera-off':
-            if (isCamOn) {
-                isCamOn = false;
-                const lp = livekitRoom?.localParticipant;
-                const pub = lp?.getTrackPublication(LivekitClient.Track.Source.Camera);
-                if (pub) pub.mute();
-            }
-            updateCamUI(); updateParticipantsPanel(); showToast('📹 دوربین خاموش');
-            broadcast({ type: 'cam', on: false });
+            if (isCamOn) { isCamOn = false; const lp = livekitRoom?.localParticipant; const pub = lp?.getTrackPublication(LivekitClient.Track.Source.Camera); if (pub) pub.mute(); }
+            updateCamUI(); updateParticipantsPanel(); showToast('📹 دوربین خاموش'); broadcast({ type: 'cam', on: false });
             break;
-        case 'kick':
-            document.getElementById('kickReason').textContent = data.reason || '...';
-            document.getElementById('kickModal').classList.add('open');
-            break;
-        case 'chat':
-            if (data.private) { if (data.to === myId || data.from === myId) displayMessage(data.name, data.message, false, true); }
-            else { displayMessage(data.name, data.message, false, false); const s = stats.userStats.get(senderId); if (s) s.chatMessages++; }
-            break;
+        case 'kick': document.getElementById('kickReason').textContent = data.reason || '...'; document.getElementById('kickModal').classList.add('open'); break;
+        case 'chat': if (data.private) { if (data.to === myId || data.from === myId) displayMessage(data.name, data.message, false, true); } else { displayMessage(data.name, data.message, false, false); const s = stats.userStats.get(senderId); if (s) s.chatMessages++; } break;
         case 'hand':
             remoteParticipants.set(senderId, { ...info, handRaised: data.raised });
             updateHandUI(senderId, data.raised); updateTeacherPanel(); updateParticipantsPanel();
-            if (data.raised) {
-                const s = stats.userStats.get(senderId); if (s) s.handRaises++;
-                if (senderId !== myId) playBell();
-                showToast('✋ ' + (remoteParticipants.get(senderId)?.name || 'کاربر') + ' دست بلند کرد');
-            }
+            if (data.raised) { const s = stats.userStats.get(senderId); if (s) s.handRaises++; if (senderId !== myId) playBell(); showToast('✋ ' + (remoteParticipants.get(senderId)?.name || 'کاربر') + ' دست بلند کرد'); }
             break;
-        case 'mic':
-            remoteParticipants.set(senderId, { ...info, micOn: data.on });
-            updateRemoteMicUI(senderId, data.on); updateTeacherPanel(); updateParticipantsPanel();
-            break;
-        case 'cam':
-            remoteParticipants.set(senderId, { ...info, camOn: data.on });
-            updateRemoteCamUI(senderId, data.on); updateParticipantsPanel();
-            break;
+        case 'mic': remoteParticipants.set(senderId, { ...info, micOn: data.on }); updateRemoteMicUI(senderId, data.on); updateTeacherPanel(); updateParticipantsPanel(); break;
+        case 'cam': remoteParticipants.set(senderId, { ...info, camOn: data.on }); updateRemoteCamUI(senderId, data.on); updateParticipantsPanel(); break;
         case 'speaking': updateSpeakingBorder(senderId, data.speaking, false); break;
-        case 'reaction':
-            showFloatingEmoji(data.emoji, data.name || remoteParticipants.get(senderId)?.name || 'کاربر');
-            const rs = stats.userStats.get(senderId); if (rs) rs.reactions++;
-            break;
+        case 'reaction': showFloatingEmoji(data.emoji, data.name || remoteParticipants.get(senderId)?.name || 'کاربر'); const rs = stats.userStats.get(senderId); if (rs) rs.reactions++; break;
         case 'announcement': showAnnouncement(data.text, data.from); break;
         case 'announcement-hide': { const ann = document.getElementById('announcementBanner'); if (ann) ann.style.display = 'none'; break; }
-        case 'activity-timer': if (!isPrivileged()) { runActivityTimer(data.seconds); showToast('⏳ ' + (data.from || '') + ' تایمر را شروع کرد'); } break;
-        case 'activity-stop': if (!isPrivileged()) { stopActivityTimer(); showToast('⏹️ تایمر متوقف شد'); } break;
-        case 'low-bandwidth': if (data.from !== myId) remoteParticipants.set(senderId, { ...info, lowBandwidth: data.enabled }); break;
+        case 'activity-timer': if (!isPrivileged()) { runActivityTimer(data.seconds); showToast('⏳ تایمر شروع شد'); } break;
+        case 'activity-stop': if (!isPrivileged()) { stopActivityTimer(); } break;
         case 'lock-room': isRoomLocked = data.locked; showToast(data.locked ? '🔒 قفل' : '🔓 باز'); break;
-        case 'recording-started': document.getElementById('recordingIndicator').classList.add('active'); document.getElementById('recordingTimer').textContent = '00:00'; startFakeRecTimer(); break;
+        case 'recording-started': document.getElementById('recordingIndicator').classList.add('active'); startFakeRecTimer(); break;
         case 'recording-stopped': document.getElementById('recordingIndicator').classList.remove('active'); stopFakeRecTimer(); break;
         case 'poll-new': if (myRole === 'student') { currentPoll = data.poll; myPollVote = -1; renderPollForStudent(); document.getElementById('pollPanel').classList.add('open'); showToast('📝 نظرسنجی'); } break;
         case 'poll-vote': if (isPrivileged()) { pollVotes.set(senderId, data.option); updatePollResults(); } break;
@@ -2129,7 +1938,6 @@ function handleIncomingData(data, senderId) {
             }
             break;
         case 'cert-received': downloadCertificateImage(data.studentName, data.roomId, data.date); showToast('🎓 گواهی صادر شد'); break;
-        case 'files-sync': sharedFiles.length = 0; data.files.forEach(f => sharedFiles.push(f)); updateFilesListUI(); break;
         case 'file-shared': sharedFiles.push(data.file); updateFilesListUI(); showToast('📎 ' + data.file.name); break;
         case 'wb-open': if (!document.getElementById('whiteboardModal').classList.contains('open')) openWhiteboard(true); break;
         case 'wb-close': if (document.getElementById('whiteboardModal').classList.contains('open')) closeWhiteboard(true); break;
@@ -2164,25 +1972,6 @@ function handleIncomingData(data, senderId) {
             if (sp && projVideo.paused) projVideo.play().catch(() => {});
             if (!sp && !projVideo.paused) projVideo.pause();
             break;
-        case 'proj-play':
-            if (isPrivileged() || !projVideo || projCurrentMedia?.type !== 'video') break;
-            projPendingState = { isPlaying: true, currentTime: data.time || 0, mediaId: projCurrentMedia.mediaId };
-            if (projVideo.readyState >= 2) { projVideo.currentTime = data.time || 0; projVideo.play().catch(() => {}); projPendingState = null; }
-            break;
-        case 'proj-pause':
-            if (isPrivileged() || !projVideo) break;
-            projPendingState = { isPlaying: false, currentTime: data.time || projVideo.currentTime, mediaId: projCurrentMedia?.mediaId };
-            if (projVideo.readyState >= 2) { projVideo.pause(); if (typeof data.time === 'number') projVideo.currentTime = data.time; projPendingState = null; }
-            break;
-        case 'proj-sync-time':
-            if (isPrivileged() || !projVideo || projVideo.paused) break;
-            if (Math.abs(projVideo.currentTime - data.time) > 1.0) projVideo.currentTime = data.time;
-            break;
-        case 'proj-seek':
-            if (isPrivileged() || !projVideo) break;
-            if (projVideo.readyState >= 2) projVideo.currentTime = data.time;
-            else projPendingState = { ...(projPendingState || {}), currentTime: data.time };
-            break;
         case 'proj-draw-start': projCurrentStroke = { color: data.color, size: data.size, points: [{ x: data.x, y: data.y }], sender: senderId }; break;
         case 'proj-draw-move':
             if (projCurrentStroke && projCurrentStroke.sender === senderId) {
@@ -2196,7 +1985,6 @@ function handleIncomingData(data, senderId) {
         case 'proj-draw-clear': if (projCtx) projCtx.clearRect(0, 0, projCanvas.width, projCanvas.height); projStrokes = []; projCurrentStroke = null; break;
     }
 }
-
 function sendStudentListTo(pid) {
     if (myRole !== 'teacher') return;
     const st = [];
@@ -2204,11 +1992,10 @@ function sendStudentListTo(pid) {
     if (st.length > 0) sendTo(pid, { type: 'student-list', students: st });
 }
 
-// ==================== WAITING ROOM ====================
+// ==================== WAITING ====================
 function toggleWaitingPanel() { const p = document.getElementById('waitingPanel'); p.classList.toggle('open'); if (p.classList.contains('open')) updateWaitingPanel(); }
 function updateWaitingPanel() {
-    const b = document.getElementById('waitingPanelBody');
-    const wc = document.getElementById('waitingCount');
+    const b = document.getElementById('waitingPanelBody'); const wc = document.getElementById('waitingCount');
     if (!b) return;
     const arr = Array.from(waitingList.entries());
     if (wc) { if (arr.length > 0) { wc.style.display = 'inline-block'; wc.textContent = arr.length; } else wc.style.display = 'none'; }
@@ -2219,15 +2006,13 @@ function updateWaitingPanel() {
     </div>`).join('');
 }
 function admitUser(pid) { sendTo(pid, { type: 'admit' }); waitingList.delete(pid); updateWaitingPanel(); showToast('✅ کاربر تأیید شد'); }
-function denyUser(pid) { sendTo(pid, { type: 'deny' }); waitingList.delete(pid); updateWaitingPanel(); showToast('🚫 درخواست رد شد'); }
+function denyUser(pid) { sendTo(pid, { type: 'deny' }); waitingList.delete(pid); updateWaitingPanel(); showToast('🚫 رد شد'); }
 function cancelWaiting() { isWaitingForApproval = false; document.getElementById('waitingRoomOverlay').style.display = 'none'; leaveMeeting(true); }
 
-// ==================== PERMISSION REQUEST ====================
+// ==================== PERMISSION ====================
 function showPermissionRequestModal(type) {
     pendingPermissionRequest = type;
-    const icon = document.getElementById('permReqIcon');
-    const title = document.getElementById('permReqTitle');
-    const desc = document.getElementById('permReqDesc');
+    const icon = document.getElementById('permReqIcon'); const title = document.getElementById('permReqTitle'); const desc = document.getElementById('permReqDesc');
     if (type === 'mic') { icon.textContent = '🎤'; title.textContent = 'درخواست روشن کردن میکروفون'; desc.textContent = 'مدرس می‌خواهد میکروفون شما را روشن کند. آیا موافق هستید؟'; }
     else { icon.textContent = '📹'; title.textContent = 'درخواست روشن کردن دوربین'; desc.textContent = 'مدرس می‌خواهد دوربین شما را روشن کند. آیا موافق هستید؟'; }
     document.getElementById('permissionRequestModal').classList.add('open');
@@ -2292,11 +2077,7 @@ function renderPollForStudent() {
     if (!currentPoll) { b.innerHTML = '<p style="text-align:center;color:var(--text-secondary);">نظرسنجی فعالی نیست</p>'; return; }
     b.innerHTML = `<h4 style="font-size:14px;margin-bottom:12px">${escapeHtml(currentPoll.question)}</h4><div>${currentPoll.options.map((o, i) => `<div class="poll-option ${myPollVote === i ? 'selected' : ''}" onclick="votePoll(${i})"><div class="opt-text">${escapeHtml(o)}</div></div>`).join('')}</div>`;
 }
-function votePoll(idx) {
-    if (myPollVote !== -1) return showToast('قبلاً رای دادید');
-    myPollVote = idx; document.querySelectorAll('.poll-option').forEach((el, i) => el.classList.toggle('selected', i === idx));
-    sendTo(teacherId, { type: 'poll-vote', option: idx }); showToast('✅ ثبت شد');
-}
+function votePoll(idx) { if (myPollVote !== -1) return showToast('قبلاً رای دادید'); myPollVote = idx; document.querySelectorAll('.poll-option').forEach((el, i) => el.classList.toggle('selected', i === idx)); sendTo(teacherId, { type: 'poll-vote', option: idx }); showToast('✅ ثبت شد'); }
 function updatePollResults() {
     if (!currentPoll) return;
     const r = new Array(currentPoll.options.length).fill(0); pollVotes.forEach(i => { if (i < r.length) r[i]++; });
@@ -2429,7 +2210,7 @@ function displayMessage(name, msg, isSelf, isPriv) {
 }
 
 // ==================== EMOJI ====================
-const EMOJIS = ['😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃','😉','😊','😇','🥰','😍','🤩','😘','😋','😛','😜','🤪','🤗','🤭','🤫','🤔','😐','😑','😶','😏','😒','🙄','😬','😌','😔','😪','😴','😷','🤒','🤕','🤢','🤮','🥵','🥶','😵','🤯','🤠','🥳','😎','🤓','🧐','😕','😟','🙁','😮','😲','😳','🥺','😨','😰','😥','😢','😭','😱','😖','😣','😞','😓','😩','😫','😤','😡','😠','🤬','😈','👿','💀','💩','🤡','👻','👽','🤖','😺','😸','😹','😻','😼','😽','🙀','😿','😾','🙈','🙉','🙊','👋','🤚','🖐️','✋','🖖','👌','✌️','🤞','🤟','🤘','🤙','👈','👉','👆','👇','☝️','👍','👎','✊','👊','👏','🙌','🙏','✍️','💪','❤️','🧡','💛','💚','💙','💜','🖤','🤍','💔','❣️','💕','💞','💓','💗','💖','💘','💝','✅','❌','⭕','🛑','⛔','💯','💢','♨️','⚠️','🔰','♻️','✳️','❇️','🌐','💠','🌀','💤','🎵','🎶','➕','➖','➗','✖️','♾️','💲','🔴','🟠','🟡','🟢','🔵','🟣','⚫','⚪','🔺','🔻','🔸','🔹','🔶','🔷','🔈','🔇','🔉','🔊','🔔','🔕','📣','📢','💬','💭'];
+const EMOJIS = ['😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃','😉','😊','😇','🥰','😍','🤩','😘','😋','😛','😜','🤪','🤗','🤭','🤫','🤔','😐','😑','😶','😏','😒','🙄','😬','😌','😔','😪','😴','😷','🤒','🤕','🤢','🤮','🥵','🥶','😵','🤯','🤠','🥳','😎','🤓','🧐','😕','😟','🙁','😮','😲','😳','🥺','😨','😰','😥','😢','😭','😱','😖','😣','😞','😓','😩','😫','😤','😡','😠','🤬','😈','👿','💀','💩','🤡','👻','👽','🤖','👍','👎','👏','🙌','🙏','❤️','🧡','💛','💚','💙','💜','🖤','🤍','💔','✅','❌','⭐','🔥','🎉','🎊','🎁','💯','💢','⚠️','🔔','📣','💬','💭'];
 function toggleEmojiPicker() { document.getElementById('emojiPicker').classList.toggle('open'); }
 function setupEmojiPicker() { const g = document.getElementById('emojiGrid'); if (g) g.innerHTML = EMOJIS.map(e => `<button onclick="insertEmoji('${e}')">${e}</button>`).join(''); }
 function insertEmoji(e) { const i = document.getElementById('msgInput'); i.value += e; i.focus(); }
@@ -2474,11 +2255,7 @@ function updateSpeakingBorder(pid, speaking, isSelf) {
 }
 
 // ==================== REACTIONS ====================
-function sendReaction(emoji) {
-    broadcast({ type: 'reaction', emoji, from: myId, name: myName });
-    showFloatingEmoji(emoji, myName);
-    const s = stats.userStats.get(myId); if (s) s.reactions++;
-}
+function sendReaction(emoji) { broadcast({ type: 'reaction', emoji, from: myId, name: myName }); showFloatingEmoji(emoji, myName); const s = stats.userStats.get(myId); if (s) s.reactions++; }
 function showFloatingEmoji(emoji, name) {
     const c = document.getElementById('reactionsContainer');
     const el = document.createElement('div'); el.className = 'float-emoji';
@@ -2571,13 +2348,11 @@ function updateStatsUI() {
         <div class="stat-row"><span class="label">🎤 صحبت</span><span class="value">${fmtTime(Math.floor(s.speakingTime))}</span></div>
         <div class="stat-row"><span class="label">✋ دست</span><span class="value">${s.handRaises}</span></div>
         <div class="stat-row"><span class="label">💬 پیام</span><span class="value">${s.chatMessages}</span></div>
-        <div class="stat-row"><span class="label">👍 واکنش</span><span class="value">${s.reactions}</span></div>
-        <div class="stat-row"><span class="label">⏰ ورود</span><span class="value">${fmtDT(s.joinedAt)}</span></div></div>`;
+        <div class="stat-row"><span class="label">👍 واکنش</span><span class="value">${s.reactions}</span></div></div>`;
     });
     c.innerHTML = html;
 }
 function toggleStatsPanel() { const p = document.getElementById('statsPanel'); p.classList.toggle('open'); if (p.classList.contains('open')) updateStatsUI(); }
-setInterval(() => { if (stats.userStats.size > 0) updateStatsUI(); }, 30000);
 
 // ==================== PARTICIPANTS ====================
 function toggleParticipantsPanel() { const p = document.getElementById('participantsPanel'); p.classList.toggle('open'); if (p.classList.contains('open')) updateParticipantsPanel(); }
@@ -2638,7 +2413,7 @@ function startPrivateChat(pid) {
     setTimeout(() => { const sel = document.getElementById('privateRecipientSelect'); if (sel) sel.value = pid; document.getElementById('msgInput').focus(); }, 150);
 }
 
-// ==================== QUALITY BAR ====================
+// ==================== QUALITY CHECK ====================
 function updateQualityBars(pid, rtt) {
     const el = document.getElementById(`quality-${pid}`); if (!el) return;
     let bars = 0, cls = '';
@@ -2647,7 +2422,7 @@ function updateQualityBars(pid, rtt) {
     let h = ''; for (let i = 0; i < 4; i++) h += `<div class="quality-bar ${i < bars ? cls : ''}"></div>`;
     el.innerHTML = h;
 }
-async function checkConnectionQuality(pid) { qualityCache.set(pid, 0.1); updateQualityBars(pid, 0.1); }
+function checkConnectionQuality(pid) { qualityCache.set(pid, 0.1); updateQualityBars(pid, 0.1); }
 function startQualityCheck() { if (qualityCheckInterval) clearInterval(qualityCheckInterval); qualityCheckInterval = setInterval(() => { remoteParticipants.forEach((_, p) => checkConnectionQuality(p)); }, 5000); }
 
 // ==================== LOW BANDWIDTH ====================
@@ -2661,7 +2436,6 @@ async function toggleLowBandwidth() {
             else await vt.applyConstraints(getStudentCamConstraints(qualitySettings.studentCam));
         } catch (e) {}
     }
-    broadcast({ type: 'low-bandwidth', enabled: isLowBandwidth, from: myId });
     showToast(isLowBandwidth ? '📶 کم‌مصرف فعال' : '📶 حالت عادی');
 }
 
@@ -2674,11 +2448,6 @@ function toggleCoTeacher(pid) {
     showToast((p.coTeacher ? '✅ ' : '🔒 ') + (remoteParticipants.get(pid)?.name || '') + ' هم‌مدرس');
     updateTeacherPanel(); updateParticipantsPanel();
 }
-
-// ==================== PASSWORD MODAL ====================
-function askForPassword(cb) { document.getElementById('passwordModal').classList.add('open'); document.getElementById('passwordInput').value = ''; window._pendingPasswordResolve = cb; }
-function submitPassword() { const p = document.getElementById('passwordInput').value.trim(); closeModal('passwordModal'); if (window._pendingPasswordResolve) { window._pendingPasswordResolve(p); window._pendingPasswordResolve = null; } }
-function cancelPassword() { closeModal('passwordModal'); window._pendingPasswordResolve = null; leaveMeeting(true); }
 
 // ==================== WHITEBOARD ====================
 function initWhiteboard() {
@@ -2726,15 +2495,8 @@ function wbDraw(e) {
     broadcast({ type: 'wb-move', x, y });
     wbLastX = x; wbLastY = y;
 }
-function wbEndDraw() {
-    if (!wbIsDrawing) return; wbIsDrawing = false;
-    if (wbCurrentStroke) { wbStrokes.push(wbCurrentStroke); wbCurrentStroke = null; }
-    broadcast({ type: 'wb-end' });
-}
-function drawSegmentOnCanvas(f, t, c, s) {
-    if (!wbCtx) return; wbCtx.strokeStyle = c; wbCtx.lineWidth = s; wbCtx.lineCap = 'round'; wbCtx.lineJoin = 'round';
-    wbCtx.beginPath(); wbCtx.moveTo(f.x, f.y); wbCtx.lineTo(t.x, t.y); wbCtx.stroke();
-}
+function wbEndDraw() { if (!wbIsDrawing) return; wbIsDrawing = false; if (wbCurrentStroke) { wbStrokes.push(wbCurrentStroke); wbCurrentStroke = null; } broadcast({ type: 'wb-end' }); }
+function drawSegmentOnCanvas(f, t, c, s) { if (!wbCtx) return; wbCtx.strokeStyle = c; wbCtx.lineWidth = s; wbCtx.lineCap = 'round'; wbCtx.lineJoin = 'round'; wbCtx.beginPath(); wbCtx.moveTo(f.x, f.y); wbCtx.lineTo(t.x, t.y); wbCtx.stroke(); }
 function redrawAllStrokes() {
     if (!wbCtx) return; wbCtx.clearRect(0, 0, wbCanvas.width, wbCanvas.height);
     wbStrokes.forEach(st => {
@@ -2748,17 +2510,8 @@ function redrawAllStrokes() {
 function clearCanvasLocal() { if (wbCtx) wbCtx.clearRect(0, 0, wbCanvas.width, wbCanvas.height); }
 function setPenColor(c, b) { wbPenColor = c; document.querySelectorAll('#whiteboardTools .color-btn').forEach(x => x.classList.remove('active')); if (b) b.classList.add('active'); }
 function setPenSize(s, b) { wbPenSize = s; document.querySelectorAll('#whiteboardTools .size-btn').forEach(x => x.classList.remove('active')); if (b) b.classList.add('active'); }
-function clearWhiteboard() {
-    if (myRole === 'student' && !isCoTeacher && !myPermissions.whiteboard) return;
-    if (!confirm('پاک شود؟')) return;
-    clearCanvasLocal(); wbStrokes = []; wbCurrentStroke = null;
-    broadcast({ type: 'wb-clear' });
-}
-function undoLastStroke() {
-    if (myRole === 'student' && !isCoTeacher && !myPermissions.whiteboard) return;
-    if (wbStrokes.length === 0) return;
-    wbStrokes.pop(); redrawAllStrokes(); broadcast({ type: 'wb-undo' });
-}
+function clearWhiteboard() { if (myRole === 'student' && !isCoTeacher && !myPermissions.whiteboard) return; if (!confirm('پاک شود؟')) return; clearCanvasLocal(); wbStrokes = []; wbCurrentStroke = null; broadcast({ type: 'wb-clear' }); }
+function undoLastStroke() { if (myRole === 'student' && !isCoTeacher && !myPermissions.whiteboard) return; if (wbStrokes.length === 0) return; wbStrokes.pop(); redrawAllStrokes(); broadcast({ type: 'wb-undo' }); }
 
 // ==================== PROJECTOR ====================
 function initProjector() {
@@ -2766,23 +2519,9 @@ function initProjector() {
     projVideo = document.getElementById('projectorVideo'); projImage = document.getElementById('projectorImage');
     resizeProjectorCanvas(); window.addEventListener('resize', resizeProjectorCanvas);
     projVideo.addEventListener('loadedmetadata', () => { document.getElementById('projDuration').textContent = fmtTime(Math.floor(projVideo.duration)); });
-    projVideo.addEventListener('timeupdate', () => {
-        if (!projIsSeeking && projVideo.duration) {
-            const p = (projVideo.currentTime / projVideo.duration) * 100;
-            document.getElementById('projectorSeek').value = p || 0;
-            document.getElementById('projCurrentTime').textContent = fmtTime(Math.floor(projVideo.currentTime));
-            projCurrentState.currentTime = projVideo.currentTime;
-            projCurrentState.mediaId = projCurrentMedia?.mediaId;
-        }
-    });
-    projVideo.addEventListener('play', () => {
-        document.getElementById('projPlayBtn').textContent = '⏸️';
-        if (hasProjectorAccess() && !projIsSeeking) { projCurrentState.isPlaying = true; projCurrentState.currentTime = projVideo.currentTime; projCurrentState.mediaId = projCurrentMedia?.mediaId; broadcast({ type: 'proj-state', state: projCurrentState }); }
-    });
-    projVideo.addEventListener('pause', () => {
-        document.getElementById('projPlayBtn').textContent = '▶️';
-        if (hasProjectorAccess() && !projIsSeeking) { projCurrentState.isPlaying = false; projCurrentState.currentTime = projVideo.currentTime; projCurrentState.mediaId = projCurrentMedia?.mediaId; broadcast({ type: 'proj-state', state: projCurrentState }); }
-    });
+    projVideo.addEventListener('timeupdate', () => { if (!projIsSeeking && projVideo.duration) { const p = (projVideo.currentTime / projVideo.duration) * 100; document.getElementById('projectorSeek').value = p || 0; document.getElementById('projCurrentTime').textContent = fmtTime(Math.floor(projVideo.currentTime)); } });
+    projVideo.addEventListener('play', () => { document.getElementById('projPlayBtn').textContent = '⏸️'; });
+    projVideo.addEventListener('pause', () => { document.getElementById('projPlayBtn').textContent = '▶️'; });
     projCanvas.addEventListener('mousedown', projStartDraw);
     projCanvas.addEventListener('mousemove', projDraw);
     projCanvas.addEventListener('mouseup', projEndDraw);
@@ -2791,29 +2530,13 @@ function initProjector() {
     projCanvas.addEventListener('touchmove', e => { e.preventDefault(); const t = e.touches[0]; projDraw({ clientX: t.clientX, clientY: t.clientY }); });
     projCanvas.addEventListener('touchend', e => { e.preventDefault(); projEndDraw(); });
 }
-function resizeProjectorCanvas() {
-    if (!projCanvas) return; const w = document.getElementById('projectorCanvasWrapper'); if (!w) return;
-    projCanvas.width = w.clientWidth; projCanvas.height = w.clientHeight;
-    if (projStrokes.length > 0) redrawProjectorStrokes();
-}
+function resizeProjectorCanvas() { if (!projCanvas) return; const w = document.getElementById('projectorCanvasWrapper'); if (!w) return; projCanvas.width = w.clientWidth; projCanvas.height = w.clientHeight; if (projStrokes.length > 0) redrawProjectorStrokes(); }
 function updateProjectorToolsVisibility() {
     const tools = document.getElementById('projectorTeacherTools');
     const hasAcc = hasProjectorAccess();
     tools.style.display = hasAcc ? 'flex' : 'none';
     ['projUploadBtn', 'projPlayBtn', 'projBackBtn', 'projFwdBtn', 'projectorSeek'].forEach(id => { const el = document.getElementById(id); if (el) el.disabled = !hasAcc; });
 }
-function startProjSync() {
-    stopProjSync(); if (!hasProjectorAccess()) return;
-    projSyncInterval = setInterval(() => {
-        if (projCurrentMedia && projVideo && projVideo.readyState >= 2) {
-            projCurrentState.currentTime = projVideo.currentTime;
-            projCurrentState.isPlaying = !projVideo.paused;
-            projCurrentState.mediaId = projCurrentMedia.mediaId;
-            broadcast({ type: 'proj-state', state: projCurrentState });
-        }
-    }, 3000);
-}
-function stopProjSync() { if (projSyncInterval) { clearInterval(projSyncInterval); projSyncInterval = null; } }
 function openProjector(s) {
     document.getElementById('projectorModal').classList.add('open');
     setTimeout(() => {
@@ -2824,17 +2547,16 @@ function openProjector(s) {
         document.getElementById('projectorDrawTools').style.display = 'flex';
         document.getElementById('projectorSeekBar').style.display = 'flex';
         if (projCurrentMedia) displayProjectorMedia(projCurrentMedia);
-        if (hasProjectorAccess()) { startProjSync(); if (!s && myRole === 'teacher') broadcast({ type: 'proj-open' }); }
     }, 100);
 }
-function closeProjector(s) { stopProjSync(); document.getElementById('projectorModal').classList.remove('open'); if (projVideo) projVideo.pause(); if (myRole === 'teacher' && !s) broadcast({ type: 'proj-close' }); }
+function closeProjector(s) { document.getElementById('projectorModal').classList.remove('open'); if (projVideo) projVideo.pause(); }
 function loadProjectorFile(e) {
     if (!hasProjectorAccess()) { showToast('🔒'); return; }
     const f = e.target.files[0]; if (!f) return;
     if (f.size > 52428800) { showToast('❌ بزرگتر از ۵۰MB'); return; }
     const iv = f.type.startsWith('video/'); const ii = f.type.startsWith('image/');
     if (!iv && !ii) { showToast('❌ فقط فیلم/عکس'); return; }
-    showToast('⏳ در حال بارگذاری و فشرده‌سازی...');
+    showToast('⏳ در حال بارگذاری...');
     const r = new FileReader();
     r.onload = ev => {
         if (ii) {
@@ -2851,19 +2573,16 @@ function loadProjectorFile(e) {
                 const compressed = c.toDataURL('image/jpeg', limits.quality);
                 const mediaId = 'media_' + Date.now();
                 projCurrentMedia = { type: 'image', name: f.name, data: compressed, from: myName, mediaId };
-                projCurrentState = { isPlaying: false, currentTime: 0, mediaId };
                 displayProjectorMedia(projCurrentMedia);
-                broadcast({ type: 'proj-media', media: projCurrentMedia, state: projCurrentState });
-                showToast('✅ بارگذاری شد (' + Math.round(w) + '×' + Math.round(h) + ')');
+                broadcast({ type: 'proj-media', media: projCurrentMedia });
+                showToast('✅ بارگذاری شد');
             };
-            img.onerror = () => showToast('❌ خطا در تصویر');
             img.src = ev.target.result;
         } else {
             const mediaId = 'media_' + Date.now();
             projCurrentMedia = { type: 'video', name: f.name, data: ev.target.result, from: myName, mediaId };
-            projCurrentState = { isPlaying: false, currentTime: 0, mediaId };
             displayProjectorMedia(projCurrentMedia);
-            broadcast({ type: 'proj-media', media: projCurrentMedia, state: projCurrentState });
+            broadcast({ type: 'proj-media', media: projCurrentMedia });
             showToast('✅ بارگذاری شد');
         }
     };
@@ -2871,33 +2590,14 @@ function loadProjectorFile(e) {
 }
 function displayProjectorMedia(m) {
     document.getElementById('projectorEmptyState').style.display = 'none';
-    if (m.type === 'video') {
-        projImage.style.display = 'none'; projVideo.style.display = 'block';
-        projVideo.src = m.data; projVideo.load();
-        const applyPending = () => { if (projPendingState) { projVideo.currentTime = projPendingState.currentTime || 0; if (projPendingState.isPlaying) projVideo.play().catch(() => {}); else projVideo.pause(); projPendingState = null; } };
-        projVideo.removeEventListener('loadeddata', applyPending);
-        projVideo.addEventListener('loadeddata', applyPending);
-    } else {
-        projVideo.style.display = 'none'; projVideo.pause();
-        projImage.style.display = 'block'; projImage.src = m.data;
-    }
+    if (m.type === 'video') { projImage.style.display = 'none'; projVideo.style.display = 'block'; projVideo.src = m.data; projVideo.load(); }
+    else { projVideo.style.display = 'none'; projVideo.pause(); projImage.style.display = 'block'; projImage.src = m.data; }
     redrawProjectorStrokes();
 }
 function toggleProjectorPlay() { if (!hasProjectorAccess() || !projCurrentMedia || projCurrentMedia.type !== 'video') return; if (projVideo.paused) projVideo.play(); else projVideo.pause(); }
-function seekProjectorBy(s) {
-    if (!hasProjectorAccess() || !projVideo.duration) return;
-    projVideo.currentTime = Math.max(0, Math.min(projVideo.duration, projVideo.currentTime + s));
-    projCurrentState.currentTime = projVideo.currentTime; projCurrentState.mediaId = projCurrentMedia?.mediaId;
-    broadcast({ type: 'proj-state', state: projCurrentState });
-}
+function seekProjectorBy(s) { if (!hasProjectorAccess() || !projVideo.duration) return; projVideo.currentTime = Math.max(0, Math.min(projVideo.duration, projVideo.currentTime + s)); }
 function onProjectorSeekInput(v) { if (hasProjectorAccess()) projIsSeeking = true; }
-function onProjectorSeekChange(v) {
-    if (!hasProjectorAccess() || !projVideo.duration) return;
-    const tt = (v / 100) * projVideo.duration;
-    projVideo.currentTime = tt; projIsSeeking = false;
-    projCurrentState.currentTime = tt; projCurrentState.mediaId = projCurrentMedia?.mediaId;
-    broadcast({ type: 'proj-state', state: projCurrentState });
-}
+function onProjectorSeekChange(v) { if (!hasProjectorAccess() || !projVideo.duration) return; projVideo.currentTime = (v / 100) * projVideo.duration; projIsSeeking = false; }
 function projStartDraw(e) {
     if (myRole === 'student' && !isCoTeacher && !myPermissions.whiteboard) return;
     projIsDrawing = true;
@@ -2932,20 +2632,16 @@ function redrawProjectorStrokes() {
 }
 function setProjPenColor(c, b) { projPenColor = c; document.querySelectorAll('#projectorDrawTools .color-btn').forEach(x => x.classList.remove('active')); if (b) b.classList.add('active'); }
 function setProjPenSize(s, b) { projPenSize = s; document.querySelectorAll('#projectorDrawTools .size-btn').forEach(x => x.classList.remove('active')); if (b) b.classList.add('active'); }
-function undoProjectorStroke() { if (myRole === 'student' && !isCoTeacher && !myPermissions.whiteboard) return; if (projStrokes.length === 0) return; projStrokes.pop(); redrawProjectorStrokes(); broadcast({ type: 'proj-draw-undo' }); }
-function clearProjectorCanvas() { if (myRole === 'student' && !isCoTeacher && !myPermissions.whiteboard) return; if (!confirm('پاک شود؟')) return; projCtx.clearRect(0, 0, projCanvas.width, projCanvas.height); projStrokes = []; projCurrentStroke = null; broadcast({ type: 'proj-draw-clear' }); }
+function undoProjectorStroke() { if (projStrokes.length === 0) return; projStrokes.pop(); redrawProjectorStrokes(); broadcast({ type: 'proj-draw-undo' }); }
+function clearProjectorCanvas() { if (!confirm('پاک شود؟')) return; projCtx.clearRect(0, 0, projCanvas.width, projCanvas.height); projStrokes = []; projCurrentStroke = null; broadcast({ type: 'proj-draw-clear' }); }
 
 // ==================== VIDEOS ====================
 function addMyVideo() {
     const ex = document.getElementById('video-me'); if (ex) ex.remove();
     const c = document.createElement('div'); c.className = 'video-box'; c.id = 'video-me';
-    const v = document.createElement('video'); 
-    v.srcObject = localStream; 
-    v.autoplay = true; 
-    v.muted = true; 
-    v.playsInline = true;
-    v.setAttribute('playsinline', '');
-    v.play().catch(() => {});
+    const v = document.createElement('video');
+    v.srcObject = localStream; v.autoplay = true; v.muted = true; v.playsInline = true;
+    v.setAttribute('playsinline', ''); v.play().catch(() => {});
     const n = document.createElement('div'); n.className = 'name'; n.textContent = `${myName} (شما)`;
     const m = document.createElement('div'); m.className = 'mic'; m.id = 'mic-me'; m.textContent = '🎤';
     const q = document.createElement('div'); q.className = 'quality'; q.id = 'quality-me';
@@ -2960,12 +2656,9 @@ function addRemoteVideo(pid, videoEl, name) {
     const n = document.createElement('div'); n.className = 'name'; n.textContent = name;
     const m = document.createElement('div'); m.className = 'mic'; m.id = `mic-${pid}`; m.textContent = '🎤';
     const q = document.createElement('div'); q.className = 'quality'; q.id = `quality-${pid}`;
-    const info = remoteParticipants.get(pid) || {};
-    if (info.coTeacher) { const cb = document.createElement('div'); cb.className = 'coteacher-badge'; cb.textContent = '🎖️'; c.appendChild(cb); }
     c.appendChild(videoEl); c.appendChild(n); c.appendChild(m); c.appendChild(q);
     document.getElementById('videos').appendChild(c);
     updateParticipantCount();
-    if (breakoutGroups) applyGroupBadges();
     checkConnectionQuality(pid);
 }
 function removeVideo(pid) { const c = document.getElementById(`video-${pid}`); if (c) c.remove(); updateParticipantCount(); }
@@ -3015,13 +2708,7 @@ function updateHandUI(pid, r) {
 }
 
 // ==================== CONTROLS ====================
-function toggleHand() {
-    isHandRaised = !isHandRaised;
-    document.getElementById('btnHand').classList.toggle('on', isHandRaised);
-    broadcast({ type: 'hand', raised: isHandRaised });
-    updateHandUI('me', isHandRaised); updateParticipantsPanel();
-    if (isHandRaised) { const s = stats.userStats.get(myId); if (s) s.handRaises++; }
-}
+function toggleHand() { isHandRaised = !isHandRaised; document.getElementById('btnHand').classList.toggle('on', isHandRaised); broadcast({ type: 'hand', raised: isHandRaised }); updateHandUI('me', isHandRaised); updateParticipantsPanel(); if (isHandRaised) { const s = stats.userStats.get(myId); if (s) s.handRaises++; } }
 async function toggleMic() { if (isPrivileged() || myPermissions.mic) await actuallyToggleMic(); else requestPermission('mic'); }
 async function actuallyToggleMic() {
     const lp = livekitRoom?.localParticipant; if (!lp) return;
@@ -3031,23 +2718,16 @@ async function actuallyToggleMic() {
         else { const pub = lp.getTrackPublication(LivekitClient.Track.Source.Microphone); if (pub) await pub.mute(); }
     } catch (e) { isMicOn = !isMicOn; return; }
     updateMicUI(); updateParticipantsPanel(); broadcast({ type: 'mic', on: isMicOn });
-    if (!isMicOn) { lastSpeakingState = false; broadcast({ type: 'speaking', speaking: false, from: myId }); updateSpeakingBorder(myId, false, true); const s = stats.userStats.get(myId); if (s && s._speakStart) { s.speakingTime += (Date.now() - s._speakStart) / 1000; s._speakStart = null; } }
+    if (!isMicOn) { lastSpeakingState = false; broadcast({ type: 'speaking', speaking: false, from: myId }); updateSpeakingBorder(myId, false, true); }
 }
 async function toggleCam() { if (isPrivileged() || myPermissions.cam) await actuallyToggleCam(); else requestPermission('cam'); }
 async function actuallyToggleCam() {
     const lp = livekitRoom?.localParticipant; if (!lp) return;
     isCamOn = !isCamOn;
     try {
-        if (isCamOn) {
-            const pub = lp.getTrackPublication(LivekitClient.Track.Source.Camera);
-            if (pub) await pub.unmute();
-            else await lp.publishTrack(localStream.getVideoTracks()[0], { name: 'camera', source: LivekitClient.Track.Source.Camera });
-        } else { const pub = lp.getTrackPublication(LivekitClient.Track.Source.Camera); if (pub) await pub.mute(); }
+        if (isCamOn) { const pub = lp.getTrackPublication(LivekitClient.Track.Source.Camera); if (pub) await pub.unmute(); else await lp.publishTrack(localStream.getVideoTracks()[0], { name: 'camera', source: LivekitClient.Track.Source.Camera }); }
+        else { const pub = lp.getTrackPublication(LivekitClient.Track.Source.Camera); if (pub) await pub.mute(); }
     } catch (e) { isCamOn = !isCamOn; return; }
-    if (myRole === 'student' || isCoTeacher) {
-        const vt = localStream?.getVideoTracks()[0];
-        if (vt) try { await vt.applyConstraints(getStudentCamConstraints(qualitySettings.studentCam)); } catch (e) {}
-    }
     updateCamUI(); updateParticipantsPanel(); broadcast({ type: 'cam', on: isCamOn });
 }
 function requestPermission(type) {
@@ -3060,17 +2740,13 @@ function requestPermission(type) {
 }
 async function toggleScreen() {
     const lp = livekitRoom?.localParticipant; if (!lp) return;
-    if (isSharing) {
-        try { await lp.setScreenShareEnabled(false); } catch (e) {}
-        isSharing = false;
-        document.getElementById('btnScreen').classList.remove('on');
-    } else {
+    if (isSharing) { try { await lp.setScreenShareEnabled(false); } catch (e) {} isSharing = false; document.getElementById('btnScreen').classList.remove('on'); }
+    else {
         try {
             const captureOpts = getScreenShareCapture(qualitySettings.screenShare);
             const publishOpts = getScreenSharePublish(qualitySettings.screenShare);
             await lp.setScreenShareEnabled(true, captureOpts, publishOpts);
-            isSharing = true;
-            document.getElementById('btnScreen').classList.add('on');
+            isSharing = true; document.getElementById('btnScreen').classList.add('on');
         } catch (e) { showToast('❌ لغو شد'); }
     }
 }
@@ -3086,7 +2762,7 @@ function updateTeacherPanel() {
     l.innerHTML = st.map(s => {
         const p = studentPermissions.get(s.pid) || { mic: false, cam: false, whiteboard: false, projector: false, coTeacher: false, pending: {} };
         return `<div class="student-card">
-            <div class="row1"><div class="s-avatar ${p.coTeacher ? 'coteacher' : ''}">${escapeHtml((s.name || '؟')[0].toUpperCase())}</div><div class="s-info"><div class="s-name">${escapeHtml(s.name)}${p.coTeacher ? ' 🎖️' : ''}</div><div class="s-status ${s.handRaised ? 'hand' : ''}">${s.handRaised ? '✋' : (s.micOn ? '🎤' : '🔇')}</div></div></div>
+            <div class="row1"><div class="s-avatar ${p.coTeacher ? 'coteacher' : ''}">${escapeHtml((s.name || '؟')[0].toUpperCase())}</div><div class="s-info"><div class="s-name">${escapeHtml(s.name)}${p.coTeacher ? ' 🎖️' : ''}</div><div class="s-status">${s.handRaised ? '✋' : (s.micOn ? '🎤' : '🔇')}</div></div></div>
             <div class="perm-row">
                 <button class="perm-btn ${p.mic ? 'granted' : (p.pending?.mic ? 'pending' : '')}" onclick="toggleStudentPermission('${s.pid}','mic')">🎤</button>
                 <button class="perm-btn ${p.cam ? 'granted' : (p.pending?.cam ? 'pending' : '')}" onclick="toggleStudentPermission('${s.pid}','cam')">📹</button>
@@ -3112,47 +2788,24 @@ function updatePendingRequestsUI() {
     l.innerHTML = p.map(r => `<div class="request-item"><div class="req-info"><div class="req-name">${escapeHtml(r.name)}</div><div class="req-type">${r.type}</div></div><div class="req-actions"><button class="accept" onclick="approvePermission('${r.peerId}','${r.type}')">✓</button><button class="reject" onclick="denyPermission('${r.peerId}','${r.type}')">✕</button></div></div>`).join('');
 }
 function approvePermission(pid, type) {
-    const p = studentPermissions.get(pid);
-    if (p && p[type]) return;
+    const p = studentPermissions.get(pid); if (p && p[type]) return;
     if (p && p.pending) p.pending[type] = true;
     if (p) studentPermissions.set(pid, p);
     sendTo(pid, { type: 'permission-request', permission: type });
-    showToast('📤 درخواست به ' + (remoteParticipants.get(pid)?.name || 'دانشجو') + ' ارسال شد');
+    showToast('📤 درخواست ارسال شد');
     updatePendingRequestsUI(); updateTeacherPanel();
 }
-function denyPermission(pid, type) {
-    const p = studentPermissions.get(pid); if (p && p.pending) p.pending[type] = false; studentPermissions.set(pid, p);
-    sendTo(pid, { type: 'permission-denied', permission: type }); updatePendingRequestsUI(); updateTeacherPanel();
-}
-function revokePermission(pid, type) {
-    const p = studentPermissions.get(pid); if (!p) return;
-    p[type] = false; studentPermissions.set(pid, p);
-    sendTo(pid, { type: 'permission-revoked', permission: type });
-    if (type === 'mic') sendTo(pid, { type: 'force-mute' });
-    else if (type === 'cam') sendTo(pid, { type: 'force-camera-off' });
-    updateTeacherPanel();
-}
+function denyPermission(pid, type) { const p = studentPermissions.get(pid); if (p && p.pending) p.pending[type] = false; studentPermissions.set(pid, p); sendTo(pid, { type: 'permission-denied', permission: type }); updatePendingRequestsUI(); updateTeacherPanel(); }
+function revokePermission(pid, type) { const p = studentPermissions.get(pid); if (!p) return; p[type] = false; studentPermissions.set(pid, p); sendTo(pid, { type: 'permission-revoked', permission: type }); if (type === 'mic') sendTo(pid, { type: 'force-mute' }); else if (type === 'cam') sendTo(pid, { type: 'force-camera-off' }); updateTeacherPanel(); }
 function toggleStudentPermission(pid, type) {
     const p = studentPermissions.get(pid) || { mic: false, cam: false, whiteboard: false, projector: false, coTeacher: false, pending: {} };
     if (p[type]) revokePermission(pid, type);
     else if (p.pending && p.pending[type]) { p.pending[type] = false; studentPermissions.set(pid, p); updatePendingRequestsUI(); updateTeacherPanel(); }
     else approvePermission(pid, type);
 }
-function teacherMuteStudent(pid) {
-    sendTo(pid, { type: 'force-mute' });
-    const i = remoteParticipants.get(pid); if (i) remoteParticipants.set(pid, { ...i, micOn: false });
-    updateRemoteMicUI(pid, false); updateTeacherPanel(); updateParticipantsPanel();
-}
-function teacherCamOffStudent(pid) {
-    sendTo(pid, { type: 'force-camera-off' });
-    const i = remoteParticipants.get(pid); if (i) remoteParticipants.set(pid, { ...i, camOn: false });
-    updateRemoteCamUI(pid, false); updateParticipantsPanel();
-}
-async function teacherKickStudent(pid) {
-    const i = remoteParticipants.get(pid); if (!i || !confirm(`اخراج ${i.name}?`)) return;
-    sendTo(pid, { type: 'kick', reason: 'مدرس شما را اخراج کرد' });
-    setTimeout(() => { removeVideo(pid); remoteParticipants.delete(pid); studentPermissions.delete(pid); updateTeacherPanel(); updatePendingRequestsUI(); updateParticipantCount(); updateParticipantsPanel(); }, 1500);
-}
+function teacherMuteStudent(pid) { sendTo(pid, { type: 'force-mute' }); const i = remoteParticipants.get(pid); if (i) remoteParticipants.set(pid, { ...i, micOn: false }); updateRemoteMicUI(pid, false); updateTeacherPanel(); updateParticipantsPanel(); }
+function teacherCamOffStudent(pid) { sendTo(pid, { type: 'force-camera-off' }); const i = remoteParticipants.get(pid); if (i) remoteParticipants.set(pid, { ...i, camOn: false }); updateRemoteCamUI(pid, false); updateParticipantsPanel(); }
+async function teacherKickStudent(pid) { const i = remoteParticipants.get(pid); if (!i || !confirm(`اخراج ${i.name}?`)) return; sendTo(pid, { type: 'kick', reason: 'مدرس شما را اخراج کرد' }); setTimeout(() => { removeVideo(pid); remoteParticipants.delete(pid); studentPermissions.delete(pid); updateTeacherPanel(); updateParticipantCount(); updateParticipantsPanel(); }, 1500); }
 function muteAllStudents() { remoteParticipants.forEach((i, p) => { if (i.role === 'student' && i.micOn) { sendTo(p, { type: 'force-mute' }); remoteParticipants.set(p, { ...i, micOn: false }); updateRemoteMicUI(p, false); } }); updateTeacherPanel(); updateParticipantsPanel(); }
 function muteAllCameras() { remoteParticipants.forEach((i, p) => { if (i.role === 'student' && i.camOn) { sendTo(p, { type: 'force-camera-off' }); remoteParticipants.set(p, { ...i, camOn: false }); updateRemoteCamUI(p, false); } }); updateParticipantsPanel(); }
 function lockRoom() { isRoomLocked = !isRoomLocked; document.getElementById('lockIcon').textContent = isRoomLocked ? '🔒' : '🔓'; broadcast({ type: 'lock-room', locked: isRoomLocked }); }
@@ -3168,7 +2821,6 @@ async function startRecording() {
         audioDestination = recCtx.createMediaStreamDestination();
         const ma = localStream.getAudioTracks()[0];
         if (ma) { const s = recCtx.createMediaStreamSource(new MediaStream([ma])); s.connect(audioDestination); }
-        if (livekitRoom) { livekitRoom.remoteParticipants.forEach(p => { p.audioTrackPublications.forEach(pub => { if (pub.track?.mediaStreamTrack) { try { const s = recCtx.createMediaStreamSource(new MediaStream([pub.track.mediaStreamTrack])); s.connect(audioDestination); } catch (e) {} } }); }); }
         audioContext = recCtx;
         const cs = compositeCanvas.captureStream(25);
         const cmb = new MediaStream([...cs.getVideoTracks(), ...audioDestination.stream.getAudioTracks()]);
@@ -3200,8 +2852,8 @@ function drawCompositeLoop() {
     const W = compositeCanvas.width, H = compositeCanvas.height;
     compositeCtx.fillStyle = '#1a1a2e'; compositeCtx.fillRect(0, 0, W, H);
     const all = [];
-    const mv = document.querySelector('#video-me video'); if (mv && mv.readyState >= 2 && isCamOn) all.push({ video: mv, name: myName });
-    remoteParticipants.forEach((i, p) => { const v = document.querySelector(`#video-${p} video`); if (v && v.readyState >= 2 && i.camOn) all.push({ video: v, name: i.name || '' }); });
+    const mv = document.querySelector('#video-me video'); if (mv && mv.readyState >= 2 && isCamOn) all.push({ video: mv });
+    remoteParticipants.forEach((i, p) => { const v = document.querySelector(`#video-${p} video`); if (v && v.readyState >= 2 && i.camOn) all.push({ video: v }); });
     const n = all.length;
     if (n === 0) { compositeAnimationId = requestAnimationFrame(drawCompositeLoop); return; }
     let cols, rows;
@@ -3216,13 +2868,10 @@ function drawCompositeLoop() {
         if (va > ca) { dw = cw; dh = cw / va; dx = x; dy = y + (ch - dh) / 2; }
         else { dh = ch; dw = ch * va; dx = x + (cw - dw) / 2; dy = y; }
         try { compositeCtx.drawImage(item.video, dx, dy, dw, dh); } catch (e) {}
-        compositeCtx.strokeStyle = '#3c4043'; compositeCtx.lineWidth = 2; compositeCtx.strokeRect(x, y, cw, ch);
     });
     compositeCtx.fillStyle = 'rgba(0,0,0,0.6)'; compositeCtx.fillRect(W - 200, 10, 190, 32);
     compositeCtx.fillStyle = '#ea4335'; compositeCtx.font = 'bold 15px Tahoma'; compositeCtx.textAlign = 'right';
     compositeCtx.fillText('🔴 ' + fmtTime(Math.floor((Date.now() - recordingStartTime) / 1000)), W - 15, 32);
-    compositeCtx.fillStyle = 'rgba(0,0,0,0.6)'; compositeCtx.fillRect(10, 10, 250, 32);
-    compositeCtx.fillStyle = '#8ab4f8'; compositeCtx.fillText('Lroom | ' + roomId, 250, 32);
     compositeAnimationId = requestAnimationFrame(drawCompositeLoop);
 }
 function startRecTimer() { const tt = document.getElementById('recordingTimer'); recordingTimerInterval = setInterval(() => { tt.textContent = fmtTime(Math.floor((Date.now() - recordingStartTime) / 1000)); }, 1000); }
@@ -3241,12 +2890,13 @@ function downloadRecording() {
 }
 function discardRecording() { recordingBlob = null; recordedChunks = []; closeModal('recordingModal'); }
 
-// ==================== LINK / LEAVE ====================
-function copyLink() {
-    const u = new URL(location.href);
-    u.searchParams.set('room', roomId);
-    navigator.clipboard.writeText(u.toString()).then(() => showToast('🔗 لینک کپی شد')).catch(() => prompt('Link:', u.toString()));
-}
+// ==================== PASSWORD MODAL ====================
+function askForPassword(cb) { document.getElementById('passwordModal').classList.add('open'); document.getElementById('passwordInput').value = ''; window._pendingPasswordResolve = cb; }
+function submitPassword() { const p = document.getElementById('passwordInput').value.trim(); closeModal('passwordModal'); if (window._pendingPasswordResolve) { window._pendingPasswordResolve(p); window._pendingPasswordResolve = null; } }
+function cancelPassword() { closeModal('passwordModal'); window._pendingPasswordResolve = null; leaveMeeting(true); }
+
+// ==================== LINK/LEAVE ====================
+function copyLink() { const u = new URL(location.href); u.searchParams.set('room', roomId); navigator.clipboard.writeText(u.toString()).then(() => showToast('🔗 کپی شد')).catch(() => prompt('Link:', u.toString())); }
 async function leaveMeeting(s) {
     if (!s && !confirm('خروج؟')) return;
     if (isRecording) stopRecording();
@@ -3254,7 +2904,6 @@ async function leaveMeeting(s) {
     if (classTimerInterval) clearInterval(classTimerInterval);
     if (activityTimerInterval) clearInterval(activityTimerInterval);
     if (qualityCheckInterval) clearInterval(qualityCheckInterval);
-    stopProjSync();
     closeScreenShareModal();
     const e = attendanceLog.get(myId); if (e) e.leftAt = new Date();
     broadcast({ type: 'bye', name: myName });
@@ -3265,16 +2914,10 @@ async function leaveMeeting(s) {
     document.getElementById('meeting').classList.remove('active');
     document.getElementById('videos').innerHTML = '';
     document.getElementById('lobby').style.display = 'flex';
-    const joinInput = document.getElementById('joinRoomCode');
-    if (joinInput) joinInput.value = '';
+    const joinInput = document.getElementById('joinRoomCode'); if (joinInput) joinInput.value = '';
     setLobbyRole('teacher');
-    location.href = location.pathname;
 }
-window.addEventListener('beforeunload', () => {
-    try { if (livekitRoom) livekitRoom.disconnect(); } catch (e) {}
-    if (localStream) localStream.getTracks().forEach(t => t.stop());
-    if (isRecording) try { mediaRecorder.stop(); } catch (e) {}
-});
+window.addEventListener('beforeunload', () => { try { if (livekitRoom) livekitRoom.disconnect(); } catch (e) {} if (localStream) localStream.getTracks().forEach(t => t.stop()); if (isRecording) try { mediaRecorder.stop(); } catch (e) {} });
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
         const wb = document.getElementById('whiteboardModal'); if (wb.classList.contains('open')) closeWhiteboard();
@@ -3285,7 +2928,7 @@ document.addEventListener('keydown', e => {
 });
 
 // ==================== INIT ====================
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
     document.body.classList.toggle('light-theme', currentTheme === 'light');
     const i = currentTheme === 'light' ? '☀️' : '🌙';
     const t1 = document.getElementById('themeToggle'); if (t1) t1.textContent = i;
@@ -3294,27 +2937,39 @@ window.addEventListener('DOMContentLoaded', () => {
     const ds = document.getElementById('deviceSelect'); if (ds) ds.value = dm;
     changeDevice(dm);
     initWhiteboard(); initProjector(); setupEmojiPicker();
-    loadAdminData();
-    updateAdminButtons();
-    if (adminActiveAnnouncement && sessionStorage.getItem('lroom_banner_dismissed') !== adminActiveAnnouncement.id) {
-        setTimeout(() => showGlobalBanner(adminActiveAnnouncement), 1000);
-    }
 
-    const saved = getSavedUser();
-    if (saved) {
-        const users = getUsers();
-        const fresh = users.find(u => u.id === saved.id);
-        if (fresh) {
-            currentUser = fresh;
-            saveSavedUser(fresh);
-            checkAndShow();
-        } else {
-            localStorage.removeItem('lroom_current');
-            document.getElementById('authScreen').style.display = 'flex';
+    try {
+        const { data: { session } } = await sb.auth.getSession();
+        if (session && session.user) {
+            let { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
+            if (!profile) {
+                const endDate = new Date();
+                endDate.setDate(endDate.getDate() + DEFAULT_SUBSCRIPTION_DAYS);
+                await sb.from('profiles').insert({
+                    id: session.user.id,
+                    email: session.user.email,
+                    name: session.user.user_metadata?.name || 'کاربر',
+                    role: session.user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'admin' : 'user',
+                    subscription_end: endDate.toISOString(),
+                });
+                const r2 = await sb.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
+                profile = r2.data;
+            }
+            if (profile) {
+                currentUser = {
+                    id: profile.id, email: profile.email, name: profile.name,
+                    role: profile.role, sessionCode: profile.session_code,
+                    subscriptionEnd: profile.subscription_end,
+                };
+                checkAndShow();
+                initRealtime();
+                loadActiveAnnouncement();
+                return;
+            }
         }
-    } else {
-        document.getElementById('authScreen').style.display = 'flex';
-    }
+    } catch (e) { console.error('Session check:', e); }
+
+    document.getElementById('authScreen').style.display = 'flex';
 });
 </script>
 </body>
