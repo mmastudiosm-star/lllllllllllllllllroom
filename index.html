@@ -946,6 +946,7 @@ let adminActiveAnnouncement = null;
 let realtimeChannel = null;
 let selectedPlan = null;
 let expiredDiscount = null;
+let waitingAudioBlockInterval = null;
 
 // ==================== HELPERS ====================
 function sanitize(r) { return String(r || '').replace(/[^a-zA-Z0-9]/g, '') || 'default'; }
@@ -985,6 +986,54 @@ function toggleTheme() {
     const i = currentTheme === 'light' ? '☀️' : '🌙';
     const t1 = document.getElementById('themeToggle'); if (t1) t1.textContent = i;
     const t2 = document.getElementById('themeToggleMeeting'); if (t2) t2.textContent = i;
+}
+
+// ==================== WAITING ROOM AUDIO BLOCKER ====================
+function startWaitingAudioBlocker() {
+    if (waitingAudioBlockInterval) return;
+    waitingAudioBlockInterval = setInterval(() => {
+        if (!isWaitingForApproval) {
+            clearInterval(waitingAudioBlockInterval);
+            waitingAudioBlockInterval = null;
+            return;
+        }
+        // قطع کردن تمام صداهای دریافتی
+        document.querySelectorAll('audio[data-identity]').forEach(el => {
+            if (!el.muted) el.muted = true;
+            try { el.volume = 0; } catch(e){}
+        });
+        // قطع track های صوتی remote
+        try {
+            livekitRoom?.remoteParticipants?.forEach(p => {
+                p.audioTrackPublications?.forEach(pub => {
+                    if (pub.track && !pub.track.isMuted) {
+                        try { pub.track.mediaStreamTrack.enabled = false; } catch(e){}
+                    }
+                });
+            });
+        } catch(e){}
+    }, 300);
+}
+function stopWaitingAudioBlocker() {
+    if (waitingAudioBlockInterval) {
+        clearInterval(waitingAudioBlockInterval);
+        waitingAudioBlockInterval = null;
+    }
+    // برگرداندن صداها
+    document.querySelectorAll('audio[data-identity]').forEach(el => {
+        el.muted = false;
+        try { el.volume = 1; } catch(e){}
+        el.play().catch(() => {});
+    });
+    try {
+        livekitRoom?.remoteParticipants?.forEach(p => {
+            p.audioTrackPublications?.forEach(pub => {
+                if (pub.track) {
+                    try { pub.track.mediaStreamTrack.enabled = true; } catch(e){}
+                }
+            });
+        });
+    } catch(e){}
 }
 
 // ==================== JWT ====================
@@ -1293,7 +1342,6 @@ function checkAndShow() {
     } else {
         document.getElementById('expiredScreen').style.display = 'flex';
         document.getElementById('expUserName').textContent = currentUser.name;
-        // reset pricing state
         selectedPlan = null; expiredDiscount = null;
         document.querySelectorAll('.pricing-card').forEach(c => c.classList.remove('selected'));
         const ds = document.getElementById('discountStatus'); if (ds) { ds.textContent = ''; ds.className = ''; }
@@ -1403,7 +1451,11 @@ async function renderAdminUsers() {
         const end = u.subscription_end ? new Date(u.subscription_end) : null;
         const daysLeft = end ? Math.ceil((end - now) / 86400000) : 0;
         const isAdmin = u.role === 'admin';
-        const statusText = isAdmin ? '👑 ادمین' : (daysLeft > 0 ? `✅ ${daysLeft} روز مانده` : '⛔ منقضی');
+        const statusText = isAdmin 
+            ? '👑 ادمین' 
+            : (daysLeft > 0 
+                ? `✅ ${daysLeft} روز مانده (تا ${end.toLocaleDateString('fa-IR')})` 
+                : '⛔ منقضی');
         const statusColor = isAdmin ? '#ffd700' : (daysLeft > 0 ? 'var(--success)' : 'var(--danger)');
         return `<div class="admin-user-row">
           <div class="admin-user-avatar ${isAdmin ? 'admin' : ''}">${escapeHtml((u.name||'?')[0].toUpperCase())}</div>
@@ -1412,9 +1464,11 @@ async function renderAdminUsers() {
             <div class="admin-user-email">${escapeHtml(u.email)}</div>
             <div class="admin-user-meta">وضعیت: <b style="color:${statusColor}">${statusText}</b>${u.session_code ? ` • کد: <b>${escapeHtml(u.session_code)}</b>` : ''}</div>
           </div>
-          <div class="admin-user-actions">
-            <button class="add-days" onclick="adminAddDays('${u.id}', 30)">+۳۰</button>
-            <button class="add-days" onclick="adminAddDays('${u.id}', 10)">+۱۰</button>
+          <div class="admin-user-actions" style="flex-wrap:wrap;gap:4px;">
+            <button class="add-days" style="background:linear-gradient(135deg,#34a853,#1e8e3e);color:#fff;" onclick="adminAddSubscription('${u.id}', 30, '۱ ماهه')">۱ ماه</button>
+            <button class="add-days" style="background:linear-gradient(135deg,#4285f4,#1a73e8);color:#fff;" onclick="adminAddSubscription('${u.id}', 90, '۳ ماهه')">۳ ماه</button>
+            <button class="add-days" style="background:linear-gradient(135deg,#ff9800,#f57c00);color:#fff;" onclick="adminAddSubscription('${u.id}', 180, '۶ ماهه')">۶ ماه</button>
+            <button class="add-days" style="background:linear-gradient(135deg,#ffd700,#ff9800);color:#202124;" onclick="adminAddSubscription('${u.id}', 365, '۱ ساله')">۱ سال</button>
             <button class="sub-days" onclick="adminAddDays('${u.id}', -10)">−۱۰</button>
             <button class="del-user" onclick="adminDeleteUser('${u.id}', '${escapeHtml(u.name)}')">🗑️</button>
           </div>
@@ -1432,6 +1486,22 @@ async function adminAddDays(userId, days) {
     await sb.from('profiles').update({ subscription_end: base.toISOString() }).eq('id', userId);
     renderAdminUsers();
     showToast(days > 0 ? `✅ ${days} روز اضافه شد` : `⚠️ ${Math.abs(days)} روز کم شد`);
+}
+async function adminAddSubscription(userId, days, label) {
+    if (!isAdminUser()) return;
+    const { data: u } = await sb.from('profiles').select('subscription_end, role, name').eq('id', userId).single();
+    if (!u) return showToast('کاربر یافت نشد');
+    if (u.role === 'admin') return showToast('👑 ادمین نیازی به اعتبار ندارد');
+    if (!confirm(`به "${u.name}" پلن ${label} (${days} روز) اضافه شود؟`)) return;
+    const now = new Date();
+    let base = u.subscription_end && new Date(u.subscription_end) > now 
+        ? new Date(u.subscription_end) 
+        : now;
+    base.setDate(base.getDate() + days);
+    const { error } = await sb.from('profiles').update({ subscription_end: base.toISOString() }).eq('id', userId);
+    if (error) return showToast('❌ ' + error.message);
+    renderAdminUsers();
+    showToast(`✅ پلن ${label} برای ${u.name} فعال شد تا ${base.toLocaleDateString('fa-IR')}`);
 }
 async function adminDeleteUser(userId, name) {
     if (!isAdminUser()) return;
@@ -1634,6 +1704,8 @@ async function joinMeeting() {
             myPermissions.mic = false; myPermissions.cam = false;
             myPermissions.whiteboard = false; myPermissions.projector = false;
             isWaitingForApproval = true;
+            // ✅ شروع بلاک صدا در اتاق انتظار
+            startWaitingAudioBlocker();
             document.getElementById('waitingRoomOverlay').style.display = 'flex';
             livekitRoom.remoteParticipants.forEach(p => {
                 if (p.identity && p.identity.startsWith('teacher-')) {
@@ -1706,7 +1778,14 @@ function setupLiveKitEvents() {
         if (track.kind === LivekitClient.Track.Kind.Video && pub.source === LivekitClient.Track.Source.ScreenShare) { showScreenShareModal(track, p.name || p.identity, p.identity); return; }
         if (track.kind === LivekitClient.Track.Kind.Audio) {
             const el = track.attach();
-            el.autoplay = true; el.style.display = 'none'; el.dataset.identity = p.identity;
+            el.autoplay = true;
+            el.style.display = 'none';
+            el.dataset.identity = p.identity;
+            // ✅ اگه در اتاق انتظاره، صدا رو قطع کن
+            if (isWaitingForApproval) {
+                el.muted = true;
+                try { el.volume = 0; } catch(e){}
+            }
             document.body.appendChild(el);
         } else {
             const el = track.attach();
@@ -1807,7 +1886,8 @@ function handleIncomingData(data, senderId) {
         case 'admit': {
             isWaitingForApproval = false;
             document.getElementById('waitingRoomOverlay').style.display = 'none';
-            document.querySelectorAll('audio[data-identity]').forEach(el => el.muted = false);
+            // ✅ توقف بلاک صدا و برگرداندن صداها
+            stopWaitingAudioBlocker();
             showToast('✅ به کلاس خوش آمدید');
             setTimeout(() => { sendData({ type: 'hello', name: myName, role: myRole, micOn: isMicOn, camOn: isCamOn, isWaiting: false }); }, 300);
             break;
@@ -1815,6 +1895,7 @@ function handleIncomingData(data, senderId) {
         case 'deny': {
             isWaitingForApproval = false;
             document.getElementById('waitingRoomOverlay').style.display = 'none';
+            stopWaitingAudioBlocker();
             showToast('❌ درخواست ورود رد شد');
             setTimeout(() => leaveMeeting(true), 1500);
             break;
@@ -2007,7 +2088,7 @@ function updateWaitingPanel() {
 }
 function admitUser(pid) { sendTo(pid, { type: 'admit' }); waitingList.delete(pid); updateWaitingPanel(); showToast('✅ کاربر تأیید شد'); }
 function denyUser(pid) { sendTo(pid, { type: 'deny' }); waitingList.delete(pid); updateWaitingPanel(); showToast('🚫 رد شد'); }
-function cancelWaiting() { isWaitingForApproval = false; document.getElementById('waitingRoomOverlay').style.display = 'none'; leaveMeeting(true); }
+function cancelWaiting() { isWaitingForApproval = false; stopWaitingAudioBlocker(); document.getElementById('waitingRoomOverlay').style.display = 'none'; leaveMeeting(true); }
 
 // ==================== PERMISSION ====================
 function showPermissionRequestModal(type) {
@@ -2904,6 +2985,7 @@ async function leaveMeeting(s) {
     if (classTimerInterval) clearInterval(classTimerInterval);
     if (activityTimerInterval) clearInterval(activityTimerInterval);
     if (qualityCheckInterval) clearInterval(qualityCheckInterval);
+    if (waitingAudioBlockInterval) { clearInterval(waitingAudioBlockInterval); waitingAudioBlockInterval = null; }
     closeScreenShareModal();
     const e = attendanceLog.get(myId); if (e) e.leftAt = new Date();
     broadcast({ type: 'bye', name: myName });
