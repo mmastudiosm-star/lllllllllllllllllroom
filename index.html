@@ -894,6 +894,7 @@ const LIVEKIT_API_SECRET = 'bSeODjRdhQPlnoSueldHwJoojaz3hrngLyDZPGSlc2S';
 const ADMIN_EMAIL = 'mmastudio.s.m@gmail.com';
 const BALE_ID = '@sobhan101095';
 const DEFAULT_SUBSCRIPTION_DAYS = 20;
+const PROJECTOR_BUCKET = 'projector-media';
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -997,12 +998,10 @@ function startWaitingAudioBlocker() {
             waitingAudioBlockInterval = null;
             return;
         }
-        // قطع کردن تمام صداهای دریافتی
         document.querySelectorAll('audio[data-identity]').forEach(el => {
             if (!el.muted) el.muted = true;
             try { el.volume = 0; } catch(e){}
         });
-        // قطع track های صوتی remote
         try {
             livekitRoom?.remoteParticipants?.forEach(p => {
                 p.audioTrackPublications?.forEach(pub => {
@@ -1019,7 +1018,6 @@ function stopWaitingAudioBlocker() {
         clearInterval(waitingAudioBlockInterval);
         waitingAudioBlockInterval = null;
     }
-    // برگرداندن صداها
     document.querySelectorAll('audio[data-identity]').forEach(el => {
         el.muted = false;
         try { el.volume = 1; } catch(e){}
@@ -1704,7 +1702,6 @@ async function joinMeeting() {
             myPermissions.mic = false; myPermissions.cam = false;
             myPermissions.whiteboard = false; myPermissions.projector = false;
             isWaitingForApproval = true;
-            // ✅ شروع بلاک صدا در اتاق انتظار
             startWaitingAudioBlocker();
             document.getElementById('waitingRoomOverlay').style.display = 'flex';
             livekitRoom.remoteParticipants.forEach(p => {
@@ -1781,7 +1778,6 @@ function setupLiveKitEvents() {
             el.autoplay = true;
             el.style.display = 'none';
             el.dataset.identity = p.identity;
-            // ✅ اگه در اتاق انتظاره، صدا رو قطع کن
             if (isWaitingForApproval) {
                 el.muted = true;
                 try { el.volume = 0; } catch(e){}
@@ -1886,7 +1882,6 @@ function handleIncomingData(data, senderId) {
         case 'admit': {
             isWaitingForApproval = false;
             document.getElementById('waitingRoomOverlay').style.display = 'none';
-            // ✅ توقف بلاک صدا و برگرداندن صداها
             stopWaitingAudioBlocker();
             showToast('✅ به کلاس خوش آمدید');
             setTimeout(() => { sendData({ type: 'hello', name: myName, role: myRole, micOn: isMicOn, camOn: isCamOn, isWaiting: false }); }, 300);
@@ -2042,16 +2037,29 @@ function handleIncomingData(data, senderId) {
             projPendingState = { ...projCurrentState };
             displayProjectorMedia(projCurrentMedia);
             document.getElementById('projectorEmptyState').style.display = 'none';
-            showToast('📽️ فیلم/عکس جدید');
+            if (!document.getElementById('projectorModal').classList.contains('open')) openProjector(true);
+            showToast('📽️ فیلم/عکس جدید - در حال بارگذاری...');
             break;
         case 'proj-state':
             if (isPrivileged() || !projVideo || !projCurrentMedia) break;
+            if (projCurrentMedia.type !== 'video') break;
             if (projVideo.readyState < 2) { projPendingState = { ...data.state }; break; }
             if (data.state.mediaId && projCurrentMedia.mediaId && data.state.mediaId !== projCurrentMedia.mediaId) break;
             const tt = data.state.currentTime || 0, sp = !!data.state.isPlaying;
-            if (Math.abs(projVideo.currentTime - tt) > 1.0) projVideo.currentTime = tt;
+            if (Math.abs(projVideo.currentTime - tt) > 2.0) projVideo.currentTime = tt;
             if (sp && projVideo.paused) projVideo.play().catch(() => {});
             if (!sp && !projVideo.paused) projVideo.pause();
+            break;
+        case 'proj-play':
+            if (isPrivileged() || !projVideo || projCurrentMedia?.type !== 'video') break;
+            if (data.mediaId && projCurrentMedia.mediaId && data.mediaId !== projCurrentMedia.mediaId) break;
+            projVideo.currentTime = data.time || 0;
+            projVideo.play().catch(() => { showToast('🎬 برای پخش ویدیو روی صفحه کلیک کنید'); });
+            break;
+        case 'proj-pause':
+            if (isPrivileged() || !projVideo) break;
+            projVideo.pause();
+            if (typeof data.time === 'number') projVideo.currentTime = data.time;
             break;
         case 'proj-draw-start': projCurrentStroke = { color: data.color, size: data.size, points: [{ x: data.x, y: data.y }], sender: senderId }; break;
         case 'proj-draw-move':
@@ -2623,7 +2631,7 @@ function openProjector(s) {
     setTimeout(() => {
         resizeProjectorCanvas(); redrawProjectorStrokes(); updateProjectorToolsVisibility();
         const hint = document.getElementById('projectorEmptyHint');
-        if (hasProjectorAccess()) hint.textContent = 'فیلم یا عکس خود را آپلود کنید';
+        if (hasProjectorAccess()) hint.innerHTML = 'فیلم یا عکس خود را آپلود کنید<br><small style="color:var(--warning);font-size:11px;">پیشنهاد: فرمت MP4 (H.264) با حجم کمتر از ۵۰MB</small>';
         else hint.textContent = 'منتظر آپلود مدرس...';
         document.getElementById('projectorDrawTools').style.display = 'flex';
         document.getElementById('projectorSeekBar').style.display = 'flex';
@@ -2631,54 +2639,110 @@ function openProjector(s) {
     }, 100);
 }
 function closeProjector(s) { document.getElementById('projectorModal').classList.remove('open'); if (projVideo) projVideo.pause(); }
-function loadProjectorFile(e) {
+
+// ==================== PROJECTOR UPLOAD (Supabase Storage) ====================
+async function loadProjectorFile(e) {
     if (!hasProjectorAccess()) { showToast('🔒'); return; }
     const f = e.target.files[0]; if (!f) return;
     if (f.size > 52428800) { showToast('❌ بزرگتر از ۵۰MB'); return; }
     const iv = f.type.startsWith('video/'); const ii = f.type.startsWith('image/');
     if (!iv && !ii) { showToast('❌ فقط فیلم/عکس'); return; }
-    showToast('⏳ در حال بارگذاری...');
-    const r = new FileReader();
-    r.onload = ev => {
-        if (ii) {
-            const img = new Image();
-            img.onload = () => {
-                const limits = getProjectorMaxSize(qualitySettings.projector);
-                let w = img.width, h = img.height;
-                if (w > limits.maxW) { h = h * limits.maxW / w; w = limits.maxW; }
-                if (h > limits.maxH) { w = w * limits.maxH / h; h = limits.maxH; }
-                const c = document.createElement('canvas');
-                c.width = Math.round(w); c.height = Math.round(h);
-                const cx = c.getContext('2d');
-                cx.drawImage(img, 0, 0, c.width, c.height);
-                const compressed = c.toDataURL('image/jpeg', limits.quality);
-                const mediaId = 'media_' + Date.now();
-                projCurrentMedia = { type: 'image', name: f.name, data: compressed, from: myName, mediaId };
-                displayProjectorMedia(projCurrentMedia);
-                broadcast({ type: 'proj-media', media: projCurrentMedia });
-                showToast('✅ بارگذاری شد');
-            };
-            img.src = ev.target.result;
-        } else {
-            const mediaId = 'media_' + Date.now();
-            projCurrentMedia = { type: 'video', name: f.name, data: ev.target.result, from: myName, mediaId };
-            displayProjectorMedia(projCurrentMedia);
-            broadcast({ type: 'proj-media', media: projCurrentMedia });
-            showToast('✅ بارگذاری شد');
+    showToast('⏳ در حال آپلود به سرور...');
+    
+    try {
+        const mediaId = 'media_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+        const ext = f.name.split('.').pop() || (iv ? 'mp4' : 'jpg');
+        const fileName = `${mediaId}.${ext}`;
+        
+        const { data: upData, error: upErr } = await sb.storage
+            .from(PROJECTOR_BUCKET)
+            .upload(fileName, f, {
+                cacheControl: '3600',
+                upsert: false,
+                contentType: f.type,
+            });
+        
+        if (upErr) {
+            console.error('Upload error:', upErr);
+            throw new Error('خطا در آپلود: ' + upErr.message);
         }
-    };
-    r.readAsDataURL(f);
+        
+        const { data: urlData } = sb.storage.from(PROJECTOR_BUCKET).getPublicUrl(fileName);
+        const publicUrl = urlData.publicUrl;
+        
+        projCurrentMedia = {
+            type: iv ? 'video' : 'image',
+            name: f.name,
+            data: publicUrl,
+            from: myName,
+            mediaId,
+            storagePath: fileName,
+        };
+        projCurrentState = { isPlaying: false, currentTime: 0, mediaId };
+        
+        displayProjectorMedia(projCurrentMedia);
+        broadcast({ type: 'proj-media', media: projCurrentMedia, state: projCurrentState });
+        showToast('✅ بارگذاری شد و برای همه پخش می‌شه');
+        
+    } catch (err) {
+        console.error('Projector upload error:', err);
+        showToast('❌ ' + err.message);
+    }
 }
 function displayProjectorMedia(m) {
     document.getElementById('projectorEmptyState').style.display = 'none';
-    if (m.type === 'video') { projImage.style.display = 'none'; projVideo.style.display = 'block'; projVideo.src = m.data; projVideo.load(); }
-    else { projVideo.style.display = 'none'; projVideo.pause(); projImage.style.display = 'block'; projImage.src = m.data; }
+    if (m.type === 'video') {
+        projImage.style.display = 'none';
+        projVideo.style.display = 'block';
+        if (projVideo.src !== m.data) {
+            projVideo.src = m.data;
+            projVideo.load();
+        }
+    } else {
+        projVideo.style.display = 'none';
+        projVideo.pause();
+        projImage.style.display = 'block';
+        projImage.src = m.data;
+    }
     redrawProjectorStrokes();
 }
-function toggleProjectorPlay() { if (!hasProjectorAccess() || !projCurrentMedia || projCurrentMedia.type !== 'video') return; if (projVideo.paused) projVideo.play(); else projVideo.pause(); }
-function seekProjectorBy(s) { if (!hasProjectorAccess() || !projVideo.duration) return; projVideo.currentTime = Math.max(0, Math.min(projVideo.duration, projVideo.currentTime + s)); }
+function toggleProjectorPlay() {
+    if (!hasProjectorAccess() || !projCurrentMedia || projCurrentMedia.type !== 'video') return;
+    if (projVideo.paused) {
+        projVideo.play().catch(() => {});
+        broadcast({ type: 'proj-play', time: projVideo.currentTime || 0, mediaId: projCurrentMedia.mediaId });
+    } else {
+        projVideo.pause();
+        broadcast({ type: 'proj-pause', time: projVideo.currentTime || 0, mediaId: projCurrentMedia.mediaId });
+    }
+}
+function seekProjectorBy(s) {
+    if (!hasProjectorAccess() || !projVideo.duration) return;
+    const newT = Math.max(0, Math.min(projVideo.duration, projVideo.currentTime + s));
+    projVideo.currentTime = newT;
+    broadcast({ type: 'proj-state', state: { isPlaying: !projVideo.paused, currentTime: newT, mediaId: projCurrentMedia?.mediaId } });
+}
 function onProjectorSeekInput(v) { if (hasProjectorAccess()) projIsSeeking = true; }
-function onProjectorSeekChange(v) { if (!hasProjectorAccess() || !projVideo.duration) return; projVideo.currentTime = (v / 100) * projVideo.duration; projIsSeeking = false; }
+function onProjectorSeekChange(v) {
+    if (!hasProjectorAccess() || !projVideo.duration) return;
+    const tt = (v / 100) * projVideo.duration;
+    projVideo.currentTime = tt;
+    projIsSeeking = false;
+    broadcast({ type: 'proj-state', state: { isPlaying: !projVideo.paused, currentTime: tt, mediaId: projCurrentMedia?.mediaId } });
+}
+function startProjSync() {
+    stopProjSync();
+    if (!hasProjectorAccess()) return;
+    projSyncInterval = setInterval(() => {
+        if (projCurrentMedia && projVideo && projVideo.readyState >= 2 && projCurrentMedia.type === 'video') {
+            projCurrentState.currentTime = projVideo.currentTime;
+            projCurrentState.isPlaying = !projVideo.paused;
+            projCurrentState.mediaId = projCurrentMedia.mediaId;
+            broadcast({ type: 'proj-state', state: projCurrentState });
+        }
+    }, 2000);
+}
+function stopProjSync() { if (projSyncInterval) { clearInterval(projSyncInterval); projSyncInterval = null; } }
 function projStartDraw(e) {
     if (myRole === 'student' && !isCoTeacher && !myPermissions.whiteboard) return;
     projIsDrawing = true;
@@ -2986,6 +3050,7 @@ async function leaveMeeting(s) {
     if (activityTimerInterval) clearInterval(activityTimerInterval);
     if (qualityCheckInterval) clearInterval(qualityCheckInterval);
     if (waitingAudioBlockInterval) { clearInterval(waitingAudioBlockInterval); waitingAudioBlockInterval = null; }
+    stopProjSync();
     closeScreenShareModal();
     const e = attendanceLog.get(myId); if (e) e.leftAt = new Date();
     broadcast({ type: 'bye', name: myName });
