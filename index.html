@@ -75,14 +75,23 @@
   .info-card .value { font-size: 0.95rem; font-weight: 800; }
   .info-card .sub { font-size: 0.75rem; color: var(--text-muted); }
 
-  /* 🎯 استایل اختصاصی گیج آلودگی هوا */
+  /* 🎯 استایل اختصاصی گیج آلودگی هوا (سرعت‌سنج) */
   .aqi-card { position: relative; overflow: hidden; }
   .gauge-container { width: 60px; height: 35px; position: relative; display: flex; justify-content: center; align-items: flex-end; }
-  .gauge-bg { width: 60px; height: 30px; border-top-left-radius: 60px; border-top-right-radius: 60px; background: conic-gradient(from 270deg at 50% 100%, #10b981 0deg, #fbbf24 54deg, #f97316 108deg, #ef4444 144deg, #8b5cf6 180deg); position: absolute; bottom: 0; opacity: 0.15; }
-  [data-theme="light"] .gauge-bg { opacity: 0.3; }
-  .gauge-fill { width: 60px; height: 30px; border-top-left-radius: 60px; border-top-right-radius: 60px; background: conic-gradient(from 270deg at 50% 100%, var(--aqi-color, #10b981) 0deg, var(--aqi-color, #10b981) var(--aqi-deg, 0deg), transparent var(--aqi-deg, 0deg)); position: absolute; bottom: 0; transition: background 1s ease; }
-  .gauge-needle { width: 2px; height: 26px; background: #fff; position: absolute; bottom: 0; left: 50%; transform-origin: bottom center; transform: translateX(-50%) rotate(-90deg); transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2; border-radius: 2px; box-shadow: 0 0 5px rgba(255,255,255,0.5); }
-  .gauge-center { width: 8px; height: 8px; background: #fff; border-radius: 50%; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); z-index: 3; }
+  .gauge-bg { 
+    width: 60px; height: 30px; 
+    border-top-left-radius: 60px; border-top-right-radius: 60px; 
+    background: conic-gradient(from 270deg at 50% 100%, 
+      #10b981 0deg, #10b981 30deg, 
+      #fbbf24 30deg, #fbbf24 60deg, 
+      #f97316 60deg, #f97316 90deg, 
+      #ef4444 90deg, #ef4444 120deg, 
+      #8b5cf6 120deg, #8b5cf6 180deg
+    ); 
+    position: absolute; bottom: 0; 
+  }
+  .gauge-needle { width: 3px; height: 28px; background: #fff; position: absolute; bottom: 0; left: 50%; transform-origin: bottom center; transform: translateX(-50%) rotate(-90deg); transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2; border-radius: 2px; box-shadow: 0 0 10px rgba(255,255,255,0.8); }
+  .gauge-center { width: 10px; height: 10px; background: #fff; border-radius: 50%; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); z-index: 3; box-shadow: 0 0 10px rgba(255,255,255,0.8); }
 
   /* ==================== دکمه‌های ناوبری و فیلتر ==================== */
   .nav-wrap { max-width: 1400px; margin: 0 auto; padding: 16px 24px 8px; display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; }
@@ -234,12 +243,11 @@
   <div class="info-card aqi-card">
     <div class="gauge-container">
       <div class="gauge-bg"></div>
-      <div class="gauge-fill" id="aqiFill"></div>
       <div class="gauge-needle" id="aqiNeedle"></div>
       <div class="gauge-center"></div>
     </div>
     <div class="body">
-      <span class="label">آلودگی هوا (AQI)</span>
+      <span class="label">آلودگی هوای تهران (AQI)</span>
       <span class="value" id="aqiValue">—</span>
       <span class="sub" id="aqiStatus">—</span>
     </div>
@@ -258,7 +266,7 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v10.2</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v10.3</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -335,7 +343,7 @@
 
 <script>
 /* ==================== تنظیمات ==================== */
-const VERSION = '10.2';
+const VERSION = '10.3';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
 const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
 const MANUAL_NEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
@@ -498,10 +506,8 @@ async function loadAQI() {
     const cappedAqi = Math.min(aqi, maxAqiForGauge);
     const deg = (cappedAqi / maxAqiForGauge) * 180;
     
-    // چرخش عقربه و رنگی کردن گیج
+    // چرخش عقربه
     document.getElementById('aqiNeedle').style.transform = `translateX(-50%) rotate(${deg - 90}deg)`;
-    document.getElementById('aqiFill').style.setProperty('--aqi-color', color);
-    document.getElementById('aqiFill').style.setProperty('--aqi-deg', `${deg}deg`);
 
   } catch (e) {
     console.warn('AQI error:', e);
@@ -790,7 +796,7 @@ document.getElementById('fontVal').textContent = parseFloat(getComputedStyle(doc
 updatePersianDateTime(); setInterval(updatePersianDateTime, 1000); 
 loadWeather(); 
 loadMarketPrices(); setInterval(loadMarketPrices, 5 * 60 * 1000); 
-loadAQI(); setInterval(loadAQI, 10 * 60 * 1000); // هر ۱۰ دقیقه آپدیت AQI
+loadAQI(); setInterval(loadAQI, 10 * 60 * 1000); 
 startCountdown(); 
 setupTTS();
 loadAll(); setInterval(loadAll, 5 * 60 * 1000);
