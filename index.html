@@ -363,7 +363,6 @@
 <div class="infobar">
   <div class="info-card"><span class="ico">📅</span><div class="body"><span class="label">تاریخ</span><span class="value" id="persianDate">...</span><span class="sub" id="clockTime"></span></div></div>
   <div class="info-card"><span class="ico">🌡️</span><div class="body"><span class="label">آب و هوای تهران</span><span class="value" id="weatherTemp">—</span><span class="sub" id="weatherDesc">—</span></div></div>
-  <!-- کارت جدید قیمت دلار -->
   <div class="info-card">
     <span class="ico">💵</span>
     <div class="body">
@@ -390,7 +389,7 @@
 
 <!-- فوتر سایت -->
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v10.0</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v10.1</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -472,7 +471,7 @@
 
 <script>
 /* ==================== تنظیمات و ثابت‌ها ==================== */
-const VERSION = '10.0';
+const VERSION = '10.1';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
 const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
 const MANUAL_NEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
@@ -595,18 +594,20 @@ async function loadWeather() {
   try { const url = 'https://api.open-meteo.com/v1/forecast?latitude=35.6892&longitude=51.3890&current=temperature_2m,weather_code&timezone=Asia/Tehran'; const res = await fetchWithTimeout(url, 8000); if (!res.ok) throw 0; const data = await res.json(); document.getElementById('weatherTemp').textContent = `${Math.round(data.current.temperature_2m)}°C`; const codes = { 0: 'صاف ☀️', 1: 'صاف 🌤️', 2: 'نیمه ابری ⛅', 3: 'ابری ☁️', 61: 'باران 🌧️', 80: 'رگبار 🌦️', 95: 'رعد ⛈️' }; document.getElementById('weatherDesc').textContent = codes[data.current.weather_code] || `کد ${data.current.weather_code}`; } catch { document.getElementById('weatherTemp').textContent = '—'; document.getElementById('weatherDesc').textContent = '—'; }
 }
 
-// دریافت قیمت لحظه‌ای دلار
+// دریافت قیمت لحظه‌ای دلار (نسخه اصلاح شده بدون CORS)
 async function loadDollarPrice() {
   try {
-    const res = await fetchWithTimeout('https://api.nobitex.ir/v2/orderbook/USDTIRT', 8000);
+    const res = await fetchWithTimeout('https://raw.githubusercontent.com/iran-market/iran-market.github.io/main/data/popular.json', 8000);
     if (!res.ok) throw new Error('HTTP error');
-    const data = await res.json();
-    const lastPriceRial = parseInt(data.lastTradePrice);
-    const lastPriceToman = Math.floor(lastPriceRial / 10);
+    const payload = await res.json();
+    const usd = payload.data.find(item => item.symbol === 'USD_IRR_FREE');
     
-    document.getElementById('dollarPrice').textContent = lastPriceToman.toLocaleString('fa-IR') + ' تومان';
-    const statusEl = document.getElementById('dollarChange');
-    if (statusEl) statusEl.textContent = data.status === 'running' ? 'بازار آزاد' : 'بازار بسته';
+    if (usd) {
+      document.getElementById('dollarPrice').textContent = usd.price.toLocaleString('fa-IR') + ' تومان';
+      document.getElementById('dollarChange').textContent = 'بازار آزاد';
+    } else {
+      throw new Error('نماد دلار پیدا نشد');
+    }
   } catch (e) {
     console.warn('Dollar price error:', e);
     document.getElementById('dollarPrice').textContent = '—';
@@ -721,7 +722,7 @@ function startProgressiveDisplay() {
   }, DISPLAY_INTERVAL);
 }
 
-/* ✅ اصلاح باگ تعداد اخبار: شمارش از روی کل دیتابیس */
+/* اصلاح باگ تعداد اخبار: شمارش از روی کل دیتابیس */
 function buildFilters() {
   let baseList = allNews;
   if (activeMode === 'unread') baseList = baseList.filter(n => !readLinks.has(n.link));
