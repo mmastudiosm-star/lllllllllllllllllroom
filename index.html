@@ -12,7 +12,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  /* ==================== متغیرهای رنگی و تنظیمات ==================== */
   :root {
     --bg: #050810; --bg-secondary: #0a0f1c; --glass-bg: rgba(18, 26, 43, 0.6);
     --glass-border: rgba(255, 255, 255, 0.08); --glass-hover: rgba(30, 144, 255, 0.15);
@@ -31,17 +30,14 @@
     --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
 
-  /* ==================== ریست پایه ==================== */
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html { scroll-behavior: smooth; font-size: var(--base-font-size); }
   body { font-family: 'Vazirmatn', Tahoma, sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.8; min-height: 100vh; overflow-x: hidden; -webkit-text-size-adjust: 100%; transition: background 0.3s, color 0.3s; }
 
-  /* ==================== پس‌زمینه ==================== */
   .bg-mesh { position: fixed; inset: 0; z-index: -2; background: radial-gradient(circle at 15% 15%, rgba(59,130,246,0.15), transparent 40%), radial-gradient(circle at 85% 85%, rgba(139,92,246,0.15), transparent 40%); filter: blur(40px); animation: meshMove 20s ease-in-out infinite alternate; }
   @keyframes meshMove { 0% { transform: scale(1) translate(0,0); } 100% { transform: scale(1.1) translate(2%,2%); } }
   .bg-grid { position: fixed; inset: 0; z-index: -1; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 50px 50px; mask-image: radial-gradient(circle at center, black, transparent 80%); }
   
-  /* ==================== هدر ==================== */
   header { position: sticky; top: 0; z-index: 100; background: rgba(5,8,16,0.7); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); }
   [data-theme="light"] header { background: rgba(240,244,248,0.7); }
   .header-inner { max-width: 1400px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
@@ -57,7 +53,6 @@
   .icon-btn:hover { background: var(--glass-hover); border-color: var(--accent-blue); transform: translateY(-2px); }
   .icon-btn .badge { position: absolute; top: -6px; right: -6px; background: var(--gradient-hot); color: #fff; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 12px; box-shadow: 0 0 10px rgba(239,68,68,0.5); }
 
-  /* ==================== نوار وضعیت ==================== */
   .statusbar { max-width: 1400px; margin: 0 auto; padding: 0 24px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-muted); flex-wrap: wrap; gap: 10px; }
   .live-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(16,185,129,0.1); color: var(--accent-green); border-radius: 20px; font-weight: 700; border: 1px solid rgba(16,185,129,0.2); }
   .live-badge .dot { width: 8px; height: 8px; background: var(--accent-green); border-radius: 50%; animation: pulse 1.5s infinite; }
@@ -65,7 +60,6 @@
   .live-badge.loading .dot { background: var(--accent-gold); }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-  /* ==================== اطلاعات (تاریخ، آب‌وهوا، دلار، طلا، AQI) ==================== */
   .infobar { max-width: 1400px; margin: 0 auto; padding: 16px 24px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
   .info-card { background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 14px 20px; display: flex; align-items: center; gap: 14px; transition: 0.3s; }
   .info-card:hover { border-color: var(--accent-blue); }
@@ -75,25 +69,41 @@
   .info-card .value { font-size: 0.95rem; font-weight: 800; }
   .info-card .sub { font-size: 0.75rem; color: var(--text-muted); }
 
-  /* 🎯 استایل اختصاصی گیج آلودگی هوا (سرعت‌سنج) */
-  .aqi-card { position: relative; overflow: hidden; }
-  .gauge-container { width: 60px; height: 35px; position: relative; display: flex; justify-content: center; align-items: flex-end; }
-  .gauge-bg { 
-    width: 60px; height: 30px; 
-    border-top-left-radius: 60px; border-top-right-radius: 60px; 
-    background: conic-gradient(from 270deg at 50% 100%, 
-      #10b981 0deg, #10b981 30deg, 
-      #fbbf24 30deg, #fbbf24 60deg, 
-      #f97316 60deg, #f97316 90deg, 
-      #ef4444 90deg, #ef4444 120deg, 
-      #8b5cf6 120deg, #8b5cf6 180deg
+  /* 🎯 گیج دایره‌ای کامل (شبیه اپ‌های هواشناسی) */
+  .aqi-card { padding: 12px 20px; }
+  .aqi-gauge-wrap { position: relative; width: 64px; height: 64px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
+  
+  .aqi-gauge-ring { 
+    position: absolute; inset: 0; border-radius: 50%; 
+    background: conic-gradient(
+      #10b981 0deg 60deg,       /* سبز: پاک */
+      #fbbf24 60deg 120deg,     /* زرد: قابل قبول */
+      #f97316 120deg 180deg,    /* نارنجی: ناسالم برای گروه‌های حساس */
+      #ef4444 180deg 240deg,    /* قرمز: ناسالم */
+      #8b5cf6 240deg 300deg,    /* بنفش: بسیار ناسالم */
+      #b91c1c 300deg 360deg     /* قرمز تیره: خطرناک */
     ); 
-    position: absolute; bottom: 0; 
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
   }
-  .gauge-needle { width: 3px; height: 28px; background: #fff; position: absolute; bottom: 0; left: 50%; transform-origin: bottom center; transform: translateX(-50%) rotate(-90deg); transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2; border-radius: 2px; box-shadow: 0 0 10px rgba(255,255,255,0.8); }
-  .gauge-center { width: 10px; height: 10px; background: #fff; border-radius: 50%; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); z-index: 3; box-shadow: 0 0 10px rgba(255,255,255,0.8); }
 
-  /* ==================== دکمه‌های ناوبری و فیلتر ==================== */
+  .aqi-gauge-inner { 
+    position: absolute; inset: 8px; border-radius: 50%; 
+    background: var(--bg); 
+    display: flex; justify-content: center; align-items: center; 
+    font-size: 16px; font-weight: 900; color: var(--text-main); 
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.8); z-index: 2; 
+  }
+  [data-theme="light"] .aqi-gauge-inner { background: #e2e8f0; box-shadow: inset 0 2px 8px rgba(0,0,0,0.1); }
+
+  .aqi-gauge-needle { 
+    position: absolute; top: -4px; left: 50%; 
+    width: 4px; height: 18px; background: #fff; 
+    border-radius: 2px; transform-origin: bottom center; 
+    transform: translateX(-50%) rotate(0deg); 
+    transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    z-index: 3; box-shadow: 0 0 8px rgba(0,0,0,0.8); border: 1px solid rgba(0,0,0,0.2); 
+  }
+
   .nav-wrap { max-width: 1400px; margin: 0 auto; padding: 16px 24px 8px; display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; }
   .nav-wrap::-webkit-scrollbar { display: none; }
   .nav-btn { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-muted); padding: 10px 20px; border-radius: 30px; cursor: pointer; font-family: inherit; font-size: 0.9rem; font-weight: 700; transition: 0.3s; white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; }
@@ -106,7 +116,6 @@
   .filter-btn:hover { border-color: var(--accent-blue); color: var(--text-main); }
   .filter-btn.active { background: rgba(59,130,246,0.2); border-color: var(--accent-blue); color: var(--accent-blue); }
 
-  /* ==================== کارت‌های خبری ==================== */
   .grid { max-width: 1400px; margin: 0 auto; padding: 0 24px 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; }
   .card { background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; cursor: pointer; }
   .card:hover { transform: translateY(-8px) scale(1.01); border-color: rgba(59,130,246,0.4); box-shadow: var(--shadow-card), var(--shadow-glow); }
@@ -131,7 +140,6 @@
   .card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.8; flex: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .card-footer { display: flex; justify-content: space-between; border-top: 1px solid var(--glass-border); padding-top: 14px; font-size: 0.8rem; color: var(--text-muted); }
 
-  /* ==================== مودال ==================== */
   .modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(5,8,16,0.85); backdrop-filter: blur(12px); display: none; align-items: flex-start; justify-content: center; padding: 20px; overflow-y: auto; }
   .modal-overlay.open { display: flex; animation: fadeIn 0.3s; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -150,7 +158,6 @@
   .modal-body img { max-width: 100%; border-radius: var(--radius-md); margin: 20px 0; }
   .modal-body a { color: var(--accent-cyan); text-decoration: none; border-bottom: 1px dashed; }
 
-  /* ==================== اشتراک‌گذاری ==================== */
   .related-item { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 12px 16px; border-radius: var(--radius-md); cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
   .related-item:hover { border-color: var(--accent-blue); background: var(--glass-hover); }
   .related-item .ri-title { font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
@@ -166,7 +173,6 @@
   .skeleton::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); animation: shimmer 1.5s infinite; }
   @keyframes shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
 
-  /* ==================== موبایل ==================== */
   @media (max-width: 768px) {
     .header-inner { padding: 12px 16px; }
     .search-box { order: 3; width: 100%; min-width: 100%; margin-top: 8px; }
@@ -181,9 +187,7 @@
     .modal-content { padding: 24px 20px; }
     .share-grid { grid-template-columns: repeat(3, 1fr); }
   }
-  @media (max-width: 400px) {
-    .infobar { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 400px) { .infobar { grid-template-columns: 1fr; } }
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 4px; }
 </style>
@@ -219,7 +223,6 @@
   <div class="info-card"><span class="ico">📅</span><div class="body"><span class="label">تاریخ</span><span class="value" id="persianDate">...</span><span class="sub" id="clockTime"></span></div></div>
   <div class="info-card"><span class="ico">🌡️</span><div class="body"><span class="label">آب و هوای تهران</span><span class="value" id="weatherTemp">—</span><span class="sub" id="weatherDesc">—</span></div></div>
   
-  <!-- کادر قیمت دلار -->
   <div class="info-card">
     <span class="ico">💵</span>
     <div class="body">
@@ -229,7 +232,6 @@
     </div>
   </div>
 
-  <!-- کادر قیمت طلا -->
   <div class="info-card">
     <span class="ico">🪙</span>
     <div class="body">
@@ -239,17 +241,16 @@
     </div>
   </div>
 
-  <!-- کادر شاخص آلودگی هوا (AQI) -->
+  <!-- کادر شاخص آلودگی هوا (AQI) با گیج دایره‌ای -->
   <div class="info-card aqi-card">
-    <div class="gauge-container">
-      <div class="gauge-bg"></div>
-      <div class="gauge-needle" id="aqiNeedle"></div>
-      <div class="gauge-center"></div>
+    <div class="aqi-gauge-wrap">
+      <div class="aqi-gauge-ring"></div>
+      <div class="aqi-gauge-inner" id="aqiValue">—</div>
+      <div class="aqi-gauge-needle" id="aqiNeedle"></div>
     </div>
     <div class="body">
       <span class="label">آلودگی هوای تهران (AQI)</span>
-      <span class="value" id="aqiValue">—</span>
-      <span class="sub" id="aqiStatus">—</span>
+      <span class="sub" id="aqiStatus" style="font-weight:800;">—</span>
     </div>
   </div>
 </div>
@@ -266,11 +267,11 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v10.3</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v11.0</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
-<!-- مودال‌ها (تنظیمات، آمار، نمایش خبر) -->
+<!-- مودال‌ها -->
 <div class="modal-overlay" id="settingsModal" style="z-index:2000;">
   <div class="modal" style="max-width:400px;">
     <button class="modal-close" id="settingsClose">✕</button>
@@ -342,14 +343,12 @@
 </div>
 
 <script>
-/* ==================== تنظیمات ==================== */
-const VERSION = '10.3';
+const VERSION = '11.0';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
 const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
 const MANUAL_NEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
 const INITIAL_COUNT = 10; const DISPLAY_STEP = 10; const DISPLAY_INTERVAL = 5000; const TRENDING_VIEW_THRESHOLD = 1000;
 
-/* ==================== وضعیت ==================== */
 let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; let allNews = [];
 let activeMode = 'all'; let activeCategory = 'همه'; let searchQuery = ''; let currentNews = null;
 let isLoading = false; let readLinks = new Set(); let savedLinks = new Set();
@@ -369,7 +368,6 @@ const CATEGORIES = {
 const APP_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1a3a"/><stop offset="1" stop-color="#050a1a"/></linearGradient><linearGradient id="globeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e90ff"/><stop offset="1" stop-color="#0066cc"/></linearGradient><linearGradient id="lGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d0d8e8"/></linearGradient><radialGradient id="globeShine" cx="0.3" cy="0.3" r="0.7"><stop offset="0" stop-color="#4fb8ff" stop-opacity="0.9"/><stop offset="1" stop-color="#0066cc" stop-opacity="0"/></radialGradient><filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect width="512" height="512" rx="115" fill="url(#bgGrad)"/><rect x="4" y="4" width="504" height="504" rx="112" fill="none" stroke="#1e90ff" stroke-width="3" opacity="0.6"/><circle cx="320" cy="200" r="115" fill="url(#globeGrad)" filter="url(#glow)" opacity="0.95"/><circle cx="320" cy="200" r="115" fill="url(#globeShine)"/><g filter="url(#glow)"><path d="M 100 130 L 175 130 L 175 330 L 260 330 L 260 385 L 100 385 Z" fill="url(#lGrad)"/></g><path d="M 175 330 L 260 330 L 260 385 L 175 385 Z" fill="#e8302a"/></svg>`;
 const ICON_URL = 'data:image/svg+xml,' + encodeURIComponent(APP_ICON_SVG);
 
-/* ==================== ابزارها و حافظه ==================== */
 function safeParse(str, fallback) { try { return JSON.parse(str); } catch { return fallback; } }
 
 (function initStorage() {
@@ -426,7 +424,6 @@ function cleanContent(html) {
   return out;
 }
 
-/* ==================== سیستم بازدید ==================== */
 async function fetchAllViews() {
   try { const res = await fetchWithTimeout(VIEWS_API, 10000); if (res.ok) { const data = await res.json(); if (data && typeof data === 'object') { newsViews = { ...newsViews, ...data }; localStorage.setItem('lrep_views_v10', JSON.stringify(newsViews)); } } } catch {}
 }
@@ -445,7 +442,6 @@ function updateViewsUI(link) {
   if (currentNews && currentNews.link === link) { const meta = document.getElementById('modalMeta'); if (meta) { const old = meta.querySelector('.views-tag'); if (old) old.remove(); if (html) meta.insertAdjacentHTML('beforeend', html); } }
 }
 
-/* ==================== تاریخ، آب‌وهوا، دلار، طلا و AQI ==================== */
 function updatePersianDateTime() {
   const now = new Date(); document.getElementById('persianDate').textContent = now.toLocaleDateString('fa-IR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   document.getElementById('clockTime').textContent = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -455,7 +451,6 @@ async function loadWeather() {
   try { const url = 'https://api.open-meteo.com/v1/forecast?latitude=35.6892&longitude=51.3890&current=temperature_2m,weather_code&timezone=Asia/Tehran'; const res = await fetchWithTimeout(url, 8000); if (!res.ok) throw 0; const data = await res.json(); document.getElementById('weatherTemp').textContent = `${Math.round(data.current.temperature_2m)}°C`; const codes = { 0: 'صاف ☀️', 1: 'صاف 🌤️', 2: 'نیمه ابری ⛅', 3: 'ابری ☁️', 61: 'باران 🌧️', 80: 'رگبار 🌦️', 95: 'رعد ⛈️' }; document.getElementById('weatherDesc').textContent = codes[data.current.weather_code] || `کد ${data.current.weather_code}`; } catch { document.getElementById('weatherTemp').textContent = '—'; document.getElementById('weatherDesc').textContent = '—'; }
 }
 
-// دریافت قیمت دلار و طلا
 async function loadMarketPrices() {
   try {
     const res = await fetchWithTimeout('https://raw.githubusercontent.com/iran-market/iran-market.github.io/main/data/popular.json', 8000);
@@ -481,38 +476,53 @@ async function loadMarketPrices() {
   }
 }
 
-// دریافت شاخص آلودگی هوا (AQI)
+// 🎯 دریافت دقیق AQI از ایستگاه‌های زمینی تهران (WAQI)
 async function loadAQI() {
+  let aqi = null;
   try {
-    const res = await fetchWithTimeout('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=35.6892&longitude=51.3890&current=us_aqi', 8000);
-    if (!res.ok) throw new Error('HTTP error');
-    const data = await res.json();
-    const aqi = data.current.us_aqi;
+    // اول از دیتای ایستگاه‌های زمینی استفاده میکنیم
+    const res = await fetchWithTimeout('https://api.waqi.info/feed/tehran/?token=demo', 6000);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.status === 'ok' && data.data && data.data.aqi) {
+        aqi = data.data.aqi;
+      }
+    }
+  } catch(e) {}
 
+  if (aqi === null) {
+    // در صورت قطعی، از دیتای ماهواره‌ای استفاده میکنیم
+    try {
+      const res = await fetchWithTimeout('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=35.6892&longitude=51.3890&current=us_aqi', 8000);
+      if (res.ok) {
+        const data = await res.json();
+        aqi = data.current.us_aqi;
+      }
+    } catch(e) {}
+  }
+
+  if (aqi !== null) {
     document.getElementById('aqiValue').textContent = aqi.toLocaleString('fa-IR');
     
     let color = '#10b981'; // Good
     let status = 'پاک';
-    if (aqi > 50) { color = '#fbbf24'; status = 'متوسط'; }
+    if (aqi > 50) { color = '#fbbf24'; status = 'قابل قبول'; }
     if (aqi > 100) { color = '#f97316'; status = 'ناسالم برای گروه‌های حساس'; }
     if (aqi > 150) { color = '#ef4444'; status = 'ناسالم'; }
     if (aqi > 200) { color = '#8b5cf6'; status = 'بسیار ناسالم'; }
+    if (aqi > 300) { color = '#b91c1c'; status = 'خطرناک'; }
 
     document.getElementById('aqiStatus').textContent = status;
     document.getElementById('aqiStatus').style.color = color;
     
-    // محاسبه درجه چرخش عقربه (بین 0 تا 300 بازه رو به 180 درجه نگاشت میکنیم)
+    // چرخش عقربه (۰ تا ۳۶۰ درجه)
     const maxAqiForGauge = 300;
     const cappedAqi = Math.min(aqi, maxAqiForGauge);
-    const deg = (cappedAqi / maxAqiForGauge) * 180;
-    
-    // چرخش عقربه
-    document.getElementById('aqiNeedle').style.transform = `translateX(-50%) rotate(${deg - 90}deg)`;
-
-  } catch (e) {
-    console.warn('AQI error:', e);
+    const deg = (cappedAqi / maxAqiForGauge) * 360;
+    document.getElementById('aqiNeedle').style.transform = `translateX(-50%) rotate(${deg}deg)`;
+  } else {
     document.getElementById('aqiValue').textContent = '—';
-    document.getElementById('aqiStatus').textContent = '—';
+    document.getElementById('aqiStatus').textContent = 'خطا';
   }
 }
 
@@ -525,7 +535,6 @@ function startCountdown() {
   }, 30000);
 }
 
-/* ==================== موتور خواندن صوتی (TTS) ==================== */
 function getPersianVoice() {
   if (!window.speechSynthesis) return null;
   const voices = window.speechSynthesis.getVoices();
@@ -562,7 +571,6 @@ function setupTTS() {
   }
 }
 
-/* ==================== هسته اصلی و رندر ==================== */
 function getTrendingNews(limit = 30, sourceList = null) {
   const base = sourceList || allNews;
   return [...base].map(n => ({ ...n, views: getViewCount(n.link) })).filter(n => n.views >= TRENDING_VIEW_THRESHOLD).sort((a, b) => b.views - a.views).slice(0, limit);
@@ -698,7 +706,6 @@ function updateUI() {
   document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === activeMode));
 }
 
-/* ==================== مدیریت مودال ==================== */
 function openModal(idx) {
   const news = window.__currentList[idx]; if (!news) return; currentNews = news;
   markAsRead(news.link); updateUI();
@@ -734,7 +741,6 @@ function closeModal() {
   document.getElementById('ttsStopBtn').style.display = 'none'; 
 }
 
-/* ==================== رویدادها ==================== */
 document.getElementById('content').addEventListener('click', (e) => {
   const star = e.target.closest('.star-btn');
   if (star) { e.stopPropagation(); const idx = +star.dataset.star; const saved = toggleSaved(window.__currentList[idx].link); showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); star.classList.toggle('saved', saved); star.textContent = saved ? '★' : '☆'; updateUI(); return; }
@@ -748,7 +754,6 @@ document.getElementById('modalClose').onclick = closeModal; document.getElementB
 document.getElementById('modalStar').onclick = () => { if (!currentNews) return; const saved = toggleSaved(currentNews.link); showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); document.getElementById('modalStar').textContent = saved ? '★' : '☆'; document.getElementById('modalStar').classList.toggle('saved', saved); render(); };
 document.getElementById('modalCopyBtn').onclick = () => { if (currentNews) navigator.clipboard.writeText(currentNews.link).then(() => showToast('📋 کپی شد')); };
 
-/* ==================== اشتراک‌گذاری ==================== */
 document.querySelectorAll('[data-share]').forEach(btn => {
   btn.onclick = () => {
     if (!currentNews) return; const url = encodeURIComponent(currentNews.link); const text = encodeURIComponent(currentNews.title); let shareUrl = '';
@@ -765,7 +770,6 @@ document.querySelectorAll('[data-share]').forEach(btn => {
   };
 });
 
-/* ==================== تنظیمات و تم ==================== */
 document.getElementById('themeBtn').onclick = () => { const html = document.documentElement; const isLight = html.getAttribute('data-theme') === 'light'; html.setAttribute('data-theme', isLight ? 'dark' : 'light'); document.getElementById('themeBtn').textContent = isLight ? '🌙' : '☀️'; localStorage.setItem('lrep_theme_v10', isLight ? 'dark' : 'light'); };
 document.getElementById('settingsBtn').onclick = () => document.getElementById('settingsModal').classList.add('open');
 document.getElementById('settingsClose').onclick = () => document.getElementById('settingsModal').classList.remove('open');
@@ -788,7 +792,6 @@ document.getElementById('statsBtn').onclick = () => {
 };
 document.getElementById('statsClose').onclick = () => document.getElementById('statsModal').classList.remove('open');
 
-/* ==================== شروع ==================== */
 document.getElementById('logoImg').src = ICON_URL;
 document.getElementById('appleIcon').href = ICON_URL;
 document.getElementById('fontVal').textContent = parseFloat(getComputedStyle(document.documentElement).fontSize).toLocaleString('fa-IR');
