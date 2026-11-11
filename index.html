@@ -14,152 +14,60 @@
 <style>
   /* ==================== متغیرهای رنگی و تنظیمات ==================== */
   :root {
-    --bg: #050810;
-    --bg-secondary: #0a0f1c;
-    --glass-bg: rgba(18, 26, 43, 0.6);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-hover: rgba(30, 144, 255, 0.15);
-    
-    --text-main: #f0f4f8;
-    --text-muted: #8b9bb4;
-    
-    --accent-blue: #3b82f6;
-    --accent-purple: #8b5cf6;
-    --accent-cyan: #06b6d4;
-    --accent-red: #ef4444;
-    --accent-gold: #f59e0b;
-    --accent-green: #10b981;
-    
+    --bg: #050810; --bg-secondary: #0a0f1c; --glass-bg: rgba(18, 26, 43, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08); --glass-hover: rgba(30, 144, 255, 0.15);
+    --text-main: #f0f4f8; --text-muted: #8b9bb4;
+    --accent-blue: #3b82f6; --accent-purple: #8b5cf6; --accent-cyan: #06b6d4;
+    --accent-red: #ef4444; --accent-gold: #f59e0b; --accent-green: #10b981;
     --gradient-main: linear-gradient(135deg, #3b82f6, #8b5cf6);
     --gradient-hot: linear-gradient(135deg, #ef4444, #f97316);
-    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
-    
     --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.2);
     --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
-    
-    --base-font-size: 16px;
-    --radius-lg: 24px;
-    --radius-md: 16px;
-    --radius-sm: 12px;
+    --base-font-size: 16px; --radius-lg: 24px; --radius-md: 16px;
   }
-
-  /* تم روشن */
   [data-theme="light"] {
-    --bg: #f0f4f8;
-    --bg-secondary: #ffffff;
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(0, 0, 0, 0.1);
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --gradient-glass: linear-gradient(135deg, rgba(0,0,0,0.02), rgba(0,0,0,0));
+    --bg: #f0f4f8; --bg-secondary: #ffffff; --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(0, 0, 0, 0.1); --text-main: #0f172a; --text-muted: #64748b;
     --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
 
   /* ==================== ریست پایه ==================== */
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html { scroll-behavior: smooth; font-size: var(--base-font-size); }
-  body {
-    font-family: 'Vazirmatn', Tahoma, sans-serif;
-    background-color: var(--bg);
-    color: var(--text-main);
-    line-height: 1.8; min-height: 100vh;
-    overflow-x: hidden;
-    -webkit-text-size-adjust: 100%;
-    transition: background 0.3s, color 0.3s;
-  }
+  body { font-family: 'Vazirmatn', Tahoma, sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.8; min-height: 100vh; overflow-x: hidden; -webkit-text-size-adjust: 100%; transition: background 0.3s, color 0.3s; }
 
-  /* ==================== پس‌زمینه گرافیکی ==================== */
-  .bg-mesh {
-    position: fixed; inset: 0; z-index: -2;
-    background: 
-      radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
-      radial-gradient(circle at 85% 85%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
-      radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
-    filter: blur(40px);
-    animation: meshMove 20s ease-in-out infinite alternate;
-  }
-  @keyframes meshMove {
-    0% { transform: scale(1) translate(0, 0); }
-    100% { transform: scale(1.1) translate(2%, 2%); }
-  }
-  .bg-grid {
-    position: fixed; inset: 0; z-index: -1;
-    background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size: 50px 50px;
-    mask-image: radial-gradient(circle at center, black, transparent 80%);
-  }
-  [data-theme="light"] .bg-grid { background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px); }
-
-  /* ==================== هدر (Header) ==================== */
-  header {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(5, 8, 16, 0.7);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--glass-border);
-  }
-  [data-theme="light"] header { background: rgba(240, 244, 248, 0.7); }
+  /* ==================== پس‌زمینه ==================== */
+  .bg-mesh { position: fixed; inset: 0; z-index: -2; background: radial-gradient(circle at 15% 15%, rgba(59,130,246,0.15), transparent 40%), radial-gradient(circle at 85% 85%, rgba(139,92,246,0.15), transparent 40%); filter: blur(40px); animation: meshMove 20s ease-in-out infinite alternate; }
+  @keyframes meshMove { 0% { transform: scale(1) translate(0,0); } 100% { transform: scale(1.1) translate(2%,2%); } }
+  .bg-grid { position: fixed; inset: 0; z-index: -1; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 50px 50px; mask-image: radial-gradient(circle at center, black, transparent 80%); }
   
-  .header-inner {
-    max-width: 1400px; margin: 0 auto; padding: 16px 24px;
-    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-  }
+  /* ==================== هدر ==================== */
+  header { position: sticky; top: 0; z-index: 100; background: rgba(5,8,16,0.7); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); }
+  [data-theme="light"] header { background: rgba(240,244,248,0.7); }
+  .header-inner { max-width: 1400px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
   .logo { display: flex; align-items: center; gap: 12px; font-weight: 900; font-size: 1.6rem; }
   .logo span { background: var(--gradient-main); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -1px; }
   .logo-img { width: 40px; height: 40px; border-radius: 12px; box-shadow: var(--shadow-glow); }
-  
   .search-box { flex: 1; min-width: 250px; position: relative; }
-  .search-box input {
-    width: 100%; padding: 14px 48px 14px 20px;
-    background: var(--glass-bg); border: 1px solid var(--glass-border);
-    border-radius: var(--radius-md); color: var(--text-main);
-    font-family: inherit; font-size: 0.95rem; outline: none; transition: 0.3s;
-  }
+  .search-box input { width: 100%; padding: 14px 48px 14px 20px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem; outline: none; transition: 0.3s; }
   .search-box input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 4px rgba(59,130,246,0.15); }
   .search-box::before { content: '🔍'; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 18px; opacity: 0.6; pointer-events: none; }
-
   .header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  .icon-btn {
-    background: var(--glass-bg); border: 1px solid var(--glass-border);
-    color: var(--text-main); width: 44px; height: 44px; border-radius: var(--radius-md);
-    cursor: pointer; font-size: 18px; display: grid; place-items: center;
-    transition: 0.3s; position: relative;
-  }
+  .icon-btn { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-main); width: 44px; height: 44px; border-radius: var(--radius-md); cursor: pointer; font-size: 18px; display: grid; place-items: center; transition: 0.3s; position: relative; }
   .icon-btn:hover { background: var(--glass-hover); border-color: var(--accent-blue); transform: translateY(-2px); }
-  .icon-btn .badge {
-    position: absolute; top: -6px; right: -6px;
-    background: var(--gradient-hot); color: #fff;
-    font-size: 10px; font-weight: 800; padding: 2px 7px;
-    border-radius: 12px; box-shadow: 0 0 10px rgba(239,68,68,0.5);
-  }
+  .icon-btn .badge { position: absolute; top: -6px; right: -6px; background: var(--gradient-hot); color: #fff; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 12px; box-shadow: 0 0 10px rgba(239,68,68,0.5); }
 
-  /* ==================== نوار وضعیت (Status Bar) ==================== */
-  .statusbar {
-    max-width: 1400px; margin: 0 auto; padding: 0 24px 12px;
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 0.8rem; color: var(--text-muted); flex-wrap: wrap; gap: 10px;
-  }
-  .live-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 12px; background: rgba(16,185,129,0.1);
-    color: var(--accent-green); border-radius: 20px; font-weight: 700;
-    border: 1px solid rgba(16,185,129,0.2);
-  }
+  /* ==================== نوار وضعیت ==================== */
+  .statusbar { max-width: 1400px; margin: 0 auto; padding: 0 24px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-muted); flex-wrap: wrap; gap: 10px; }
+  .live-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(16,185,129,0.1); color: var(--accent-green); border-radius: 20px; font-weight: 700; border: 1px solid rgba(16,185,129,0.2); }
   .live-badge .dot { width: 8px; height: 8px; background: var(--accent-green); border-radius: 50%; animation: pulse 1.5s infinite; }
   .live-badge.loading { background: rgba(245,158,11,0.1); color: var(--accent-gold); border-color: rgba(245,158,11,0.2); }
   .live-badge.loading .dot { background: var(--accent-gold); }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-  /* ==================== اطلاعات آب‌وهوا، تاریخ و دلار ==================== */
-  .infobar {
-    max-width: 1400px; margin: 0 auto; padding: 16px 24px 0;
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;
-  }
-  .info-card {
-    background: var(--glass-bg); backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border); border-radius: var(--radius-md);
-    padding: 14px 20px; display: flex; align-items: center; gap: 14px; transition: 0.3s;
-  }
+  /* ==================== اطلاعات (تاریخ، آب‌وهوا، دلار، طلا، AQI) ==================== */
+  .infobar { max-width: 1400px; margin: 0 auto; padding: 16px 24px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .info-card { background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 14px 20px; display: flex; align-items: center; gap: 14px; transition: 0.3s; }
   .info-card:hover { border-color: var(--accent-blue); }
   .info-card .ico { font-size: 24px; }
   .info-card .body { display: flex; flex-direction: column; }
@@ -167,158 +75,96 @@
   .info-card .value { font-size: 0.95rem; font-weight: 800; }
   .info-card .sub { font-size: 0.75rem; color: var(--text-muted); }
 
-  /* ==================== دکمه‌های ناوبری ==================== */
-  .nav-wrap {
-    max-width: 1400px; margin: 0 auto; padding: 16px 24px 8px;
-    display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none;
-  }
+  /* 🎯 استایل اختصاصی گیج آلودگی هوا */
+  .aqi-card { position: relative; overflow: hidden; }
+  .gauge-container { width: 60px; height: 35px; position: relative; display: flex; justify-content: center; align-items: flex-end; }
+  .gauge-bg { width: 60px; height: 30px; border-top-left-radius: 60px; border-top-right-radius: 60px; background: conic-gradient(from 270deg at 50% 100%, #10b981 0deg, #fbbf24 54deg, #f97316 108deg, #ef4444 144deg, #8b5cf6 180deg); position: absolute; bottom: 0; opacity: 0.15; }
+  [data-theme="light"] .gauge-bg { opacity: 0.3; }
+  .gauge-fill { width: 60px; height: 30px; border-top-left-radius: 60px; border-top-right-radius: 60px; background: conic-gradient(from 270deg at 50% 100%, var(--aqi-color, #10b981) 0deg, var(--aqi-color, #10b981) var(--aqi-deg, 0deg), transparent var(--aqi-deg, 0deg)); position: absolute; bottom: 0; transition: background 1s ease; }
+  .gauge-needle { width: 2px; height: 26px; background: #fff; position: absolute; bottom: 0; left: 50%; transform-origin: bottom center; transform: translateX(-50%) rotate(-90deg); transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2; border-radius: 2px; box-shadow: 0 0 5px rgba(255,255,255,0.5); }
+  .gauge-center { width: 8px; height: 8px; background: #fff; border-radius: 50%; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); z-index: 3; }
+
+  /* ==================== دکمه‌های ناوبری و فیلتر ==================== */
+  .nav-wrap { max-width: 1400px; margin: 0 auto; padding: 16px 24px 8px; display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; }
   .nav-wrap::-webkit-scrollbar { display: none; }
-  .nav-btn {
-    background: var(--glass-bg); border: 1px solid var(--glass-border);
-    color: var(--text-muted); padding: 10px 20px; border-radius: 30px;
-    cursor: pointer; font-family: inherit; font-size: 0.9rem; font-weight: 700;
-    transition: 0.3s; white-space: nowrap; display: inline-flex; align-items: center; gap: 8px;
-  }
+  .nav-btn { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-muted); padding: 10px 20px; border-radius: 30px; cursor: pointer; font-family: inherit; font-size: 0.9rem; font-weight: 700; transition: 0.3s; white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; }
   .nav-btn:hover { background: var(--glass-hover); color: var(--text-main); border-color: var(--accent-blue); }
   .nav-btn.active { background: var(--gradient-main); color: #fff; border-color: transparent; box-shadow: 0 4px 20px rgba(59,130,246,0.4); }
   .nav-btn .cnt { font-size: 11px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; }
-
-  /* ==================== فیلتر دسته‌بندی ==================== */
-  .filters-wrap {
-    max-width: 1400px; margin: 0 auto; padding: 0 24px 16px;
-    display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
-  }
+  .filters-wrap { max-width: 1400px; margin: 0 auto; padding: 0 24px 16px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
   .filters-wrap::-webkit-scrollbar { display: none; }
-  .filter-btn {
-    background: transparent; border: 1px solid var(--glass-border);
-    color: var(--text-muted); padding: 6px 14px; border-radius: 20px;
-    cursor: pointer; font-family: inherit; font-size: 0.8rem; font-weight: 600;
-    transition: 0.3s; white-space: nowrap;
-  }
+  .filter-btn { background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-family: inherit; font-size: 0.8rem; font-weight: 600; transition: 0.3s; white-space: nowrap; }
   .filter-btn:hover { border-color: var(--accent-blue); color: var(--text-main); }
   .filter-btn.active { background: rgba(59,130,246,0.2); border-color: var(--accent-blue); color: var(--accent-blue); }
 
-  /* ==================== گرید و کارت‌های خبری ==================== */
-  .grid {
-    max-width: 1400px; margin: 0 auto; padding: 0 24px 40px;
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;
-  }
-  .card {
-    background: var(--glass-bg); backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border); border-radius: var(--radius-lg);
-    overflow: hidden; display: flex; flex-direction: column;
-    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: relative; cursor: pointer;
-  }
+  /* ==================== کارت‌های خبری ==================== */
+  .grid { max-width: 1400px; margin: 0 auto; padding: 0 24px 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; }
+  .card { background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; cursor: pointer; }
   .card:hover { transform: translateY(-8px) scale(1.01); border-color: rgba(59,130,246,0.4); box-shadow: var(--shadow-card), var(--shadow-glow); }
   .card.read { opacity: 0.6; filter: grayscale(0.5); }
   .card.saved { border-color: var(--accent-gold); box-shadow: 0 0 20px rgba(245,158,11,0.2); }
   .card.manual { border-right: 4px solid var(--accent-gold); }
-
   .card-img-wrap { position: relative; height: 200px; background: #0f1525; overflow: hidden; }
   .card-img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; }
   .card:hover .card-img { transform: scale(1.08); }
   .card-img-wrap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, var(--bg) 0%, transparent 50%); }
-
-  .star-btn {
-    position: absolute; top: 16px; right: 16px; z-index: 10;
-    width: 44px; height: 44px; border-radius: 50%;
-    background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.2); color: #fff;
-    display: grid; place-items: center; font-size: 20px; transition: 0.3s; cursor: pointer;
-  }
+  .star-btn { position: absolute; top: 16px; right: 16px; z-index: 10; width: 44px; height: 44px; border-radius: 50%; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2); color: #fff; display: grid; place-items: center; font-size: 20px; transition: 0.3s; cursor: pointer; }
   .star-btn:hover { background: var(--accent-gold); color: #000; transform: scale(1.1) rotate(15deg); }
   .star-btn.saved { background: var(--accent-gold); color: #000; border-color: var(--accent-gold); }
-
   .card-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; flex: 1; z-index: 2; }
   .card-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
   .source-tag { font-size: 11px; font-weight: 800; color: #fff; background: var(--gradient-main); padding: 5px 14px; border-radius: 20px; }
   .source-tag.manual { background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #000; }
-  
   .views-tag { font-size: 11px; font-weight: 700; color: var(--text-main); background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px; border: 1px solid var(--glass-border); }
   .views-tag.hot { background: var(--gradient-hot); color: #fff; animation: pulse-hot 2s infinite; }
   @keyframes pulse-hot { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-
   .card h2 { font-size: 1.15rem; font-weight: 800; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.8; flex: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .card-footer { display: flex; justify-content: space-between; border-top: 1px solid var(--glass-border); padding-top: 14px; font-size: 0.8rem; color: var(--text-muted); }
 
-  /* ==================== مودال (پنجره بازشو) ==================== */
-  .modal-overlay {
-    position: fixed; inset: 0; z-index: 1000;
-    background: rgba(5,8,16,0.85); backdrop-filter: blur(12px);
-    display: none; align-items: flex-start; justify-content: center;
-    padding: 20px; overflow-y: auto;
-  }
+  /* ==================== مودال ==================== */
+  .modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(5,8,16,0.85); backdrop-filter: blur(12px); display: none; align-items: flex-start; justify-content: center; padding: 20px; overflow-y: auto; }
   .modal-overlay.open { display: flex; animation: fadeIn 0.3s; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  
-  .modal {
-    background: var(--bg-secondary); border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg); max-width: 800px; width: 100%;
-    margin: auto; position: relative; box-shadow: var(--shadow-card);
-    animation: slideUp 0.4s; overflow: hidden;
-  }
+  .modal { background: var(--bg-secondary); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); max-width: 800px; width: 100%; margin: auto; position: relative; box-shadow: var(--shadow-card); animation: slideUp 0.4s; overflow: hidden; }
   @keyframes slideUp { from { transform: translateY(40px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
-  
   .modal-hero { width: 100%; max-height: 400px; object-fit: cover; }
   .modal-content { padding: 32px; }
-  .modal-close, .modal-star {
-    position: absolute; top: 16px; width: 44px; height: 44px; border-radius: 50%;
-    background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.2); color: #fff;
-    display: grid; place-items: center; cursor: pointer; transition: 0.3s; z-index: 10;
-  }
+  .modal-close, .modal-star { position: absolute; top: 16px; width: 44px; height: 44px; border-radius: 50%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2); color: #fff; display: grid; place-items: center; cursor: pointer; transition: 0.3s; z-index: 10; }
   .modal-close { left: 16px; font-size: 24px; }
   .modal-star { right: 16px; font-size: 22px; }
   .modal-close:hover { background: var(--accent-red); transform: rotate(90deg); }
   .modal-star:hover { background: var(--accent-gold); color: #000; }
   .modal-star.saved { background: var(--accent-gold); color: #000; }
-  
   .modal h1 { font-size: 1.6rem; font-weight: 900; margin-bottom: 20px; line-height: 1.5; }
   .modal-body { font-size: 1rem; line-height: 2.2; }
   .modal-body img { max-width: 100%; border-radius: var(--radius-md); margin: 20px 0; }
   .modal-body a { color: var(--accent-cyan); text-decoration: none; border-bottom: 1px dashed; }
 
-  /* ==================== اخبار مرتبط و اشتراک‌گذاری ==================== */
-  .related-item {
-    background: var(--glass-bg); border: 1px solid var(--glass-border);
-    padding: 12px 16px; border-radius: var(--radius-md); cursor: pointer;
-    transition: 0.3s; display: flex; align-items: center; gap: 10px;
-  }
+  /* ==================== اشتراک‌گذاری ==================== */
+  .related-item { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 12px 16px; border-radius: var(--radius-md); cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
   .related-item:hover { border-color: var(--accent-blue); background: var(--glass-hover); }
   .related-item .ri-title { font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
   .related-item .ri-meta { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
-
   .share-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; margin-top: 20px; }
-  .share-btn {
-    background: var(--glass-bg); border: 1px solid var(--glass-border);
-    color: var(--text-main); padding: 12px 8px; border-radius: var(--radius-md);
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-    font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.3s;
-  }
+  .share-btn { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-main); padding: 12px 8px; border-radius: var(--radius-md); display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.3s; }
   .share-btn:hover { background: var(--glass-hover); transform: translateY(-3px); border-color: var(--accent-blue); }
   .share-btn svg { width: 22px; height: 22px; }
-
-  .btn {
-    padding: 12px 24px; border-radius: var(--radius-md); font-weight: 700;
-    display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
-    border: 1px solid var(--glass-border); background: var(--glass-bg);
-    color: var(--text-main); transition: 0.3s; font-family: inherit;
-  }
+  .btn { padding: 12px 24px; border-radius: var(--radius-md); font-weight: 700; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-main); transition: 0.3s; font-family: inherit; }
   .btn:hover { background: var(--glass-hover); border-color: var(--accent-blue); transform: translateY(-2px); }
   .btn-primary { background: var(--gradient-main); border: none; color: #fff; box-shadow: 0 4px 15px rgba(59,130,246,0.3); }
-
-  /* ==================== اسکلتون (لودینگ) ==================== */
   .skeleton { background: var(--glass-bg); border-radius: var(--radius-lg); height: 380px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; }
   .skeleton::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); animation: shimmer 1.5s infinite; }
   @keyframes shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
 
-  /* ==================== ریسپانسیو (موبایل) ==================== */
+  /* ==================== موبایل ==================== */
   @media (max-width: 768px) {
     .header-inner { padding: 12px 16px; }
     .search-box { order: 3; width: 100%; min-width: 100%; margin-top: 8px; }
-    .infobar { grid-template-columns: 1fr; padding: 12px 16px 0; }
+    .infobar { grid-template-columns: 1fr 1fr; padding: 12px 16px 0; gap: 8px; }
+    .info-card { padding: 10px 14px; }
+    .info-card .label { font-size: 0.65rem; }
+    .info-card .value { font-size: 0.85rem; }
     .nav-wrap, .filters-wrap { padding-left: 16px; padding-right: 16px; }
     .grid { padding: 0 16px 30px; grid-template-columns: 1fr; gap: 16px; }
     .modal-overlay { padding: 0; }
@@ -326,17 +172,18 @@
     .modal-content { padding: 24px 20px; }
     .share-grid { grid-template-columns: repeat(3, 1fr); }
   }
+  @media (max-width: 400px) {
+    .infobar { grid-template-columns: 1fr; }
+  }
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 4px; }
 </style>
 </head>
 <body>
 
-<!-- المان‌های پس‌زمینه -->
 <div class="bg-mesh"></div><div class="bg-grid"></div>
 <div class="progress-bar" id="progressBar" style="position:fixed;top:0;left:0;right:0;height:3px;background:var(--gradient-main);transform-origin:right;transform:scaleX(0);transition:transform 0.3s;z-index:9999;"></div>
 
-<!-- هدر سایت -->
 <header>
   <div class="header-inner">
     <div class="logo"><img class="logo-img" id="logoImg" alt="Lreporter"><span>Lreporter</span></div>
@@ -359,10 +206,11 @@
   </div>
 </header>
 
-<!-- نوار اطلاعات (تاریخ، آب‌وهوا، دلار) -->
 <div class="infobar">
   <div class="info-card"><span class="ico">📅</span><div class="body"><span class="label">تاریخ</span><span class="value" id="persianDate">...</span><span class="sub" id="clockTime"></span></div></div>
   <div class="info-card"><span class="ico">🌡️</span><div class="body"><span class="label">آب و هوای تهران</span><span class="value" id="weatherTemp">—</span><span class="sub" id="weatherDesc">—</span></div></div>
+  
+  <!-- کادر قیمت دلار -->
   <div class="info-card">
     <span class="ico">💵</span>
     <div class="body">
@@ -371,9 +219,33 @@
       <span class="sub" id="dollarChange">—</span>
     </div>
   </div>
+
+  <!-- کادر قیمت طلا -->
+  <div class="info-card">
+    <span class="ico">🪙</span>
+    <div class="body">
+      <span class="label">طلای ۱۸ عیار (هر گرم)</span>
+      <span class="value" id="goldPrice">—</span>
+      <span class="sub" id="goldChange">—</span>
+    </div>
+  </div>
+
+  <!-- کادر شاخص آلودگی هوا (AQI) -->
+  <div class="info-card aqi-card">
+    <div class="gauge-container">
+      <div class="gauge-bg"></div>
+      <div class="gauge-fill" id="aqiFill"></div>
+      <div class="gauge-needle" id="aqiNeedle"></div>
+      <div class="gauge-center"></div>
+    </div>
+    <div class="body">
+      <span class="label">آلودگی هوا (AQI)</span>
+      <span class="value" id="aqiValue">—</span>
+      <span class="sub" id="aqiStatus">—</span>
+    </div>
+  </div>
 </div>
 
-<!-- دکمه‌های فیلتر اصلی -->
 <div class="nav-wrap">
   <button class="nav-btn active" data-mode="all">📰 همه <span class="cnt" id="cntAll">0</span></button>
   <button class="nav-btn" data-mode="unread">📬 نخوانده <span class="cnt" id="cntUnread">0</span></button>
@@ -381,19 +253,16 @@
   <button class="nav-btn" data-mode="trending">🔥 ترند <span class="cnt" id="cntTrending">0</span></button>
 </div>
 
-<!-- فیلتر دسته‌بندی (سیاسی، ورزش و...) -->
 <div class="filters-wrap" id="filtersWrap"></div>
 
-<!-- گرید اخبار -->
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
-<!-- فوتر سایت -->
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v10.1</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v10.2</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
-<!-- مودال تنظیمات -->
+<!-- مودال‌ها (تنظیمات، آمار، نمایش خبر) -->
 <div class="modal-overlay" id="settingsModal" style="z-index:2000;">
   <div class="modal" style="max-width:400px;">
     <button class="modal-close" id="settingsClose">✕</button>
@@ -411,7 +280,6 @@
   </div>
 </div>
 
-<!-- مودال آمار -->
 <div class="modal-overlay" id="statsModal" style="z-index:2000;">
   <div class="modal" style="max-width:450px;">
     <button class="modal-close" id="statsClose">✕</button>
@@ -422,7 +290,6 @@
   </div>
 </div>
 
-<!-- مودال نمایش خبر -->
 <div class="modal-overlay" id="modal">
   <div class="modal" id="modalBox">
     <button class="modal-close" id="modalClose">✕</button>
@@ -432,7 +299,6 @@
       <div class="modal-meta" id="modalMeta" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;"></div>
       <h1 id="modalTitle"></h1>
       
-      <!-- دکمه‌های خواندن صوتی -->
       <div class="tts-controls" id="ttsControls" style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
         <button class="btn" id="ttsPlayBtn" style="padding:8px 16px;">🔊 خواندن</button>
         <button class="btn" id="ttsPauseBtn" style="padding:8px 16px;display:none;">⏸ توقف</button>
@@ -441,13 +307,11 @@
 
       <div class="modal-body" id="modalBody"></div>
       
-      <!-- بخش اخبار مرتبط -->
       <div id="relatedSection" style="display:none;margin-top:30px;padding-top:20px;border-top:1px solid var(--glass-border);">
         <div style="font-size:0.9rem;font-weight:700;margin-bottom:16px;color:var(--accent-cyan);">🎯 اخبار مرتبط:</div>
         <div id="relatedGrid" style="display:flex;flex-direction:column;gap:10px;"></div>
       </div>
 
-      <!-- بخش اشتراک‌گذاری -->
       <div style="margin-top:30px;padding-top:24px;border-top:1px solid var(--glass-border);">
         <div style="font-size:0.9rem;font-weight:700;margin-bottom:16px;color:var(--text-muted);">📤 اشتراک‌گذاری:</div>
         <div class="share-grid">
@@ -470,28 +334,17 @@
 </div>
 
 <script>
-/* ==================== تنظیمات و ثابت‌ها ==================== */
-const VERSION = '10.1';
+/* ==================== تنظیمات ==================== */
+const VERSION = '10.2';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
 const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
 const MANUAL_NEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
-const INITIAL_COUNT = 10;
-const DISPLAY_STEP = 10;
-const DISPLAY_INTERVAL = 5000;
-const TRENDING_VIEW_THRESHOLD = 1000;
+const INITIAL_COUNT = 10; const DISPLAY_STEP = 10; const DISPLAY_INTERVAL = 5000; const TRENDING_VIEW_THRESHOLD = 1000;
 
-/* ==================== وضعیت برنامه ==================== */
-let newsViews = {};
-let displayLimit = INITIAL_COUNT;
-let displayTimer = null;
-let allNews = [];
-let activeMode = 'all';
-let activeCategory = 'همه';
-let searchQuery = '';
-let currentNews = null;
-let isLoading = false;
-let readLinks = new Set();
-let savedLinks = new Set();
+/* ==================== وضعیت ==================== */
+let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; let allNews = [];
+let activeMode = 'all'; let activeCategory = 'همه'; let searchQuery = ''; let currentNews = null;
+let isLoading = false; let readLinks = new Set(); let savedLinks = new Set();
 let ttsSpeaking = false, ttsPaused = false, ttsQueue = [], ttsCurrentIndex = 0;
 
 const CATEGORIES = {
@@ -584,7 +437,7 @@ function updateViewsUI(link) {
   if (currentNews && currentNews.link === link) { const meta = document.getElementById('modalMeta'); if (meta) { const old = meta.querySelector('.views-tag'); if (old) old.remove(); if (html) meta.insertAdjacentHTML('beforeend', html); } }
 }
 
-/* ==================== تاریخ، آب‌وهوا و دلار ==================== */
+/* ==================== تاریخ، آب‌وهوا، دلار، طلا و AQI ==================== */
 function updatePersianDateTime() {
   const now = new Date(); document.getElementById('persianDate').textContent = now.toLocaleDateString('fa-IR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   document.getElementById('clockTime').textContent = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -594,24 +447,66 @@ async function loadWeather() {
   try { const url = 'https://api.open-meteo.com/v1/forecast?latitude=35.6892&longitude=51.3890&current=temperature_2m,weather_code&timezone=Asia/Tehran'; const res = await fetchWithTimeout(url, 8000); if (!res.ok) throw 0; const data = await res.json(); document.getElementById('weatherTemp').textContent = `${Math.round(data.current.temperature_2m)}°C`; const codes = { 0: 'صاف ☀️', 1: 'صاف 🌤️', 2: 'نیمه ابری ⛅', 3: 'ابری ☁️', 61: 'باران 🌧️', 80: 'رگبار 🌦️', 95: 'رعد ⛈️' }; document.getElementById('weatherDesc').textContent = codes[data.current.weather_code] || `کد ${data.current.weather_code}`; } catch { document.getElementById('weatherTemp').textContent = '—'; document.getElementById('weatherDesc').textContent = '—'; }
 }
 
-// دریافت قیمت لحظه‌ای دلار (نسخه اصلاح شده بدون CORS)
-async function loadDollarPrice() {
+// دریافت قیمت دلار و طلا
+async function loadMarketPrices() {
   try {
     const res = await fetchWithTimeout('https://raw.githubusercontent.com/iran-market/iran-market.github.io/main/data/popular.json', 8000);
     if (!res.ok) throw new Error('HTTP error');
     const payload = await res.json();
-    const usd = payload.data.find(item => item.symbol === 'USD_IRR_FREE');
     
+    const usd = payload.data.find(item => item.symbol === 'USD_IRR_FREE');
     if (usd) {
       document.getElementById('dollarPrice').textContent = usd.price.toLocaleString('fa-IR') + ' تومان';
       document.getElementById('dollarChange').textContent = 'بازار آزاد';
-    } else {
-      throw new Error('نماد دلار پیدا نشد');
+    }
+
+    const gold = payload.data.find(item => item.symbol === 'GOLD_18K_IRR');
+    if (gold) {
+      document.getElementById('goldPrice').textContent = gold.price.toLocaleString('fa-IR') + ' تومان';
+      const changeSign = gold.change_pct > 0 ? '▲' : (gold.change_pct < 0 ? '▼' : '');
+      document.getElementById('goldChange').textContent = `${changeSign} ${Math.abs(gold.change_pct).toFixed(1)}% تغییر`;
     }
   } catch (e) {
-    console.warn('Dollar price error:', e);
-    document.getElementById('dollarPrice').textContent = '—';
-    document.getElementById('dollarChange').textContent = '—';
+    console.warn('Market price error:', e);
+    document.getElementById('dollarPrice').textContent = '—'; document.getElementById('dollarChange').textContent = '—';
+    document.getElementById('goldPrice').textContent = '—'; document.getElementById('goldChange').textContent = '—';
+  }
+}
+
+// دریافت شاخص آلودگی هوا (AQI)
+async function loadAQI() {
+  try {
+    const res = await fetchWithTimeout('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=35.6892&longitude=51.3890&current=us_aqi', 8000);
+    if (!res.ok) throw new Error('HTTP error');
+    const data = await res.json();
+    const aqi = data.current.us_aqi;
+
+    document.getElementById('aqiValue').textContent = aqi.toLocaleString('fa-IR');
+    
+    let color = '#10b981'; // Good
+    let status = 'پاک';
+    if (aqi > 50) { color = '#fbbf24'; status = 'متوسط'; }
+    if (aqi > 100) { color = '#f97316'; status = 'ناسالم برای گروه‌های حساس'; }
+    if (aqi > 150) { color = '#ef4444'; status = 'ناسالم'; }
+    if (aqi > 200) { color = '#8b5cf6'; status = 'بسیار ناسالم'; }
+
+    document.getElementById('aqiStatus').textContent = status;
+    document.getElementById('aqiStatus').style.color = color;
+    
+    // محاسبه درجه چرخش عقربه (بین 0 تا 300 بازه رو به 180 درجه نگاشت میکنیم)
+    const maxAqiForGauge = 300;
+    const cappedAqi = Math.min(aqi, maxAqiForGauge);
+    const deg = (cappedAqi / maxAqiForGauge) * 180;
+    
+    // چرخش عقربه و رنگی کردن گیج
+    document.getElementById('aqiNeedle').style.transform = `translateX(-50%) rotate(${deg - 90}deg)`;
+    document.getElementById('aqiFill').style.setProperty('--aqi-color', color);
+    document.getElementById('aqiFill').style.setProperty('--aqi-deg', `${deg}deg`);
+
+  } catch (e) {
+    console.warn('AQI error:', e);
+    document.getElementById('aqiValue').textContent = '—';
+    document.getElementById('aqiStatus').textContent = '—';
   }
 }
 
@@ -722,7 +617,6 @@ function startProgressiveDisplay() {
   }, DISPLAY_INTERVAL);
 }
 
-/* اصلاح باگ تعداد اخبار: شمارش از روی کل دیتابیس */
 function buildFilters() {
   let baseList = allNews;
   if (activeMode === 'unread') baseList = baseList.filter(n => !readLinks.has(n.link));
@@ -735,10 +629,7 @@ function buildFilters() {
   }
 
   const counts = {};
-  baseList.forEach(n => {
-    const cat = n.category || 'عمومی';
-    counts[cat] = (counts[cat] || 0) + 1;
-  });
+  baseList.forEach(n => { const cat = n.category || 'عمومی'; counts[cat] = (counts[cat] || 0) + 1; });
 
   const totalCount = baseList.length;
   const cats = ['همه', ...Object.keys(counts).sort((a, b) => counts[b] - counts[a])];
@@ -750,12 +641,7 @@ function buildFilters() {
     return `<button class="filter-btn ${c === activeCategory ? 'active' : ''}" data-cat="${escapeHtml(c)}">${escapeHtml(label)}</button>`;
   }).join('');
   
-  box.querySelectorAll('button').forEach(btn => btn.onclick = () => { 
-    activeCategory = btn.dataset.cat; 
-    displayLimit = INITIAL_COUNT; 
-    buildFilters(); 
-    render(); 
-  });
+  box.querySelectorAll('button').forEach(btn => btn.onclick = () => { activeCategory = btn.dataset.cat; displayLimit = INITIAL_COUNT; buildFilters(); render(); });
 }
 
 function getFilteredList() {
@@ -842,7 +728,7 @@ function closeModal() {
   document.getElementById('ttsStopBtn').style.display = 'none'; 
 }
 
-/* ==================== رویدادهای کلیک ==================== */
+/* ==================== رویدادها ==================== */
 document.getElementById('content').addEventListener('click', (e) => {
   const star = e.target.closest('.star-btn');
   if (star) { e.stopPropagation(); const idx = +star.dataset.star; const saved = toggleSaved(window.__currentList[idx].link); showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); star.classList.toggle('saved', saved); star.textContent = saved ? '★' : '☆'; updateUI(); return; }
@@ -896,19 +782,19 @@ document.getElementById('statsBtn').onclick = () => {
 };
 document.getElementById('statsClose').onclick = () => document.getElementById('statsModal').classList.remove('open');
 
-/* ==================== شروع برنامه ==================== */
+/* ==================== شروع ==================== */
 document.getElementById('logoImg').src = ICON_URL;
 document.getElementById('appleIcon').href = ICON_URL;
 document.getElementById('fontVal').textContent = parseFloat(getComputedStyle(document.documentElement).fontSize).toLocaleString('fa-IR');
 
 updatePersianDateTime(); setInterval(updatePersianDateTime, 1000); 
 loadWeather(); 
-loadDollarPrice(); setInterval(loadDollarPrice, 5 * 60 * 1000); 
+loadMarketPrices(); setInterval(loadMarketPrices, 5 * 60 * 1000); 
+loadAQI(); setInterval(loadAQI, 10 * 60 * 1000); // هر ۱۰ دقیقه آپدیت AQI
 startCountdown(); 
 setupTTS();
 loadAll(); setInterval(loadAll, 5 * 60 * 1000);
 
-// PWA Manifest
 try {
   const manifest = { name: 'Lreporter', short_name: 'Lreporter', start_url: location.pathname || '/', display: 'standalone', background_color: '#050810', theme_color: '#3b82f6', icons: [{ src: ICON_URL, sizes: '192x192', type: 'image/svg+xml' }, { src: ICON_URL, sizes: '512x512', type: 'image/svg+xml' }] };
   document.getElementById('manifestLink').href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/json' }));
