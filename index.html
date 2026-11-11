@@ -69,7 +69,7 @@
   .info-card .value { font-size: 0.95rem; font-weight: 800; }
   .info-card .sub { font-size: 0.75rem; color: var(--text-muted); }
 
-  /* 🎯 گیج دایره‌ای کامل (شبیه اپ‌های هواشناسی) */
+  /* 🎯 گیج دایره‌ای کامل */
   .aqi-card { padding: 12px 20px; }
   .aqi-gauge-wrap { position: relative; width: 64px; height: 64px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
   
@@ -96,13 +96,14 @@
   [data-theme="light"] .aqi-gauge-inner { background: #e2e8f0; box-shadow: inset 0 2px 8px rgba(0,0,0,0.1); }
 
   .aqi-gauge-needle { 
-    position: absolute; top: -4px; left: 50%; 
-    width: 4px; height: 18px; background: #fff; 
-    border-radius: 2px; transform-origin: bottom center; 
+    position: absolute; bottom: 50%; left: 50%; 
+    width: 4px; height: 26px; background: #fff; 
+    border-radius: 4px; transform-origin: bottom center; 
     transform: translateX(-50%) rotate(0deg); 
     transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
     z-index: 3; box-shadow: 0 0 8px rgba(0,0,0,0.8); border: 1px solid rgba(0,0,0,0.2); 
   }
+  .demo-warning { font-size: 10px; color: #ef4444; margin-right: 4px; cursor: help; }
 
   .nav-wrap { max-width: 1400px; margin: 0 auto; padding: 16px 24px 8px; display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; }
   .nav-wrap::-webkit-scrollbar { display: none; }
@@ -249,7 +250,7 @@
       <div class="aqi-gauge-needle" id="aqiNeedle"></div>
     </div>
     <div class="body">
-      <span class="label">آلودگی هوای تهران (AQI)</span>
+      <span class="label">آلودگی هوای تهران (AQI) <span id="aqiDemoWarning" class="demo-warning" style="display:none;" title="برای دقت ۱۰۰٪ توکن WAQI خود را در کد قرار دهید">*</span></span>
       <span class="sub" id="aqiStatus" style="font-weight:800;">—</span>
     </div>
   </div>
@@ -267,7 +268,7 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v11.0</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v11.2</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -343,10 +344,12 @@
 </div>
 
 <script>
-const VERSION = '11.0';
+const VERSION = '11.2';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
-const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
+const VIEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/views';
 const MANUAL_NEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
+// 🔑 توکن WAQI (دریافت رایگان از aqicn.org/data-platform/token)
+const WAQI_TOKEN = 'demo'; 
 const INITIAL_COUNT = 10; const DISPLAY_STEP = 10; const DISPLAY_INTERVAL = 5000; const TRENDING_VIEW_THRESHOLD = 1000;
 
 let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; let allNews = [];
@@ -476,27 +479,29 @@ async function loadMarketPrices() {
   }
 }
 
-// 🎯 دریافت دقیق AQI از ایستگاه‌های زمینی تهران (WAQI)
 async function loadAQI() {
   let aqi = null;
+  
+  // ۱. تلاش برای دریافت دیتای دقیق ایستگاه زمینی از WAQI
   try {
-    // اول از دیتای ایستگاه‌های زمینی استفاده میکنیم
-    const res = await fetchWithTimeout('https://api.waqi.info/feed/tehran/?token=demo', 6000);
+    const res = await fetchWithTimeout(`https://api.waqi.info/feed/tehran/?token=${WAQI_TOKEN}`, 6000);
     if (res.ok) {
       const data = await res.json();
       if (data.status === 'ok' && data.data && data.data.aqi) {
         aqi = data.data.aqi;
+        document.getElementById('aqiDemoWarning').style.display = WAQI_TOKEN === 'demo' ? 'inline' : 'none';
       }
     }
   } catch(e) {}
 
+  // ۲. اگر توکن demo بود یا خطا داد، از دیتای ماهواره‌ای استفاده میکنیم
   if (aqi === null) {
-    // در صورت قطعی، از دیتای ماهواره‌ای استفاده میکنیم
     try {
       const res = await fetchWithTimeout('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=35.6892&longitude=51.3890&current=us_aqi', 8000);
       if (res.ok) {
         const data = await res.json();
         aqi = data.current.us_aqi;
+        document.getElementById('aqiDemoWarning').style.display = 'inline'; // چون ماهواره‌ای است، ستاره نمایش داده میشود
       }
     } catch(e) {}
   }
@@ -515,14 +520,14 @@ async function loadAQI() {
     document.getElementById('aqiStatus').textContent = status;
     document.getElementById('aqiStatus').style.color = color;
     
-    // چرخش عقربه (۰ تا ۳۶۰ درجه)
+    // محاسبه درجه چرخش عقربه (۰ تا ۳۶۰ درجه)
     const maxAqiForGauge = 300;
     const cappedAqi = Math.min(aqi, maxAqiForGauge);
     const deg = (cappedAqi / maxAqiForGauge) * 360;
     document.getElementById('aqiNeedle').style.transform = `translateX(-50%) rotate(${deg}deg)`;
   } else {
     document.getElementById('aqiValue').textContent = '—';
-    document.getElementById('aqiStatus').textContent = 'خطا';
+    document.getElementById('aqiStatus').textContent = 'خطا در دریافت';
   }
 }
 
