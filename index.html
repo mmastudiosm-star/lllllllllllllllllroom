@@ -235,7 +235,8 @@
     </div>
     <div class="body">
       <span class="label">آلودگی هوای تهران (AQI)</span>
-      <span class="sub" id="aqiStatus" style="font-weight:800;">—</span>
+      <span class="value" id="aqiValue">—</span>
+      <span class="sub" id="aqiStatus">در حال دریافت...</span>
     </div>
   </div>
 </div>
@@ -252,7 +253,7 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v12.1</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v12.2</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -386,10 +387,10 @@
 
 <script>
 /* ==================== تنظیمات ==================== */
-const VERSION = '12.1';
-const SUPABASE_URL = 'https://kemwkxuwhgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
-const VIEWS_API = 'https://kemwkxuwhgqqfyfpbmm.supabase.co/functions/v1/views';
-const MANUAL_NEWS_API = 'https://kemwkxuwhgqqfyfpbmm.supabase.co/functions/v1/manual-news';
+const VERSION = '12.2';
+const SUPABASE_URL = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
+const VIEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/views';
+const MANUAL_NEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
 const INITIAL_COUNT = 10; const DISPLAY_STEP = 10; const DISPLAY_INTERVAL = 5000; const TRENDING_VIEW_THRESHOLD = 1000;
 
 let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; let allNews = [];
@@ -519,16 +520,17 @@ async function loadMarketPrices() {
   }
 }
 
-// ✅ تابع اصلاح‌شده آلودگی هوا
+// ✅ تابع اصلاح‌شده آلودگی هوا (حل مشکل باگ)
 async function loadAQI() {
   const statusEl = document.getElementById('aqiStatus');
   const valEl = document.getElementById('aqiValue');
-  
+  const needleEl = document.getElementById('aqiNeedle');
+  const fillEl = document.getElementById('aqiFill');
+
   statusEl.textContent = 'در حال دریافت...';
   statusEl.style.color = 'var(--text-muted)';
 
   try {
-    // استفاده مستقیم از Open-Meteo (پایدارترین API بدون نیاز به توکن)
     const res = await fetchWithTimeout('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=35.6892&longitude=51.3890&current=us_aqi', 10000);
     if (!res.ok) throw new Error('API Error');
     
@@ -536,7 +538,7 @@ async function loadAQI() {
     
     if (data && data.current && typeof data.current.us_aqi === 'number') {
       const aqi = data.current.us_aqi;
-      valEl.textContent = aqi.toLocaleString('fa-IR');
+      if (valEl) valEl.textContent = aqi.toLocaleString('fa-IR');
       
       let color = '#10b981'; let status = 'پاک';
       if (aqi > 50) { color = '#fbbf24'; status = 'قابل قبول'; }
@@ -548,24 +550,23 @@ async function loadAQI() {
       statusEl.textContent = status;
       statusEl.style.color = color;
       
-      // چرخش عقربه نیم‌دایره
       const maxAqiForGauge = 300;
       const cappedAqi = Math.min(aqi, maxAqiForGauge);
       const deg = (cappedAqi / maxAqiForGauge) * 180;
       
-      document.getElementById('aqiNeedle').style.transform = `translateX(-50%) rotate(${deg - 90}deg)`;
-      document.getElementById('aqiFill').style.setProperty('--aqi-color', color);
-      document.getElementById('aqiFill').style.setProperty('--aqi-deg', `${deg}deg`);
+      if (needleEl) needleEl.style.transform = `translateX(-50%) rotate(${deg - 90}deg)`;
+      if (fillEl) {
+        fillEl.style.setProperty('--aqi-color', color);
+        fillEl.style.setProperty('--aqi-deg', `${deg}deg`);
+      }
     } else {
       throw new Error('Invalid data format');
     }
   } catch (err) {
     console.warn('AQI Error:', err);
     statusEl.textContent = 'خطای شبکه';
-    valEl.textContent = '—';
-    
-    // تلاش مجدد بعد از ۱۰ ثانیه در صورت قطعی
-    setTimeout(loadAQI, 10000);
+    if (valEl) valEl.textContent = '—';
+    setTimeout(loadAQI, 10000); 
   }
 }
 
