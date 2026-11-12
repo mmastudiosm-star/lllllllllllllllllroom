@@ -253,7 +253,7 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v12.2</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v13.0</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -387,10 +387,11 @@
 
 <script>
 /* ==================== تنظیمات ==================== */
-const VERSION = '12.2';
-const SUPABASE_URL = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
-const VIEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/views';
-const MANUAL_NEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
+const VERSION = '13.0';
+// ✅ آدرس‌های اصلاح‌شده (حرف q و g درست شد)
+const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
+const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
+const MANUAL_NEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
 const INITIAL_COUNT = 10; const DISPLAY_STEP = 10; const DISPLAY_INTERVAL = 5000; const TRENDING_VIEW_THRESHOLD = 1000;
 
 let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; let allNews = [];
@@ -520,12 +521,14 @@ async function loadMarketPrices() {
   }
 }
 
-// ✅ تابع اصلاح‌شده آلودگی هوا (حل مشکل باگ)
+// ✅ تابع اصلاح‌شده و ضدضربه آلودگی هوا
 async function loadAQI() {
   const statusEl = document.getElementById('aqiStatus');
   const valEl = document.getElementById('aqiValue');
   const needleEl = document.getElementById('aqiNeedle');
   const fillEl = document.getElementById('aqiFill');
+
+  if (!statusEl || !valEl || !needleEl || !fillEl) return; // چک امنیتی
 
   statusEl.textContent = 'در حال دریافت...';
   statusEl.style.color = 'var(--text-muted)';
@@ -538,7 +541,7 @@ async function loadAQI() {
     
     if (data && data.current && typeof data.current.us_aqi === 'number') {
       const aqi = data.current.us_aqi;
-      if (valEl) valEl.textContent = aqi.toLocaleString('fa-IR');
+      valEl.textContent = aqi.toLocaleString('fa-IR');
       
       let color = '#10b981'; let status = 'پاک';
       if (aqi > 50) { color = '#fbbf24'; status = 'قابل قبول'; }
@@ -554,19 +557,16 @@ async function loadAQI() {
       const cappedAqi = Math.min(aqi, maxAqiForGauge);
       const deg = (cappedAqi / maxAqiForGauge) * 180;
       
-      if (needleEl) needleEl.style.transform = `translateX(-50%) rotate(${deg - 90}deg)`;
-      if (fillEl) {
-        fillEl.style.setProperty('--aqi-color', color);
-        fillEl.style.setProperty('--aqi-deg', `${deg}deg`);
-      }
+      needleEl.style.transform = `translateX(-50%) rotate(${deg - 90}deg)`;
+      fillEl.style.setProperty('--aqi-color', color);
+      fillEl.style.setProperty('--aqi-deg', `${deg}deg`);
     } else {
-      throw new Error('Invalid data format');
+      throw new Error('Invalid data');
     }
   } catch (err) {
     console.warn('AQI Error:', err);
-    statusEl.textContent = 'خطای شبکه';
-    if (valEl) valEl.textContent = '—';
-    setTimeout(loadAQI, 10000); 
+    statusEl.textContent = 'خطا در دریافت';
+    valEl.textContent = '—';
   }
 }
 
