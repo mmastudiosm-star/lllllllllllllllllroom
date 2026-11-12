@@ -247,7 +247,7 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v18.0</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v16.4</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -337,11 +337,7 @@
               <option>عمومی</option><option>سیاسی</option><option>اقتصاد</option><option>ورزش</option><option>فناوری</option><option>سلامت</option><option>فرهنگ</option><option>حوادث</option>
             </select>
           </div>
-          <div>
-            <label style="display:block; margin-bottom:8px; font-size:0.9rem; color:var(--text-muted);">تصویر خبر (اختیاری)</label>
-            <input type="file" id="anImageFile" accept="image/*" style="padding: 10px; background: var(--bg); border: 1px solid var(--glass-border); border-radius: 8px; width: 100%;">
-            <div id="uploadStatus" style="font-size: 0.8rem; color: var(--accent-cyan); margin-top: 5px;"></div>
-          </div>
+          <input type="url" id="anImage" placeholder="لینک تصویر (اختیاری)">
           <textarea id="anContent" placeholder="متن خبر *" required></textarea>
           <button type="submit" class="btn btn-primary">ثبت و انتشار در سایت</button>
         </form>
@@ -420,15 +416,10 @@
 
 <script>
 /* ==================== تنظیمات ==================== */
-const VERSION = '18.0';
+const VERSION = '16.4';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
-const VIEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/views';
-const MANUAL_NEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
-const UPLOAD_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/upload-image';
-
-// ⚠️ اینجا کلید آنون خودت رو جایگزین کن
-const SUPABASE_ANON_KEY = 'sb_publishable_OsUd9T9GvvY6rvyycxlQSA_xFazoXBe';
-
+const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
+const MANUAL_NEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
 const INITIAL_COUNT = 10; const DISPLAY_STEP = 10; const DISPLAY_INTERVAL = 5000; const TRENDING_VIEW_THRESHOLD = 1000;
 
 let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; let allNews = [];
@@ -667,9 +658,7 @@ async function loadAll() {
   if (isLoading) return; isLoading = true;
   const badge = document.getElementById('liveBadge'); badge.classList.add('loading'); badge.innerHTML = '<span class="dot"></span> دریافت...';
   try {
-    const [resNews, resManual] = await Promise.allSettled([fetchWithTimeout(SUPABASE_URL, 15000), fetchWithTimeout(MANUAL_NEWS_API, 10000, {
-      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
-    })]);
+    const [resNews, resManual] = await Promise.allSettled([fetchWithTimeout(SUPABASE_URL, 15000), fetchWithTimeout(MANUAL_NEWS_API, 10000)]);
     const knownLinks = new Set(allNews.map(n => n.link));
     
     if (resNews.status === 'fulfilled' && resNews.value.ok) {
@@ -873,7 +862,7 @@ document.getElementById('statsBtn').onclick = () => {
 document.getElementById('statsClose').onclick = () => document.getElementById('statsModal').classList.remove('open');
 
 /* =========================================================
-   🌟 سیستم ثبت‌نام، ورود و پنل ادمین
+   🌟 سیستم ثبت‌نام، ورود و پنل ادمین (جدید)
    ========================================================= */
 
 const authModal = document.getElementById('authModal');
@@ -984,12 +973,7 @@ async function loadAdminData() {
   newsList.innerHTML = '<tr><td colspan="4" style="text-align:center;">در حال بارگذاری...</td></tr>';
   
   try {
-    const res = await fetchWithTimeout(MANUAL_NEWS_API + '?all=1', 10000, {
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-      }
-    });
+    const res = await fetchWithTimeout(MANUAL_NEWS_API + '?all=1', 10000);
     if (res.ok) {
       const manualNews = await res.json();
       if (Array.isArray(manualNews) && manualNews.length > 0) {
@@ -1014,82 +998,36 @@ async function loadAdminData() {
 
 document.getElementById('addNewsForm').onsubmit = async (e) => {
   e.preventDefault();
-  
-  const btn = e.target.querySelector('button');
-  const fileInput = document.getElementById('anImageFile');
-  const statusEl = document.getElementById('uploadStatus');
-  
-  let imageUrl = '';
+  const payload = {
+    title: document.getElementById('anTitle').value.trim(),
+    source: document.getElementById('anSource').value.trim() || 'خبر دستی',
+    category: document.getElementById('anCategory').value,
+    image: document.getElementById('anImage').value.trim(),
+    content: document.getElementById('anContent').value.trim(),
+    published: true
+  };
 
-  btn.textContent = '⏳ در حال پردازش...'; 
-  btn.disabled = true;
-  if(statusEl) statusEl.textContent = '';
+  const btn = e.target.querySelector('button');
+  btn.textContent = '⏳ در حال ثبت...'; btn.disabled = true;
 
   try {
-    // اگر عکسی انتخاب شده بود، آپلودش کن
-    if (fileInput.files.length > 0) {
-      const file = fileInput.files[0];
-      if(statusEl) statusEl.textContent = '⏳ در حال آپلود عکس...';
-
-      const base64 = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-
-      const uploadRes = await fetchWithTimeout(UPLOAD_API, 20000, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-        },
-        body: JSON.stringify({ base64, fileName: file.name })
-      });
-
-      if (!uploadRes.ok) throw new Error('خطا در آپلود عکس');
-      
-      const uploadData = await uploadRes.json();
-      imageUrl = uploadData.url;
-      if(statusEl) statusEl.textContent = '✅ عکس آپلود شد';
-    }
-
-    // حالا خبر رو با لینک عکس ثبت کن
-    const payload = {
-      title: document.getElementById('anTitle').value.trim(),
-      source: document.getElementById('anSource').value.trim() || 'خبر دستی',
-      category: document.getElementById('anCategory').value,
-      image: imageUrl,
-      content: document.getElementById('anContent').value.trim(),
-      published: true
-    };
-
     const res = await fetchWithTimeout(MANUAL_NEWS_API, 10000, {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-
     if (res.ok) {
       showToast('✅ خبر با موفقیت ثبت شد');
       e.target.reset();
-      if(statusEl) statusEl.textContent = '';
       loadAdminData();
       loadAll();
     } else {
       showToast('خطا در ثبت خبر');
     }
   } catch (err) {
-    showToast('خطا: ' + err.message);
-    if(statusEl) statusEl.textContent = '❌ خطا در آپلود';
+    showToast('خطای شبکه در ثبت خبر');
   } finally {
-    btn.textContent = 'ثبت و انتشار در سایت'; 
-    btn.disabled = false;
+    btn.textContent = 'ثبت و انتشار در سایت'; btn.disabled = false;
   }
 };
 
@@ -1097,11 +1035,7 @@ window.deleteNews = async (id) => {
   if (!confirm('این خبر حذف شود؟')) return;
   try {
     const res = await fetchWithTimeout(MANUAL_NEWS_API + '?id=' + id, 10000, {
-      method: 'DELETE',
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-      }
+      method: 'DELETE'
     });
     if (res.ok) {
       showToast('🗑 خبر حذف شد');
