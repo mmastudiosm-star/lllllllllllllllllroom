@@ -69,7 +69,7 @@
   .info-card .value { font-size: 0.95rem; font-weight: 800; }
   .info-card .sub { font-size: 0.75rem; color: var(--text-muted); }
 
-  /* 🎯 گیج دایره‌ای کامل برای AQI */
+  /* 🎯 گیج دایره‌ای کامل */
   .aqi-card { padding: 12px 20px; }
   .aqi-gauge-wrap { position: relative; width: 64px; height: 64px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
   
@@ -281,7 +281,7 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v14.1</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v14.2</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -415,7 +415,7 @@
 
 <script>
 /* ==================== تنظیمات ==================== */
-const VERSION = '14.1';
+const VERSION = '14.2';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
 const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
 const MANUAL_NEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
@@ -548,7 +548,7 @@ async function loadMarketPrices() {
   }
 }
 
-// ✅ تابع آلودگی هوا با گیج دایره‌ای
+// ✅ تابع آلودگی هوا با غیرفعال‌سازی کش و گیج دایره‌ای
 async function loadAQI() {
   const statusEl = document.getElementById('aqiStatus');
   const valEl = document.getElementById('aqiValue');
@@ -560,7 +560,9 @@ async function loadAQI() {
   statusEl.style.color = 'var(--text-muted)';
 
   try {
-    const res = await fetchWithTimeout('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=35.6892&longitude=51.3890&current=us_aqi', 10000);
+    // اضافه کردن timestamp به URL برای جلوگیری از کش شدن
+    const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=35.6892&longitude=51.3890&current=us_aqi&t=${Date.now()}`;
+    const res = await fetchWithTimeout(url, 10000, { cache: 'no-store' });
     if (!res.ok) throw new Error('API Error');
     
     const data = await res.json();
