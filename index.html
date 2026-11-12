@@ -105,6 +105,7 @@
   .card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.8; flex: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .card-footer { display: flex; justify-content: space-between; border-top: 1px solid var(--glass-border); padding-top: 14px; font-size: 0.8rem; color: var(--text-muted); }
 
+  /* 🌟 مودال‌ها و فرم‌ها */
   .modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(5,8,16,0.85); backdrop-filter: blur(12px); display: none; align-items: flex-start; justify-content: center; padding: 20px; overflow-y: auto; }
   .modal-overlay.open { display: flex; animation: fadeIn 0.3s; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -123,10 +124,6 @@
   .modal-body img { max-width: 100%; border-radius: var(--radius-md); margin: 20px 0; }
   .modal-body a { color: var(--accent-cyan); text-decoration: none; border-bottom: 1px dashed; }
 
-  .related-item { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 12px 16px; border-radius: var(--radius-md); cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
-  .related-item:hover { border-color: var(--accent-blue); background: var(--glass-hover); }
-  .related-item .ri-title { font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
-  .related-item .ri-meta { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
   .share-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; margin-top: 20px; }
   .share-btn { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-main); padding: 12px 8px; border-radius: var(--radius-md); display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.3s; }
   .share-btn:hover { background: var(--glass-hover); transform: translateY(-3px); border-color: var(--accent-blue); }
@@ -134,10 +131,7 @@
   .btn { padding: 12px 24px; border-radius: var(--radius-md); font-weight: 700; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-main); transition: 0.3s; font-family: inherit; }
   .btn:hover { background: var(--glass-hover); border-color: var(--accent-blue); transform: translateY(-2px); }
   .btn-primary { background: var(--gradient-main); border: none; color: #fff; box-shadow: 0 4px 15px rgba(59,130,246,0.3); }
-  .skeleton { background: var(--glass-bg); border-radius: var(--radius-lg); height: 380px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; }
-  .skeleton::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); animation: shimmer 1.5s infinite; }
-  @keyframes shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
-
+  
   /* 🌟 استایل‌های سیستم لاگین و پنل ادمین */
   .auth-input { width: 100%; padding: 12px 16px; margin-bottom: 12px; background: var(--bg); border: 1px solid var(--glass-border); border-radius: 10px; color: var(--text-main); font-family: inherit; font-size: 1rem; outline: none; transition: 0.3s; }
   .auth-input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px var(--accent-glow); }
@@ -146,6 +140,23 @@
   .admin-table th, .admin-table td { padding: 12px; text-align: right; border-bottom: 1px solid var(--glass-border); }
   .admin-table th { color: var(--accent-cyan); font-weight: 800; background: rgba(0,0,0,0.2); }
   .admin-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+  /* 🌟 پنل ادمین جدید (تمام صفحه) */
+  .admin-panel { position: fixed; inset: 0; z-index: 4000; background: var(--bg); display: none; flex-direction: row; }
+  .admin-panel.open { display: flex; }
+  .admin-sidebar { width: 260px; background: var(--bg-secondary); border-left: 1px solid var(--glass-border); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .admin-sidebar .logo { margin-bottom: 20px; }
+  .admin-nav-btn { padding: 12px 16px; border-radius: 10px; background: transparent; border: none; color: var(--text-muted); font-family: inherit; font-size: 0.95rem; font-weight: 700; text-align: right; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
+  .admin-nav-btn:hover { background: var(--glass-hover); color: var(--text-main); }
+  .admin-nav-btn.active { background: var(--accent-blue); color: #fff; }
+  .admin-main { flex: 1; padding: 30px; overflow-y: auto; }
+  .admin-tab { display: none; }
+  .admin-tab.active { display: block; animation: fadeIn 0.3s; }
+  .admin-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; }
+  .admin-card h3 { font-size: 1.2rem; margin-bottom: 20px; color: var(--accent-cyan); }
+  .admin-form { display: flex; flex-direction: column; gap: 15px; }
+  .admin-form input, .admin-form textarea, .admin-form select { padding: 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--bg); color: var(--text-main); font-family: inherit; font-size: 0.9rem; }
+  .admin-form textarea { min-height: 120px; resize: vertical; }
 
   @media (max-width: 768px) {
     .header-inner { padding: 12px 16px; }
@@ -161,6 +172,11 @@
     .modal-content { padding: 24px 20px; }
     .share-grid { grid-template-columns: repeat(3, 1fr); }
     .admin-table { font-size: 0.75rem; }
+    .admin-panel { flex-direction: column; }
+    .admin-sidebar { width: 100%; border-left: none; border-bottom: 1px solid var(--glass-border); flex-direction: row; overflow-x: auto; padding: 10px; gap: 10px; }
+    .admin-sidebar .logo { display: none; }
+    .admin-nav-btn { white-space: nowrap; padding: 10px 14px; }
+    .admin-main { padding: 15px; }
   }
   @media (max-width: 400px) { .infobar { grid-template-columns: 1fr; } }
   ::-webkit-scrollbar { width: 6px; }
@@ -177,7 +193,8 @@
     <div class="logo"><img class="logo-img" id="logoImg" alt="Lreporter"><span>Lreporter</span></div>
     <div class="search-box"><input type="text" id="searchInput" placeholder="جستجو در اخبار..."></div>
     <div class="header-actions">
-      <button class="icon-btn" id="adminBtn" title="پنل مدیریت" style="color:var(--accent-gold); border-color:var(--accent-gold);">🔒</button>
+      <button class="icon-btn" id="adminBtn" title="پنل مدیریت" style="display:none; color:var(--accent-gold); border-color:var(--accent-gold);">🔒</button>
+      <button class="icon-btn" id="userBtn" title="پروفایل">👤</button>
       <button class="icon-btn" id="themeBtn" title="تغییر تم">🌙</button>
       <button class="icon-btn" id="statsBtn" title="آمار">📊</button>
       <button class="icon-btn" id="settingsBtn" title="تنظیمات">⚙️</button>
@@ -230,92 +247,102 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v15.0</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v16.0</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
-<!-- 🌟 مودال انتخاب نام کاربری و رمز عبور -->
-<div class="modal-overlay" id="loginGateModal" style="z-index:3000;">
-  <div class="modal" style="max-width:400px; text-align:center;">
+<!-- 🌟 مودال ثبت‌نام و ورود (Auth) -->
+<div class="modal-overlay" id="authModal" style="z-index:5000;">
+  <div class="modal" style="max-width:400px;">
+    <button class="modal-close" id="authClose">✕</button>
     <div class="modal-content">
-      <h2 style="font-size:1.4rem;margin-bottom:16px;color:var(--accent-cyan);">⏳ زمان آزمایش به پایان رسید</h2>
-      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:24px;">برای ادامه استفاده از سایت، لطفاً یک نام کاربری و رمز عبور برای خود انتخاب کنید.</p>
-      <form id="gateForm">
-        <input type="text" id="gateUser" class="auth-input" placeholder="نام کاربری جدید..." required autocomplete="off">
-        <input type="password" id="gatePass" class="auth-input" placeholder="رمز عبور جدید..." required autocomplete="new-password">
-        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:10px;">ثبت‌نام و ادامه</button>
+      <h2 style="font-size:1.5rem;margin-bottom:20px;color:var(--accent-cyan);text-align:center;">👤 ورود / ثبت‌نام</h2>
+      <div style="display:flex; gap:10px; margin-bottom:20px;">
+        <button class="btn active" id="tabLogin" style="flex:1; justify-content:center;">ورود</button>
+        <button class="btn" id="tabRegister" style="flex:1; justify-content:center;">ثبت‌نام</button>
+      </div>
+      <form id="loginForm">
+        <input type="text" id="loginUser" class="auth-input" placeholder="نام کاربری..." required>
+        <input type="password" id="loginPass" class="auth-input" placeholder="رمز عبور..." required>
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">ورود به حساب</button>
+      </form>
+      <form id="registerForm" style="display:none;">
+        <input type="text" id="regUser" class="auth-input" placeholder="نام کاربری جدید..." required>
+        <input type="password" id="regPass" class="auth-input" placeholder="رمز عبور جدید..." required>
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">ساخت حساب</button>
       </form>
     </div>
   </div>
 </div>
 
-<!-- 🌟 مودال ورود ادمین -->
-<div class="modal-overlay" id="adminLoginModal" style="z-index:3000;">
-  <div class="modal" style="max-width:400px; text-align:center;">
-    <button class="modal-close" id="adminLoginClose">✕</button>
-    <div class="modal-content">
-      <h2 style="font-size:1.4rem;margin-bottom:16px;color:var(--accent-gold);">🔐 ورود به پنل مدیریت</h2>
-      <form id="adminLoginForm">
-        <input type="text" id="adminUser" class="auth-input" placeholder="نام کاربری ادمین" required autocomplete="off">
-        <input type="password" id="adminPass" class="auth-input" placeholder="رمز عبور ادمین" required autocomplete="new-password">
-        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:10px; background:var(--accent-gold); color:#000;">ورود</button>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- 🌟 مودال پنل ادمین -->
-<div class="modal-overlay" id="adminPanelModal" style="z-index:3000;">
-  <div class="modal" style="max-width:1000px;">
-    <button class="modal-close" id="adminPanelClose">✕</button>
-    <div class="modal-content">
-      <h2 style="font-size:1.5rem;margin-bottom:20px;color:var(--accent-gold);">📊 پنل مدیریت Lreporter</h2>
-      <p style="color:var(--text-muted); margin-bottom:15px; font-size:0.9rem;">لیست تمام اخبار موجود در دیتابیس (شامل RSS و اخبار دستی):</p>
-      
-      <div style="max-height: 60vh; overflow-y: auto; border: 1px solid var(--glass-border); border-radius: 10px;">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>عنوان خبر</th>
-              <th>منبع</th>
-              <th>دسته‌بندی</th>
-              <th>زمان</th>
-            </tr>
-          </thead>
-          <tbody id="adminNewsList"></tbody>
-        </table>
+<!-- 🌟 پنل ادمین جدید (KOLI KOLI) -->
+<div class="admin-panel" id="adminPanel">
+  <aside class="admin-sidebar">
+    <div class="logo"><img class="logo-img" src="" alt=""><span>ادمین</span></div>
+    <button class="admin-nav-btn active" data-tab="dash">📊 داشبورد</button>
+    <button class="admin-nav-btn" data-tab="news">📰 مدیریت اخبار</button>
+    <button class="admin-nav-btn" data-tab="users">👥 کاربران</button>
+    <button class="admin-nav-btn" data-tab="settings">⚙️ تنظیمات سایت</button>
+    <button class="admin-nav-btn" id="adminLogout" style="margin-top:auto;color:var(--accent-red);">🚪 خروج از پنل</button>
+  </aside>
+  <main class="admin-main">
+    <!-- تب داشبورد -->
+    <div class="admin-tab active" id="tab-dash">
+      <h2>📊 داشبورد مدیریت</h2>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:15px; margin-top:20px;">
+        <div class="admin-card"><h3>کل اخبار</h3><div style="font-size:2rem; font-weight:900;" id="dashTotalNews">0</div></div>
+        <div class="admin-card"><h3>اخبار دستی</h3><div style="font-size:2rem; font-weight:900;" id="dashManualNews">0</div></div>
+        <div class="admin-card"><h3>کاربران</h3><div style="font-size:2rem; font-weight:900;" id="dashUsers">0</div></div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- مودال تنظیمات -->
-<div class="modal-overlay" id="settingsModal" style="z-index:2000;">
-  <div class="modal" style="max-width:400px;">
-    <button class="modal-close" id="settingsClose">✕</button>
-    <div class="modal-content">
-      <h2 style="font-size:1.2rem;margin-bottom:20px;color:var(--accent-cyan);">⚙️ تنظیمات</h2>
-      <div style="margin-bottom:20px;">
-        <label style="display:block;margin-bottom:8px;font-weight:700;color:var(--text-muted);">اندازه فونت</label>
-        <div style="display:flex;gap:10px;align-items:center;">
-          <button class="btn" id="fontMinus">−</button>
-          <span id="fontVal" style="flex:1;text-align:center;font-weight:800;font-size:1.1rem;">۱۶</span>
-          <button class="btn" id="fontPlus">+</button>
+    <!-- تب مدیریت اخبار -->
+    <div class="admin-tab" id="tab-news">
+      <div class="admin-card">
+        <h3>➕ افزودن خبر دستی</h3>
+        <form class="admin-form" id="addNewsForm">
+          <input type="text" id="anTitle" placeholder="عنوان خبر *" required>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <input type="text" id="anSource" placeholder="منبع (مثلاً: خبر دستی)" value="خبر دستی">
+            <select id="anCategory">
+              <option>عمومی</option><option>سیاسی</option><option>اقتصاد</option><option>ورزش</option><option>فناوری</option><option>سلامت</option><option>فرهنگ</option><option>حوادث</option>
+            </select>
+          </div>
+          <input type="url" id="anImage" placeholder="لینک تصویر (اختیاری)">
+          <textarea id="anContent" placeholder="متن خبر *" required></textarea>
+          <button type="submit" class="btn btn-primary">ثبت و انتشار در سایت</button>
+        </form>
+      </div>
+      <div class="admin-card">
+        <h3>📋 لیست اخبار دستی</h3>
+        <div style="max-height:400px; overflow-y:auto;">
+          <table class="admin-table">
+            <thead><tr><th>عنوان</th><th>منبع</th><th>تاریخ</th><th>عملیات</th></tr></thead>
+            <tbody id="adminNewsList"></tbody>
+          </table>
         </div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- مودال آمار -->
-<div class="modal-overlay" id="statsModal" style="z-index:2000;">
-  <div class="modal" style="max-width:450px;">
-    <button class="modal-close" id="statsClose">✕</button>
-    <div class="modal-content">
-      <h2 style="font-size:1.2rem;margin-bottom:20px;color:var(--accent-cyan);">📊 آمار سیستم</h2>
-      <div id="statsContent"></div>
+    <!-- تب کاربران -->
+    <div class="admin-tab" id="tab-users">
+      <div class="admin-card">
+        <h3>👥 لیست کاربران ثبت‌نام‌شده</h3>
+        <table class="admin-table">
+          <thead><tr><th>نام کاربری</th><th>نقش</th><th>تاریخ عضویت</th></tr></thead>
+          <tbody id="adminUserList"></tbody>
+        </table>
+      </div>
     </div>
-  </div>
+
+    <!-- تب تنظیمات -->
+    <div class="admin-tab" id="tab-settings">
+      <div class="admin-card">
+        <h3>⚙️ تنظیمات کلی</h3>
+        <p>این بخش در نسخه‌های بعدی تکمیل می‌شود.</p>
+      </div>
+    </div>
+  </main>
 </div>
 
 <!-- مودال خبر -->
@@ -327,22 +354,17 @@
     <div class="modal-content">
       <div class="modal-meta" id="modalMeta" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;"></div>
       <h1 id="modalTitle"></h1>
-      
       <div class="tts-controls" id="ttsControls" style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
         <button class="btn" id="ttsPlayBtn" style="padding:8px 16px;">🔊 خواندن</button>
         <button class="btn" id="ttsPauseBtn" style="padding:8px 16px;display:none;">⏸ توقف</button>
         <button class="btn" id="ttsStopBtn" style="padding:8px 16px;display:none;">⏹ پایان</button>
       </div>
-
       <div class="modal-body" id="modalBody"></div>
-      
       <div id="relatedSection" style="display:none;margin-top:30px;padding-top:20px;border-top:1px solid var(--glass-border);">
         <div style="font-size:0.9rem;font-weight:700;margin-bottom:16px;color:var(--accent-cyan);">🎯 اخبار مرتبط:</div>
         <div id="relatedGrid" style="display:flex;flex-direction:column;gap:10px;"></div>
       </div>
-
       <div style="margin-top:30px;padding-top:24px;border-top:1px solid var(--glass-border);">
-        <div style="font-size:0.9rem;font-weight:700;margin-bottom:16px;color:var(--text-muted);">📤 اشتراک‌گذاری:</div>
         <div class="share-grid">
           <button class="share-btn telegram" data-share="telegram"><svg viewBox="0 0 24 24" fill="#0088cc"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span>تلگرام</span></button>
           <button class="share-btn whatsapp" data-share="whatsapp"><svg viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg><span>واتساپ</span></button>
@@ -364,7 +386,7 @@
 
 <script>
 /* ==================== تنظیمات ==================== */
-const VERSION = '15.0';
+const VERSION = '16.0';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
 const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
 const MANUAL_NEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
@@ -374,6 +396,9 @@ let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; l
 let activeMode = 'all'; let activeCategory = 'همه'; let searchQuery = ''; let currentNews = null;
 let isLoading = false; let readLinks = new Set(); let savedLinks = new Set();
 let ttsSpeaking = false, ttsPaused = false, ttsQueue = [], ttsCurrentIndex = 0;
+
+let currentUser = null;
+let usersDB = JSON.parse(localStorage.getItem('lrep_users') || '[]');
 
 const CATEGORIES = {
   'جنگ':    ['جنگ', 'حمله', 'موشک', 'آتش‌بس', 'غزه', 'اوکراین', 'انفجار', 'نظامی', 'پدافند', 'رزمایش'],
@@ -399,6 +424,18 @@ function safeParse(str, fallback) { try { return JSON.parse(str); } catch { retu
   if (savedFont) document.documentElement.style.setProperty('--base-font-size', savedFont + 'px');
   const savedTheme = localStorage.getItem('lrep_theme_v10');
   if (savedTheme === 'light') { document.documentElement.setAttribute('data-theme', 'light'); document.getElementById('themeBtn').textContent = '☀️'; }
+  
+  // ادمین پیش‌فرض
+  if (!usersDB.find(u => u.username === 'mma')) {
+    usersDB.push({ username: 'mma', password: '1405', role: 'admin', date: new Date().toISOString() });
+    localStorage.setItem('lrep_users', JSON.stringify(usersDB));
+  }
+  // چک کردن یوزر لاگین شده
+  const savedUser = localStorage.getItem('lrep_current_user');
+  if (savedUser) {
+    currentUser = JSON.parse(savedUser);
+    updateAuthUI();
+  }
 })();
 
 function saveRead() { try { localStorage.setItem('lrep_read_v10', JSON.stringify([...readLinks].slice(-3000))); } catch {} }
@@ -560,8 +597,7 @@ async function fetchFallbackNews() {
     const feeds = [
       { name: 'ایرنا', url: 'https://www.irna.ir/rss' },
       { name: 'مهر', url: 'https://www.mehrnews.com/rss' },
-      { name: 'ایسنا', url: 'https://www.isna.ir/rss' },
-      { name: 'تابناک', url: 'https://www.tabnak.ir/fa/rss/allnews' }
+      { name: 'ایسنا', url: 'https://www.isna.ir/rss' }
     ];
     const results = await Promise.allSettled(feeds.map(f => 
       fetchWithTimeout(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(f.url)}`, 10000)
@@ -574,25 +610,15 @@ async function fetchFallbackNews() {
         res.value.items.forEach(item => {
           let plain = item.description ? item.description.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : '';
           fallbackNews.push({
-            title: item.title,
-            link: item.link,
-            summary: plain.slice(0, 250) + (plain.length > 250 ? '...' : ''),
-            content: item.content || item.description || '',
-            plain: plain,
-            image: item.thumbnail || '',
-            date: item.pubDate || new Date().toISOString(),
-            source: feeds[index].name,
-            category: detectCategory(item.title + ' ' + plain),
-            textLength: plain.length
+            title: item.title, link: item.link, summary: plain.slice(0, 250), content: item.content || item.description || '', plain: plain,
+            image: item.thumbnail || '', date: item.pubDate || new Date().toISOString(), source: feeds[index].name,
+            category: detectCategory(item.title + ' ' + plain), textLength: plain.length
           });
         });
       }
     });
     return fallbackNews;
-  } catch (e) {
-    console.warn('Fallback news error:', e);
-    return [];
-  }
+  } catch (e) { return []; }
 }
 
 async function loadAll() {
@@ -641,11 +667,7 @@ async function loadAll() {
     
     document.getElementById('status').textContent = `آخرین بروزرسانی: ${new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })}`;
     startProgressiveDisplay();
-  } catch (err) { 
-    document.getElementById('status').textContent = '⚠️ خطا در دریافت'; 
-  } finally { 
-    isLoading = false; badge.classList.remove('loading'); badge.innerHTML = '<span class="dot"></span> زنده'; 
-  }
+  } catch (err) { document.getElementById('status').textContent = '⚠️ خطا در دریافت'; } finally { isLoading = false; badge.classList.remove('loading'); badge.innerHTML = '<span class="dot"></span> زنده'; }
 }
 
 function startProgressiveDisplay() {
@@ -662,10 +684,7 @@ function buildFilters() {
   else if (activeMode === 'saved') baseList = baseList.filter(n => savedLinks.has(n.link));
   else if (activeMode === 'trending') baseList = getTrendingNews(30, baseList);
 
-  if (searchQuery.trim()) {
-    const q = searchQuery.trim().toLowerCase();
-    baseList = baseList.filter(n => (n.title || '').toLowerCase().includes(q) || (n.plain || '').toLowerCase().includes(q));
-  }
+  if (searchQuery.trim()) { const q = searchQuery.trim().toLowerCase(); baseList = baseList.filter(n => (n.title || '').toLowerCase().includes(q) || (n.plain || '').toLowerCase().includes(q)); }
 
   const counts = {};
   baseList.forEach(n => { const cat = n.category || 'عمومی'; counts[cat] = (counts[cat] || 0) + 1; });
@@ -737,9 +756,7 @@ function openModal(idx) {
   
   const hero = document.getElementById('modalHero'); if (news.image) { hero.src = news.image; hero.style.display = 'block'; } else hero.style.display = 'none';
   document.getElementById('modalTitle').textContent = news.title;
-  
   document.getElementById('modalMeta').innerHTML = `<span class="source-tag ${news._manual ? 'manual' : ''}">${escapeHtml(news.source)}</span><span style="background:var(--glass-border);padding:4px 10px;border-radius:10px;font-size:0.8rem;">🕐 ${formatTime(news.date)}</span>${viewsBadgeHtml(news.link)}`;
-  
   document.getElementById('modalBody').innerHTML = cleanContent(news.content || news.plain || '');
   
   const related = findRelatedNews(news, allNews); const relSection = document.getElementById('relatedSection'); const relGrid = document.getElementById('relatedGrid');
@@ -753,18 +770,10 @@ function openModal(idx) {
   document.getElementById('modal').classList.add('open'); document.body.style.overflow = 'hidden';
   document.getElementById('modalStar').textContent = savedLinks.has(news.link) ? '★' : '☆';
   document.getElementById('modalStar').classList.toggle('saved', savedLinks.has(news.link));
-  
   incrementView(news.link);
 }
 
-function closeModal() { 
-  document.getElementById('modal').classList.remove('open'); 
-  document.body.style.overflow = ''; 
-  window.speechSynthesis.cancel(); 
-  document.getElementById('ttsPlayBtn').textContent = '🔊 خواندن'; 
-  document.getElementById('ttsPauseBtn').style.display = 'none'; 
-  document.getElementById('ttsStopBtn').style.display = 'none'; 
-}
+function closeModal() { document.getElementById('modal').classList.remove('open'); document.body.style.overflow = ''; window.speechSynthesis.cancel(); document.getElementById('ttsPlayBtn').textContent = '🔊 خواندن'; document.getElementById('ttsPauseBtn').style.display = 'none'; document.getElementById('ttsStopBtn').style.display = 'none'; }
 
 document.getElementById('content').addEventListener('click', (e) => {
   const star = e.target.closest('.star-btn');
@@ -817,66 +826,220 @@ document.getElementById('statsBtn').onclick = () => {
 };
 document.getElementById('statsClose').onclick = () => document.getElementById('statsModal').classList.remove('open');
 
-/* 🌟 سیستم لاگین ۵ دقیقه‌ای و پنل ادمین */
+/* =========================================================
+   🌟 سیستم ثبت‌نام، ورود و پنل ادمین (جدید)
+   ========================================================= */
 
-const TRIAL_TIME = 5 * 60 * 1000; 
-function startTrial() {
-  if (localStorage.getItem('lrep_logged_in') === 'true') return; 
-  setTimeout(() => {
-    if (localStorage.getItem('lrep_logged_in') !== 'true') {
-      document.getElementById('loginGateModal').classList.add('open');
-    }
-  }, TRIAL_TIME);
-}
+// باز و بسته کردن مودال Auth
+const authModal = document.getElementById('authModal');
+document.getElementById('userBtn').onclick = () => authModal.classList.add('open');
+document.getElementById('authClose').onclick = () => authModal.classList.remove('open');
 
-document.getElementById('gateForm').onsubmit = (e) => {
-  e.preventDefault();
-  const user = document.getElementById('gateUser').value;
-  const pass = document.getElementById('gatePass').value;
-  if (user && pass) {
-    localStorage.setItem('lrep_logged_in', 'true');
-    localStorage.setItem('lrep_user', user);
-    document.getElementById('loginGateModal').classList.remove('open');
-    showToast('حساب کاربری با موفقیت ساخته شد. خوش آمدید!');
-  }
+// تب‌های Login / Register
+document.getElementById('tabLogin').onclick = () => {
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('registerForm').style.display = 'none';
+  document.getElementById('tabLogin').classList.add('active');
+  document.getElementById('tabRegister').classList.remove('active');
+};
+document.getElementById('tabRegister').onclick = () => {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('registerForm').style.display = 'block';
+  document.getElementById('tabLogin').classList.remove('active');
+  document.getElementById('tabRegister').classList.add('active');
 };
 
-document.getElementById('adminBtn').onclick = () => document.getElementById('adminLoginModal').classList.add('open');
-document.getElementById('adminLoginClose').onclick = () => document.getElementById('adminLoginModal').classList.remove('open');
-
-document.getElementById('adminLoginForm').onsubmit = (e) => {
+// ثبت‌نام
+document.getElementById('registerForm').onsubmit = (e) => {
   e.preventDefault();
-  const user = document.getElementById('adminUser').value;
-  const pass = document.getElementById('adminPass').value;
+  const user = document.getElementById('regUser').value.trim();
+  const pass = document.getElementById('regPass').value.trim();
   
-  if (user === 'mma' && pass === '1394') {
-    document.getElementById('adminLoginModal').classList.remove('open');
-    openAdminPanel();
+  if (usersDB.find(u => u.username === user)) { showToast('این نام کاربری قبلا گرفته شده!'); return; }
+  
+  usersDB.push({ username: user, password: pass, role: 'user', date: new Date().toISOString() });
+  localStorage.setItem('lrep_users', JSON.stringify(usersDB));
+  showToast('✅ ثبت‌نام موفق. حالا وارد شوید.');
+  document.getElementById('tabLogin').click();
+  document.getElementById('loginUser').value = user;
+};
+
+// ورود
+document.getElementById('loginForm').onsubmit = (e) => {
+  e.preventDefault();
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value.trim();
+  
+  const found = usersDB.find(u => u.username === user && u.password === pass);
+  if (found) {
+    currentUser = found;
+    localStorage.setItem('lrep_current_user', JSON.stringify(found));
+    updateAuthUI();
+    authModal.classList.remove('open');
+    showToast(`خوش آمدید ${user}`);
   } else {
     showToast('نام کاربری یا رمز عبور اشتباه است!');
   }
 };
 
-function openAdminPanel() {
-  document.getElementById('adminPanelModal').classList.add('open');
-  const list = document.getElementById('adminNewsList');
-  
-  if (allNews.length === 0) {
-    list.innerHTML = '<tr><td colspan="4" style="text-align:center;">هیچ خبری یافت نشد.</td></tr>';
-    return;
+// آپدیت UI بعد از لاگین
+function updateAuthUI() {
+  if (currentUser) {
+    document.getElementById('userBtn').textContent = '👋';
+    document.getElementById('userBtn').title = currentUser.username;
+    if (currentUser.role === 'admin') {
+      document.getElementById('adminBtn').style.display = 'grid';
+    } else {
+      document.getElementById('adminBtn').style.display = 'none';
+    }
+  } else {
+    document.getElementById('userBtn').textContent = '👤';
+    document.getElementById('userBtn').title = 'پروفایل';
+    document.getElementById('adminBtn').style.display = 'none';
   }
-
-  list.innerHTML = allNews.slice(0, 100).map(n => `
-    <tr>
-      <td style="font-weight:700;">${escapeHtml(n.title)}</td>
-      <td><span class="source-tag" style="font-size:10px;">${escapeHtml(n.source)}</span></td>
-      <td>${escapeHtml(n.category)}</td>
-      <td style="color:var(--text-muted); font-size:0.8rem;">${formatTime(n.date)}</td>
-    </tr>
-  `).join('');
 }
 
-document.getElementById('adminPanelClose').onclick = () => document.getElementById('adminPanelModal').classList.remove('open');
+// خروج
+function logout() {
+  currentUser = null;
+  localStorage.removeItem('lrep_current_user');
+  updateAuthUI();
+  document.getElementById('adminPanel').classList.remove('open');
+  showToast('خارج شدید');
+}
+
+/* =========================================================
+   🌟 پنل ادمین کامل (KOLI KOLI)
+   ========================================================= */
+document.getElementById('adminBtn').onclick = () => {
+  if (currentUser && currentUser.role === 'admin') {
+    document.getElementById('adminPanel').classList.add('open');
+    loadAdminData();
+  }
+};
+
+document.getElementById('adminLogout').onclick = logout;
+
+// تب‌های پنل ادمین
+document.querySelectorAll('.admin-nav-btn[data-tab]').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  };
+});
+
+// بارگذاری دیتای پنل ادمین
+async function loadAdminData() {
+  // آمار
+  document.getElementById('dashTotalNews').textContent = allNews.length.toLocaleString('fa-IR');
+  document.getElementById('dashManualNews').textContent = allNews.filter(n => n._manual).length.toLocaleString('fa-IR');
+  document.getElementById('dashUsers').textContent = usersDB.length.toLocaleString('fa-IR');
+
+  // لیست کاربران
+  const userList = document.getElementById('adminUserList');
+  userList.innerHTML = usersDB.map(u => `
+    <tr>
+      <td style="font-weight:700;">${escapeHtml(u.username)}</td>
+      <td>${u.role === 'admin' ? '<span style="color:var(--accent-gold);">مدیر</span>' : 'کاربر عادی'}</td>
+      <td>${new Date(u.date).toLocaleDateString('fa-IR')}</td>
+    </tr>
+  `).join('');
+
+  // لیست اخبار دستی
+  const newsList = document.getElementById('adminNewsList');
+  newsList.innerHTML = '<tr><td colspan="4" style="text-align:center;">در حال بارگذاری...</td></tr>';
+  
+  try {
+    const res = await fetchWithTimeout(MANUAL_NEWS_API + '?all=1', 10000, { headers: { 'x-admin-key': 'Lrep@2026#Admin!Secure' } });
+    if (res.ok) {
+      const manualNews = await res.json();
+      if (Array.isArray(manualNews) && manualNews.length > 0) {
+        newsList.innerHTML = manualNews.map(n => `
+          <tr>
+            <td style="font-weight:700;">${escapeHtml(n.title)}</td>
+            <td>${escapeHtml(n.source)}</td>
+            <td>${new Date(n.date).toLocaleDateString('fa-IR')}</td>
+            <td><button class="btn btn-sm btn-danger" onclick="deleteNews('${n._id}')" style="padding:4px 8px; font-size:0.7rem;">حذف</button></td>
+          </tr>
+        `).join('');
+      } else {
+        newsList.innerHTML = '<tr><td colspan="4" style="text-align:center;">هیچ خبر دستی یافت نشد.</td></tr>';
+      }
+    } else {
+      throw new Error('API Error');
+    }
+  } catch (e) {
+    newsList.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--accent-red);">خطا در دریافت (کلید امنیتی یا سرور چک شود)</td></tr>';
+  }
+}
+
+// افزودن خبر از پنل ادمین
+document.getElementById('addNewsForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const payload = {
+    title: document.getElementById('anTitle').value.trim(),
+    source: document.getElementById('anSource').value.trim() || 'خبر دستی',
+    category: document.getElementById('anCategory').value,
+    image: document.getElementById('anImage').value.trim(),
+    content: document.getElementById('anContent').value.trim(),
+    published: true
+  };
+
+  const btn = e.target.querySelector('button');
+  btn.textContent = '⏳ در حال ثبت...'; btn.disabled = true;
+
+  try {
+    const res = await fetchWithTimeout(MANUAL_NEWS_API, 10000, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-key': 'Lrep@2026#Admin!Secure' },
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      showToast('✅ خبر با موفقیت ثبت شد');
+      e.target.reset();
+      loadAdminData();
+      loadAll(); // رفرش سایت اصلی
+    } else {
+      showToast('خطا در ثبت خبر (کلید امنیتی چک شود)');
+    }
+  } catch (err) {
+    showToast('خطای شبکه در ثبت خبر');
+  } finally {
+    btn.textContent = 'ثبت و انتشار در سایت'; btn.disabled = false;
+  }
+};
+
+// حذف خبر دستی
+window.deleteNews = async (id) => {
+  if (!confirm('این خبر حذف شود؟')) return;
+  try {
+    const res = await fetchWithTimeout(MANUAL_NEWS_API + '?id=' + id, 10000, {
+      method: 'DELETE',
+      headers: { 'x-admin-key': 'Lrep@2026#Admin!Secure' }
+    });
+    if (res.ok) {
+      showToast('🗑 خبر حذف شد');
+      loadAdminData();
+      loadAll();
+    } else { showToast('خطا در حذف'); }
+  } catch (e) { showToast('خطای شبکه در حذف'); }
+};
+
+/* =========================================================
+   🌟 تایمر ۵ دقیقه‌ای (اگر لاگین نکرده باشد)
+   ========================================================= */
+const TRIAL_TIME = 5 * 60 * 1000; 
+function startTrial() {
+  if (currentUser) return; // اگر لاگین است، تایمر کار نمی‌کند
+  setTimeout(() => {
+    if (!currentUser) {
+      authModal.classList.add('open');
+      showToast('⏳ زمان آزمایش تمام شد. لطفاً ثبت‌نام کنید.');
+    }
+  }, TRIAL_TIME);
+}
 
 /* شروع برنامه */
 document.getElementById('logoImg').src = ICON_URL;
@@ -891,11 +1054,6 @@ setupTTS();
 loadAll(); setInterval(loadAll, 5 * 60 * 1000);
 
 startTrial(); 
-
-try {
-  const manifest = { name: 'Lreporter', short_name: 'Lreporter', start_url: location.pathname || '/', display: 'standalone', background_color: '#050810', theme_color: '#3b82f6', icons: [{ src: ICON_URL, sizes: '192x192', type: 'image/svg+xml' }, { src: ICON_URL, sizes: '512x512', type: 'image/svg+xml' }] };
-  document.getElementById('manifestLink').href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/json' }));
-} catch {}
 </script>
 </body>
 </html>
