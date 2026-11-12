@@ -69,7 +69,7 @@
   .info-card .value { font-size: 0.95rem; font-weight: 800; }
   .info-card .sub { font-size: 0.75rem; color: var(--text-muted); }
 
-  /* گیج نیم‌دایره‌ای (سرعت‌سنج) */
+  /* 🎯 گیج نیم‌دایره‌ای (سرعت‌سنج) دقیقاً مثل قبلی */
   .aqi-card { padding: 12px 20px; }
   .gauge-container { width: 60px; height: 35px; position: relative; display: flex; justify-content: center; align-items: flex-end; flex-shrink: 0; }
   .gauge-bg { width: 60px; height: 30px; border-top-left-radius: 60px; border-top-right-radius: 60px; background: conic-gradient(from 270deg at 50% 100%, #10b981 0deg, #10b981 30deg, #fbbf24 30deg, #fbbf24 60deg, #f97316 60deg, #f97316 90deg, #ef4444 90deg, #ef4444 120deg, #8b5cf6 120deg, #8b5cf6 180deg); position: absolute; bottom: 0; opacity: 0.15; }
@@ -253,7 +253,7 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v13.0</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v13.2</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -387,7 +387,7 @@
 
 <script>
 /* ==================== تنظیمات ==================== */
-const VERSION = '13.0';
+const VERSION = '13.2';
 // ✅ آدرس‌های اصلاح‌شده (حرف q و g درست شد)
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
 const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
@@ -521,14 +521,14 @@ async function loadMarketPrices() {
   }
 }
 
-// ✅ تابع اصلاح‌شده و ضدضربه آلودگی هوا
+// ✅ تابع اصلاح‌شده و ضدضربه آلودگی هوا (با عقربه نیم‌دایره)
 async function loadAQI() {
   const statusEl = document.getElementById('aqiStatus');
   const valEl = document.getElementById('aqiValue');
   const needleEl = document.getElementById('aqiNeedle');
   const fillEl = document.getElementById('aqiFill');
 
-  if (!statusEl || !valEl || !needleEl || !fillEl) return; // چک امنیتی
+  if (!statusEl || !valEl || !needleEl || !fillEl) return;
 
   statusEl.textContent = 'در حال دریافت...';
   statusEl.style.color = 'var(--text-muted)';
