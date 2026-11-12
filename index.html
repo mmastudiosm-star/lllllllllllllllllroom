@@ -247,9 +247,38 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v16.1</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v16.2</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
+
+<!-- 🌟 مودال تنظیمات (برگردانده شد) -->
+<div class="modal-overlay" id="settingsModal" style="z-index:2000;">
+  <div class="modal" style="max-width:400px;">
+    <button class="modal-close" id="settingsClose">✕</button>
+    <div class="modal-content">
+      <h2 style="font-size:1.2rem;margin-bottom:20px;color:var(--accent-cyan);">⚙️ تنظیمات</h2>
+      <div style="margin-bottom:20px;">
+        <label style="display:block;margin-bottom:8px;font-weight:700;color:var(--text-muted);">اندازه فونت</label>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button class="btn" id="fontMinus">−</button>
+          <span id="fontVal" style="flex:1;text-align:center;font-weight:800;font-size:1.1rem;">۱۶</span>
+          <button class="btn" id="fontPlus">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 🌟 مودال آمار (برگردانده شد) -->
+<div class="modal-overlay" id="statsModal" style="z-index:2000;">
+  <div class="modal" style="max-width:450px;">
+    <button class="modal-close" id="statsClose">✕</button>
+    <div class="modal-content">
+      <h2 style="font-size:1.2rem;margin-bottom:20px;color:var(--accent-cyan);">📊 آمار سیستم</h2>
+      <div id="statsContent"></div>
+    </div>
+  </div>
+</div>
 
 <!-- 🌟 مودال ثبت‌نام و ورود (Auth) -->
 <div class="modal-overlay" id="authModal" style="z-index:5000;">
@@ -378,6 +407,7 @@
         </div>
         <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
           <a class="btn btn-primary" id="modalSourceBtn" target="_blank" rel="noopener" style="flex:1;justify-content:center;">🔗 مشاهده در منبع</a>
+          <button class="btn" id="modalStarBtn">⭐ ذخیره</button>
         </div>
       </div>
     </div>
@@ -386,11 +416,11 @@
 
 <script>
 /* ==================== تنظیمات ==================== */
-const VERSION = '16.1';
+const VERSION = '16.2';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
 const VIEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/views';
 const MANUAL_NEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
-const ADMIN_KEY = 'Lrep@2026#Admin!Secure'; // کلید ادمین برای پنل
+const ADMIN_KEY = 'Lrep@2026#Admin!Secure';
 const INITIAL_COUNT = 10; const DISPLAY_STEP = 10; const DISPLAY_INTERVAL = 5000; const TRENDING_VIEW_THRESHOLD = 1000;
 
 let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; let allNews = [];
@@ -398,27 +428,16 @@ let activeMode = 'all'; let activeCategory = 'همه'; let searchQuery = ''; let
 let isLoading = false; let readLinks = new Set(); let savedLinks = new Set();
 let ttsSpeaking = false, ttsPaused = false, ttsQueue = [], ttsCurrentIndex = 0;
 
-// 🌟 تعریف کاربر و دیتابیس کاربران (قبل از استفاده)
 let currentUser = null;
 let usersDB = [];
 try {
   const rawUsers = localStorage.getItem('lrep_users');
-  if (rawUsers) {
-    const parsed = JSON.parse(rawUsers);
-    if (Array.isArray(parsed)) usersDB = parsed;
-  }
+  if (rawUsers) { const parsed = JSON.parse(rawUsers); if (Array.isArray(parsed)) usersDB = parsed; }
 } catch (e) { usersDB = []; }
-
 try {
   const rawUser = localStorage.getItem('lrep_current_user');
   if (rawUser) currentUser = JSON.parse(rawUser);
 } catch (e) { currentUser = null; }
-
-// 🌟 گرفتن المان‌های DOM (قبل از استفاده)
-const authModal = document.getElementById('authModal');
-const loginForm = document.getElementById('loginForm');
-const registerForm = document.getElementById('registerForm');
-const adminPanel = document.getElementById('adminPanel');
 
 const CATEGORIES = {
   'جنگ':    ['جنگ', 'حمله', 'موشک', 'آتش‌بس', 'غزه', 'اوکراین', 'انفجار', 'نظامی', 'پدافند', 'رزمایش'],
@@ -445,12 +464,10 @@ function safeParse(str, fallback) { try { return JSON.parse(str); } catch { retu
   const savedTheme = localStorage.getItem('lrep_theme_v10');
   if (savedTheme === 'light') { document.documentElement.setAttribute('data-theme', 'light'); document.getElementById('themeBtn').textContent = '☀️'; }
   
-  // ادمین پیش‌فرض
   if (!usersDB.find(u => u.username === 'mma')) {
     usersDB.push({ username: 'mma', password: '1405', role: 'admin', date: new Date().toISOString() });
     localStorage.setItem('lrep_users', JSON.stringify(usersDB));
   }
-  // چک کردن یوزر لاگین شده
   updateAuthUI();
 })();
 
@@ -803,6 +820,7 @@ document.getElementById('searchInput').addEventListener('input', (e) => { search
 document.getElementById('refreshBtn').onclick = () => { loadAll(); };
 document.getElementById('modalClose').onclick = closeModal; document.getElementById('modal').onclick = (e) => { if (e.target.id === 'modal') closeModal(); };
 document.getElementById('modalStar').onclick = () => { if (!currentNews) return; const saved = toggleSaved(currentNews.link); showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); document.getElementById('modalStar').textContent = saved ? '★' : '☆'; document.getElementById('modalStar').classList.toggle('saved', saved); render(); };
+document.getElementById('modalStarBtn').onclick = () => { if (!currentNews) return; const saved = toggleSaved(currentNews.link); showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); document.getElementById('modalStar').textContent = saved ? '★' : '☆'; document.getElementById('modalStar').classList.toggle('saved', saved); render(); };
 document.getElementById('modalCopyBtn').onclick = () => { if (currentNews) navigator.clipboard.writeText(currentNews.link).then(() => showToast('📋 کپی شد')); };
 
 document.querySelectorAll('[data-share]').forEach(btn => {
@@ -847,18 +865,19 @@ document.getElementById('statsClose').onclick = () => document.getElementById('s
    🌟 سیستم ثبت‌نام، ورود و پنل ادمین (جدید)
    ========================================================= */
 
+const authModal = document.getElementById('authModal');
 document.getElementById('userBtn').onclick = () => authModal.classList.add('open');
 document.getElementById('authClose').onclick = () => authModal.classList.remove('open');
 
 document.getElementById('tabLogin').onclick = () => {
-  loginForm.style.display = 'block';
-  registerForm.style.display = 'none';
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('registerForm').style.display = 'none';
   document.getElementById('tabLogin').classList.add('active');
   document.getElementById('tabRegister').classList.remove('active');
 };
 document.getElementById('tabRegister').onclick = () => {
-  loginForm.style.display = 'none';
-  registerForm.style.display = 'block';
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('registerForm').style.display = 'block';
   document.getElementById('tabLogin').classList.remove('active');
   document.getElementById('tabRegister').classList.add('active');
 };
@@ -914,13 +933,13 @@ function logout() {
   currentUser = null;
   localStorage.removeItem('lrep_current_user');
   updateAuthUI();
-  adminPanel.classList.remove('open');
+  document.getElementById('adminPanel').classList.remove('open');
   showToast('خارج شدید');
 }
 
 document.getElementById('adminBtn').onclick = () => {
   if (currentUser && currentUser.role === 'admin') {
-    adminPanel.classList.add('open');
+    document.getElementById('adminPanel').classList.add('open');
     loadAdminData();
   }
 };
