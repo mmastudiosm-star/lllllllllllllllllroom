@@ -77,7 +77,6 @@
   .gauge-fill { width: 60px; height: 30px; border-top-left-radius: 60px; border-top-right-radius: 60px; background: conic-gradient(from 270deg at 50% 100%, var(--aqi-color, #10b981) 0deg, var(--aqi-color, #10b981) var(--aqi-deg, 0deg), transparent var(--aqi-deg, 0deg)); position: absolute; bottom: 0; transition: background 1s ease; }
   .gauge-needle { width: 2px; height: 26px; background: #fff; position: absolute; bottom: 0; left: 50%; transform-origin: bottom center; transform: translateX(-50%) rotate(-90deg); transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2; border-radius: 2px; box-shadow: 0 0 5px rgba(255,255,255,0.5); }
   .gauge-center { width: 8px; height: 8px; background: #fff; border-radius: 50%; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); z-index: 3; }
-  .demo-warning { font-size: 10px; color: #ef4444; margin-right: 4px; cursor: help; }
 
   .nav-wrap { max-width: 1400px; margin: 0 auto; padding: 16px 24px 8px; display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; }
   .nav-wrap::-webkit-scrollbar { display: none; }
@@ -148,7 +147,7 @@
   .skeleton::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); animation: shimmer 1.5s infinite; }
   @keyframes shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
 
-  /* 🌟 استایل‌های جدید برای سیستم لاگین و پنل ادمین */
+  /* 🌟 استایل‌های سیستم لاگین و پنل ادمین */
   .auth-input { width: 100%; padding: 12px 16px; margin-bottom: 12px; background: var(--bg); border: 1px solid var(--glass-border); border-radius: 10px; color: var(--text-main); font-family: inherit; font-size: 1rem; outline: none; transition: 0.3s; }
   .auth-input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px var(--accent-glow); }
   
@@ -235,7 +234,7 @@
       <div class="gauge-center"></div>
     </div>
     <div class="body">
-      <span class="label">آلودگی هوای تهران (AQI) <span id="aqiDemoWarning" class="demo-warning" style="display:none;" title="برای دقت ۱۰۰٪ توکن WAQI خود را در کد قرار دهید">*</span></span>
+      <span class="label">آلودگی هوای تهران (AQI)</span>
       <span class="sub" id="aqiStatus" style="font-weight:800;">—</span>
     </div>
   </div>
@@ -253,11 +252,11 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v12.0</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v12.1</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
-<!-- 🌟 مودال انتخاب نام کاربری و رمز عبور (بعد از ۵ دقیقه) -->
+<!-- 🌟 مودال انتخاب نام کاربری و رمز عبور -->
 <div class="modal-overlay" id="loginGateModal" style="z-index:3000;">
   <div class="modal" style="max-width:400px; text-align:center;">
     <div class="modal-content">
@@ -287,7 +286,7 @@
   </div>
 </div>
 
-<!-- 🌟 مودال پنل ادمین (نمایش اخبار) -->
+<!-- 🌟 مودال پنل ادمین -->
 <div class="modal-overlay" id="adminPanelModal" style="z-index:3000;">
   <div class="modal" style="max-width:1000px;">
     <button class="modal-close" id="adminPanelClose">✕</button>
@@ -305,9 +304,7 @@
               <th>زمان</th>
             </tr>
           </thead>
-          <tbody id="adminNewsList">
-            <!-- JS news will be injected here -->
-          </tbody>
+          <tbody id="adminNewsList"></tbody>
         </table>
       </div>
     </div>
@@ -389,11 +386,10 @@
 
 <script>
 /* ==================== تنظیمات ==================== */
-const VERSION = '12.0';
-const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
-const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
-const MANUAL_NEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
-const WAQI_TOKEN = 'demo'; 
+const VERSION = '12.1';
+const SUPABASE_URL = 'https://kemwkxuwhgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
+const VIEWS_API = 'https://kemwkxuwhgqqfyfpbmm.supabase.co/functions/v1/views';
+const MANUAL_NEWS_API = 'https://kemwkxuwhgqqfyfpbmm.supabase.co/functions/v1/manual-news';
 const INITIAL_COUNT = 10; const DISPLAY_STEP = 10; const DISPLAY_INTERVAL = 5000; const TRENDING_VIEW_THRESHOLD = 1000;
 
 let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; let allNews = [];
@@ -523,54 +519,53 @@ async function loadMarketPrices() {
   }
 }
 
+// ✅ تابع اصلاح‌شده آلودگی هوا
 async function loadAQI() {
-  let aqi = null;
+  const statusEl = document.getElementById('aqiStatus');
+  const valEl = document.getElementById('aqiValue');
+  
+  statusEl.textContent = 'در حال دریافت...';
+  statusEl.style.color = 'var(--text-muted)';
+
   try {
-    const res = await fetchWithTimeout(`https://api.waqi.info/feed/tehran/?token=${WAQI_TOKEN}`, 6000);
-    if (res.ok) {
-      const data = await res.json();
-      if (data.status === 'ok' && data.data && data.data.aqi) {
-        aqi = data.data.aqi;
-        document.getElementById('aqiDemoWarning').style.display = WAQI_TOKEN === 'demo' ? 'inline' : 'none';
-      }
+    // استفاده مستقیم از Open-Meteo (پایدارترین API بدون نیاز به توکن)
+    const res = await fetchWithTimeout('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=35.6892&longitude=51.3890&current=us_aqi', 10000);
+    if (!res.ok) throw new Error('API Error');
+    
+    const data = await res.json();
+    
+    if (data && data.current && typeof data.current.us_aqi === 'number') {
+      const aqi = data.current.us_aqi;
+      valEl.textContent = aqi.toLocaleString('fa-IR');
+      
+      let color = '#10b981'; let status = 'پاک';
+      if (aqi > 50) { color = '#fbbf24'; status = 'قابل قبول'; }
+      if (aqi > 100) { color = '#f97316'; status = 'ناسالم برای گروه‌های حساس'; }
+      if (aqi > 150) { color = '#ef4444'; status = 'ناسالم'; }
+      if (aqi > 200) { color = '#8b5cf6'; status = 'بسیار ناسالم'; }
+      if (aqi > 300) { color = '#b91c1c'; status = 'خطرناک'; }
+
+      statusEl.textContent = status;
+      statusEl.style.color = color;
+      
+      // چرخش عقربه نیم‌دایره
+      const maxAqiForGauge = 300;
+      const cappedAqi = Math.min(aqi, maxAqiForGauge);
+      const deg = (cappedAqi / maxAqiForGauge) * 180;
+      
+      document.getElementById('aqiNeedle').style.transform = `translateX(-50%) rotate(${deg - 90}deg)`;
+      document.getElementById('aqiFill').style.setProperty('--aqi-color', color);
+      document.getElementById('aqiFill').style.setProperty('--aqi-deg', `${deg}deg`);
+    } else {
+      throw new Error('Invalid data format');
     }
-  } catch(e) {}
-
-  if (aqi === null) {
-    try {
-      const res = await fetchWithTimeout('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=35.6892&longitude=51.3890&current=us_aqi', 8000);
-      if (res.ok) {
-        const data = await res.json();
-        aqi = data.current.us_aqi;
-        document.getElementById('aqiDemoWarning').style.display = 'inline';
-      }
-    } catch(e) {}
-  }
-
-  if (aqi !== null) {
-    document.getElementById('aqiValue').textContent = aqi.toLocaleString('fa-IR');
+  } catch (err) {
+    console.warn('AQI Error:', err);
+    statusEl.textContent = 'خطای شبکه';
+    valEl.textContent = '—';
     
-    let color = '#10b981'; let status = 'پاک';
-    if (aqi > 50) { color = '#fbbf24'; status = 'قابل قبول'; }
-    if (aqi > 100) { color = '#f97316'; status = 'ناسالم برای گروه‌های حساس'; }
-    if (aqi > 150) { color = '#ef4444'; status = 'ناسالم'; }
-    if (aqi > 200) { color = '#8b5cf6'; status = 'بسیار ناسالم'; }
-    if (aqi > 300) { color = '#b91c1c'; status = 'خطرناک'; }
-
-    document.getElementById('aqiStatus').textContent = status;
-    document.getElementById('aqiStatus').style.color = color;
-    
-    const maxAqiForGauge = 300;
-    const cappedAqi = Math.min(aqi, maxAqiForGauge);
-    const deg = (cappedAqi / maxAqiForGauge) * 180;
-    
-    document.getElementById('aqiNeedle').style.transform = `translateX(-50%) rotate(${deg - 90}deg)`;
-    document.getElementById('aqiFill').style.setProperty('--aqi-color', color);
-    document.getElementById('aqiFill').style.setProperty('--aqi-deg', `${deg}deg`);
-
-  } else {
-    document.getElementById('aqiValue').textContent = '—';
-    document.getElementById('aqiStatus').textContent = 'خطا در دریافت';
+    // تلاش مجدد بعد از ۱۰ ثانیه در صورت قطعی
+    setTimeout(loadAQI, 10000);
   }
 }
 
@@ -797,7 +792,7 @@ document.getElementById('content').addEventListener('click', (e) => {
 
 document.querySelectorAll('.nav-btn').forEach(btn => btn.onclick = () => { activeMode = btn.dataset.mode; displayLimit = INITIAL_COUNT; buildFilters(); render(); });
 document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; displayLimit = INITIAL_COUNT; buildFilters(); render(); });
-document.getElementById('refreshBtn').onclick = () => loadAll();
+document.getElementById('refreshBtn').onclick = () => { loadAll(); loadAQI(); };
 document.getElementById('modalClose').onclick = closeModal; document.getElementById('modal').onclick = (e) => { if (e.target.id === 'modal') closeModal(); };
 document.getElementById('modalStar').onclick = () => { if (!currentNews) return; const saved = toggleSaved(currentNews.link); showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); document.getElementById('modalStar').textContent = saved ? '★' : '☆'; document.getElementById('modalStar').classList.toggle('saved', saved); render(); };
 document.getElementById('modalCopyBtn').onclick = () => { if (currentNews) navigator.clipboard.writeText(currentNews.link).then(() => showToast('📋 کپی شد')); };
@@ -842,10 +837,9 @@ document.getElementById('statsClose').onclick = () => document.getElementById('s
 
 /* 🌟 سیستم لاگین ۵ دقیقه‌ای و پنل ادمین */
 
-// ۱. تایمر ۵ دقیقه‌ای
 const TRIAL_TIME = 5 * 60 * 1000; 
 function startTrial() {
-  if (localStorage.getItem('lrep_logged_in') === 'true') return; // کاربر قبلا ثبت‌نام کرده
+  if (localStorage.getItem('lrep_logged_in') === 'true') return; 
   setTimeout(() => {
     if (localStorage.getItem('lrep_logged_in') !== 'true') {
       document.getElementById('loginGateModal').classList.add('open');
@@ -853,7 +847,6 @@ function startTrial() {
   }, TRIAL_TIME);
 }
 
-// ثبت‌نام کاربر
 document.getElementById('gateForm').onsubmit = (e) => {
   e.preventDefault();
   const user = document.getElementById('gateUser').value;
@@ -866,7 +859,6 @@ document.getElementById('gateForm').onsubmit = (e) => {
   }
 };
 
-// ۲. ورود ادمین
 document.getElementById('adminBtn').onclick = () => document.getElementById('adminLoginModal').classList.add('open');
 document.getElementById('adminLoginClose').onclick = () => document.getElementById('adminLoginModal').classList.remove('open');
 
@@ -883,7 +875,6 @@ document.getElementById('adminLoginForm').onsubmit = (e) => {
   }
 };
 
-// ۳. نمایش پنل ادمین و لیست اخبار
 function openAdminPanel() {
   document.getElementById('adminPanelModal').classList.add('open');
   const list = document.getElementById('adminNewsList');
@@ -913,12 +904,12 @@ document.getElementById('fontVal').textContent = parseFloat(getComputedStyle(doc
 updatePersianDateTime(); setInterval(updatePersianDateTime, 1000); 
 loadWeather(); 
 loadMarketPrices(); setInterval(loadMarketPrices, 5 * 60 * 1000); 
-loadAQI(); setInterval(loadAQI, 10 * 60 * 1000); 
+loadAQI(); setInterval(loadAQI, 15 * 60 * 1000); 
 startCountdown(); 
 setupTTS();
 loadAll(); setInterval(loadAll, 5 * 60 * 1000);
 
-startTrial(); // شروع تایمر ۵ دقیقه‌ای
+startTrial(); 
 
 try {
   const manifest = { name: 'Lreporter', short_name: 'Lreporter', start_url: location.pathname || '/', display: 'standalone', background_color: '#050810', theme_color: '#3b82f6', icons: [{ src: ICON_URL, sizes: '192x192', type: 'image/svg+xml' }, { src: ICON_URL, sizes: '512x512', type: 'image/svg+xml' }] };
