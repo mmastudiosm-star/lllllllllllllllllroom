@@ -22,6 +22,7 @@
     --gradient-hot: linear-gradient(135deg, #ef4444, #f97316);
     --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.2);
     --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --accent-glow: rgba(59,130,246,0.3);
     --base-font-size: 16px; --radius-lg: 24px; --radius-md: 16px;
   }
   [data-theme="light"] {
@@ -36,7 +37,7 @@
 
   .bg-mesh { position: fixed; inset: 0; z-index: -2; background: radial-gradient(circle at 15% 15%, rgba(59,130,246,0.15), transparent 40%), radial-gradient(circle at 85% 85%, rgba(139,92,246,0.15), transparent 40%); filter: blur(40px); animation: meshMove 20s ease-in-out infinite alternate; }
   @keyframes meshMove { 0% { transform: scale(1) translate(0,0); } 100% { transform: scale(1.1) translate(2%,2%); } }
-  .bg-grid { position: fixed; inset: 0; z-index: -1; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 50px 50px; mask-image: radial-gradient(circle at center, black, transparent 80%); }
+  .bg-grid { position: fixed; inset: 0; z-index: -1; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 50px 50px; mask-image: radial-gradient(circle at center, black, transparent 80%); -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%); }
   
   header { position: sticky; top: 0; z-index: 100; background: rgba(5,8,16,0.7); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); }
   [data-theme="light"] header { background: rgba(240,244,248,0.7); }
@@ -105,6 +106,31 @@
   .card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.8; flex: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .card-footer { display: flex; justify-content: space-between; border-top: 1px solid var(--glass-border); padding-top: 14px; font-size: 0.8rem; color: var(--text-muted); }
 
+  /* 🌟 اسکلتون لودینگ */
+  .skeleton {
+    height: 380px; border-radius: var(--radius-lg);
+    background: linear-gradient(90deg, var(--glass-bg) 25%, rgba(255,255,255,0.06) 50%, var(--glass-bg) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border: 1px solid var(--glass-border);
+  }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+  /* 🌟 توست */
+  @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes slideOut { to { transform: translateX(120%); opacity: 0; } }
+
+  /* 🌟 اخبار مرتبط */
+  .related-item { display: flex; gap: 10px; padding: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; cursor: pointer; transition: 0.25s; align-items: flex-start; }
+  .related-item:hover { border-color: var(--accent-blue); background: var(--glass-hover); transform: translateX(-3px); }
+  .related-item .ri-title { font-weight: 700; font-size: 0.9rem; line-height: 1.5; margin-bottom: 4px; }
+  .related-item .ri-meta { font-size: 0.75rem; color: var(--text-muted); }
+
+  /* 🌟 دکمه‌های کوچک و خطرناک */
+  .btn-sm { padding: 6px 12px !important; font-size: 0.75rem !important; }
+  .btn-danger { background: rgba(239,68,68,0.15); border-color: var(--accent-red); color: var(--accent-red); }
+  .btn-danger:hover { background: var(--accent-red); color: #fff; border-color: var(--accent-red); }
+
   /* 🌟 مودال‌ها و فرم‌ها */
   .modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(5,8,16,0.85); backdrop-filter: blur(12px); display: none; align-items: flex-start; justify-content: center; padding: 20px; overflow-y: auto; }
   .modal-overlay.open { display: flex; animation: fadeIn 0.3s; }
@@ -141,7 +167,7 @@
   .admin-table th { color: var(--accent-cyan); font-weight: 800; background: rgba(0,0,0,0.2); }
   .admin-table tr:hover td { background: rgba(255,255,255,0.03); }
 
-  /* 🌟 پنل ادمین جدید (تمام صفحه) */
+  /* 🌟 پنل ادمین */
   .admin-panel { position: fixed; inset: 0; z-index: 4000; background: var(--bg); display: none; flex-direction: row; }
   .admin-panel.open { display: flex; }
   .admin-sidebar { width: 260px; background: var(--bg-secondary); border-left: 1px solid var(--glass-border); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
@@ -157,6 +183,43 @@
   .admin-form { display: flex; flex-direction: column; gap: 15px; }
   .admin-form input, .admin-form textarea, .admin-form select { padding: 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--bg); color: var(--text-main); font-family: inherit; font-size: 0.9rem; }
   .admin-form textarea { min-height: 120px; resize: vertical; }
+
+  /* ===== آپلود عکس ادمین ===== */
+  .img-input-wrap { margin-top: 4px; }
+  .img-tabs { display: flex; gap: 8px; margin-bottom: 10px; }
+  .img-tab {
+    flex: 1; padding: 9px 12px; border-radius: 10px;
+    background: var(--glass-bg); border: 1px solid var(--glass-border);
+    color: var(--text-muted); font-family: inherit; font-weight: 700;
+    font-size: 0.85rem; cursor: pointer; transition: 0.3s;
+  }
+  .img-tab:hover { border-color: var(--accent-blue); color: var(--text-main); }
+  .img-tab.active { background: var(--gradient-main); color: #fff; border-color: transparent; }
+
+  .upload-zone {
+    display: block; border: 2px dashed var(--glass-border);
+    border-radius: 12px; padding: 32px 20px; text-align: center;
+    cursor: pointer; transition: 0.25s;
+    background: rgba(255,255,255,0.02);
+  }
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--accent-blue);
+    background: var(--glass-hover);
+    transform: translateY(-1px);
+  }
+  .upload-zone .upload-inner {
+    display: flex; flex-direction: column; gap: 6px; align-items: center;
+    color: var(--text-muted); font-weight: 600; font-size: 0.9rem;
+  }
+  #imgPreview {
+    margin-top: 12px; display: flex; align-items: center; gap: 12px;
+    padding: 12px; background: var(--glass-bg);
+    border: 1px solid var(--glass-border); border-radius: 12px;
+  }
+  #imgPreviewTag {
+    width: 90px; height: 90px; border-radius: 10px;
+    object-fit: cover; background: #000; flex-shrink: 0;
+  }
 
   @media (max-width: 768px) {
     .header-inner { padding: 12px 16px; }
@@ -177,6 +240,7 @@
     .admin-sidebar .logo { display: none; }
     .admin-nav-btn { white-space: nowrap; padding: 10px 14px; }
     .admin-main { padding: 15px; }
+    #imgPreviewTag { width: 70px; height: 70px; }
   }
   @media (max-width: 400px) { .infobar { grid-template-columns: 1fr; } }
   ::-webkit-scrollbar { width: 6px; }
@@ -215,24 +279,8 @@
 <div class="infobar">
   <div class="info-card"><span class="ico">📅</span><div class="body"><span class="label">تاریخ</span><span class="value" id="persianDate">...</span><span class="sub" id="clockTime"></span></div></div>
   <div class="info-card"><span class="ico">🌡️</span><div class="body"><span class="label">آب و هوای تهران</span><span class="value" id="weatherTemp">—</span><span class="sub" id="weatherDesc">—</span></div></div>
-  
-  <div class="info-card">
-    <span class="ico">💵</span>
-    <div class="body">
-      <span class="label">قیمت دلار (بازار آزاد)</span>
-      <span class="value" id="dollarPrice">—</span>
-      <span class="sub" id="dollarChange">—</span>
-    </div>
-  </div>
-
-  <div class="info-card">
-    <span class="ico">🪙</span>
-    <div class="body">
-      <span class="label">طلای ۱۸ عیار (هر گرم)</span>
-      <span class="value" id="goldPrice">—</span>
-      <span class="sub" id="goldChange">—</span>
-    </div>
-  </div>
+  <div class="info-card"><span class="ico">💵</span><div class="body"><span class="label">قیمت دلار (بازار آزاد)</span><span class="value" id="dollarPrice">—</span><span class="sub" id="dollarChange">—</span></div></div>
+  <div class="info-card"><span class="ico">🪙</span><div class="body"><span class="label">طلای ۱۸ عیار (هر گرم)</span><span class="value" id="goldPrice">—</span><span class="sub" id="goldChange">—</span></div></div>
 </div>
 
 <div class="nav-wrap">
@@ -247,7 +295,7 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v16.4</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v16.5</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -337,7 +385,38 @@
               <option>عمومی</option><option>سیاسی</option><option>اقتصاد</option><option>ورزش</option><option>فناوری</option><option>سلامت</option><option>فرهنگ</option><option>حوادث</option>
             </select>
           </div>
-          <input type="url" id="anImage" placeholder="لینک تصویر (اختیاری)">
+
+          <!-- 🖼️ بخش عکس (جدید) -->
+          <div class="img-input-wrap">
+            <div class="img-tabs">
+              <button type="button" class="img-tab active" data-imode="upload">📤 آپلود عکس</button>
+              <button type="button" class="img-tab" data-imode="url">🔗 لینک عکس</button>
+            </div>
+
+            <div id="imgUploadMode">
+              <label for="anImageFile" class="upload-zone" id="uploadZone">
+                <input type="file" id="anImageFile" accept="image/*" hidden>
+                <div class="upload-inner">
+                  <span style="font-size:2rem;">📸</span>
+                  <span>عکس را انتخاب کنید یا اینجا بکشید</span>
+                  <span style="font-size:0.75rem; color:var(--text-muted);">JPG, PNG, WEBP — حداکثر ۱۰MB</span>
+                </div>
+              </label>
+              <div id="imgPreview" style="display:none;">
+                <img id="imgPreviewTag" alt="پیش‌نمایش">
+                <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+                  <span style="font-weight:700; font-size:0.9rem;">✅ عکس آماده است</span>
+                  <span id="imgSizeInfo" style="font-size:0.75rem; color:var(--text-muted);"></span>
+                </div>
+                <button type="button" class="btn" id="removeImgBtn" style="padding:6px 12px; font-size:0.8rem;">🗑 حذف</button>
+              </div>
+            </div>
+
+            <div id="imgUrlMode" style="display:none;">
+              <input type="url" id="anImage" placeholder="https://example.com/image.jpg">
+            </div>
+          </div>
+
           <textarea id="anContent" placeholder="متن خبر *" required></textarea>
           <button type="submit" class="btn btn-primary">ثبت و انتشار در سایت</button>
         </form>
@@ -416,7 +495,7 @@
 
 <script>
 /* ==================== تنظیمات ==================== */
-const VERSION = '16.4';
+const VERSION = '16.5';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
 const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
 const MANUAL_NEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
@@ -489,7 +568,7 @@ function formatTime(dateStr) {
 }
 function showToast(message, duration = 3000) {
   const toast = document.createElement('div');
-  toast.style.cssText = `position:fixed;bottom:30px;right:30px;background:var(--glass-bg);backdrop-filter:blur(10px);border:1px solid var(--accent-blue);color:var(--text-main);padding:14px 24px;border-radius:16px;z-index:9999;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,0.5);animation:slideIn 0.4s`;
+  toast.style.cssText = `position:fixed;bottom:30px;right:30px;background:var(--glass-bg);backdrop-filter:blur(10px);border:1px solid var(--accent-blue);color:var(--text-main);padding:14px 24px;border-radius:16px;z-index:9999;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,0.5);animation:slideIn 0.4s;max-width:calc(100vw - 60px);`;
   toast.textContent = message; document.body.appendChild(toast);
   setTimeout(() => { toast.style.animation = 'slideOut 0.4s forwards'; setTimeout(() => toast.remove(), 400); }, duration);
 }
@@ -505,13 +584,25 @@ function detectCategory(text) {
 
 function cleanContent(html) {
   if (!html) return '<p>محتوایی موجود نیست.</p>';
-  let out = String(html);
-  out = out.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<iframe[\s\S]*?<\/iframe>/gi, '');
-  if (!/<[a-z][\s\S]*>/i.test(out)) {
-    return out.split(/\n+/).filter(p => p.trim()).map(p => `<p>${escapeHtml(p.trim())}</p>`).join('');
+  const raw = String(html);
+  if (!/<[a-z][\s\S]*>/i.test(raw)) {
+    return raw.split(/\n+/).filter(p => p.trim()).map(p => `<p>${escapeHtml(p.trim())}</p>`).join('');
   }
-  out = out.replace(/<a /gi, '<a target="_blank" rel="noopener" ').replace(/<img /gi, '<img loading="lazy" ');
-  return out;
+  const doc = new DOMParser().parseFromString(raw, 'text/html');
+  doc.querySelectorAll('script,style,iframe,object,embed,form,link,meta,base').forEach(el => el.remove());
+  doc.querySelectorAll('*').forEach(el => {
+    [...el.attributes].forEach(a => {
+      const name = a.name.toLowerCase();
+      const val = (a.value || '').trim();
+      if (name.startsWith('on')) el.removeAttribute(a.name);
+      if ((name === 'href' || name === 'src' || name === 'xlink:href') && /^(javascript|data:text\/html|vbscript):/i.test(val)) {
+        el.removeAttribute(a.name);
+      }
+    });
+    if (el.tagName === 'A') { el.setAttribute('target', '_blank'); el.setAttribute('rel', 'noopener noreferrer'); }
+    if (el.tagName === 'IMG') { el.setAttribute('loading', 'lazy'); el.setAttribute('referrerpolicy', 'no-referrer'); }
+  });
+  return doc.body.innerHTML;
 }
 
 async function fetchAllViews() {
@@ -546,18 +637,18 @@ async function loadMarketPrices() {
     const res = await fetchWithTimeout('https://raw.githubusercontent.com/iran-market/iran-market.github.io/main/data/popular.json', 8000);
     if (!res.ok) throw new Error('HTTP error');
     const payload = await res.json();
-    
+    if (!payload || !Array.isArray(payload.data)) throw new Error('bad payload');
+
     const usd = payload.data.find(item => item.symbol === 'USD_IRR_FREE');
     if (usd) {
       document.getElementById('dollarPrice').textContent = usd.price.toLocaleString('fa-IR') + ' تومان';
       document.getElementById('dollarChange').textContent = 'بازار آزاد';
     }
-
     const gold = payload.data.find(item => item.symbol === 'GOLD_18K_IRR');
     if (gold) {
       document.getElementById('goldPrice').textContent = gold.price.toLocaleString('fa-IR') + ' تومان';
       const changeSign = gold.change_pct > 0 ? '▲' : (gold.change_pct < 0 ? '▼' : '');
-      document.getElementById('goldChange').textContent = `${changeSign} ${Math.abs(gold.change_pct).toFixed(1)}% تغییر`;
+      document.getElementById('goldChange').textContent = `${changeSign} ${Math.abs(gold.change_pct || 0).toFixed(1)}% تغییر`;
     }
   } catch (e) {
     console.warn('Market price error:', e);
@@ -679,6 +770,7 @@ async function loadAll() {
         for (const item of mnews) {
           if (!item.link) item.link = 'manual:' + (item._id || Date.now());
           if (item.title && !knownLinks.has(item.link)) {
+            item._manual = true;
             if (!item.category) item.category = detectCategory(item.title + ' ' + (item.plain || ''));
             allNews.push(item); knownLinks.add(item.link);
           }
@@ -807,7 +899,15 @@ function openModal(idx) {
   incrementView(news.link);
 }
 
-function closeModal() { document.getElementById('modal').classList.remove('open'); document.body.style.overflow = ''; window.speechSynthesis.cancel(); document.getElementById('ttsPlayBtn').textContent = '🔊 خواندن'; document.getElementById('ttsPauseBtn').style.display = 'none'; document.getElementById('ttsStopBtn').style.display = 'none'; }
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+  window.speechSynthesis.cancel();
+  ttsSpeaking = false; ttsPaused = false; ttsQueue = []; ttsCurrentIndex = 0;
+  document.getElementById('ttsPlayBtn').textContent = '🔊 خواندن';
+  document.getElementById('ttsPauseBtn').style.display = 'none';
+  document.getElementById('ttsStopBtn').style.display = 'none';
+}
 
 document.getElementById('content').addEventListener('click', (e) => {
   const star = e.target.closest('.star-btn');
@@ -862,11 +962,19 @@ document.getElementById('statsBtn').onclick = () => {
 document.getElementById('statsClose').onclick = () => document.getElementById('statsModal').classList.remove('open');
 
 /* =========================================================
-   🌟 سیستم ثبت‌نام، ورود و پنل ادمین (جدید)
+   🌟 سیستم ثبت‌نام، ورود و پنل ادمین
    ========================================================= */
 
 const authModal = document.getElementById('authModal');
-document.getElementById('userBtn').onclick = () => authModal.classList.add('open');
+document.getElementById('userBtn').onclick = () => {
+  if (currentUser) {
+    // اگر لاگین است، گزینه خروج نشان بده
+    showToast(`👋 خوش آمدید ${currentUser.username}`);
+    if (confirm('از حساب خارج می‌شوید؟')) logout();
+  } else {
+    authModal.classList.add('open');
+  }
+};
 document.getElementById('authClose').onclick = () => authModal.classList.remove('open');
 
 document.getElementById('tabLogin').onclick = () => {
@@ -887,6 +995,7 @@ document.getElementById('registerForm').onsubmit = (e) => {
   const user = document.getElementById('regUser').value.trim();
   const pass = document.getElementById('regPass').value.trim();
   
+  if (!user || !pass) { showToast('نام کاربری و رمز نمی‌توانند خالی باشند'); return; }
   if (usersDB.find(u => u.username === user)) { showToast('این نام کاربری قبلا گرفته شده!'); return; }
   
   usersDB.push({ username: user, password: pass, role: 'user', date: new Date().toISOString() });
@@ -894,6 +1003,8 @@ document.getElementById('registerForm').onsubmit = (e) => {
   showToast('✅ ثبت‌نام موفق. حالا وارد شوید.');
   document.getElementById('tabLogin').click();
   document.getElementById('loginUser').value = user;
+  document.getElementById('regUser').value = '';
+  document.getElementById('regPass').value = '';
 };
 
 document.getElementById('loginForm').onsubmit = (e) => {
@@ -903,8 +1014,9 @@ document.getElementById('loginForm').onsubmit = (e) => {
   
   const found = usersDB.find(u => u.username === user && u.password === pass);
   if (found) {
-    currentUser = found;
-    localStorage.setItem('lrep_current_user', JSON.stringify(found));
+    const { password, ...safeUser } = found;
+    currentUser = safeUser;
+    localStorage.setItem('lrep_current_user', JSON.stringify(safeUser));
     updateAuthUI();
     authModal.classList.remove('open');
     showToast(`خوش آمدید ${user}`);
@@ -916,7 +1028,7 @@ document.getElementById('loginForm').onsubmit = (e) => {
 function updateAuthUI() {
   if (currentUser) {
     document.getElementById('userBtn').textContent = '👋';
-    document.getElementById('userBtn').title = currentUser.username;
+    document.getElementById('userBtn').title = currentUser.username + ' (برای خروج کلیک کنید)';
     if (currentUser.role === 'admin') {
       document.getElementById('adminBtn').style.display = 'grid';
     } else {
@@ -977,14 +1089,18 @@ async function loadAdminData() {
     if (res.ok) {
       const manualNews = await res.json();
       if (Array.isArray(manualNews) && manualNews.length > 0) {
-        newsList.innerHTML = manualNews.map(n => `
+        newsList.innerHTML = manualNews.map(n => {
+          const id = n._id || n.id || '';
+          return `
           <tr>
-            <td style="font-weight:700;">${escapeHtml(n.title)}</td>
-            <td>${escapeHtml(n.source)}</td>
-            <td>${new Date(n.date).toLocaleDateString('fa-IR')}</td>
-            <td><button class="btn btn-sm btn-danger" onclick="deleteNews('${n._id}')" style="padding:4px 8px; font-size:0.7rem;">حذف</button></td>
+            <td style="font-weight:700;">${escapeHtml(n.title || '')}</td>
+            <td>${escapeHtml(n.source || '')}</td>
+            <td>${n.date ? new Date(n.date).toLocaleDateString('fa-IR') : ''}</td>
+            <td>${id ? `<button class="btn btn-sm btn-danger" data-del-id="${escapeHtml(String(id))}">حذف</button>` : '—'}</td>
           </tr>
-        `).join('');
+        `;}).join('');
+        // bind delete
+        newsList.querySelectorAll('[data-del-id]').forEach(b => b.onclick = () => deleteNews(b.dataset.delId));
       } else {
         newsList.innerHTML = '<tr><td colspan="4" style="text-align:center;">هیچ خبر دستی یافت نشد.</td></tr>';
       }
@@ -996,22 +1112,143 @@ async function loadAdminData() {
   }
 }
 
+/* =========================================================
+   🖼️ آپلود عکس ادمین (فشرده‌سازی + Base64)
+   ========================================================= */
+let anImageBase64 = '';
+
+function compressImage(file, maxW = 1280, maxH = 1280, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) { reject(new Error('فایل انتخاب‌شده تصویر نیست')); return; }
+    if (file.size > 10 * 1024 * 1024) { reject(new Error('حجم فایل بیش از ۱۰ مگابایت است')); return; }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxW)  { height = Math.round(height * maxW / width);  width  = maxW; }
+        if (height > maxH) { width  = Math.round(width  * maxH / height); height = maxH; }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // اگر PNG/WEBP بود، شفافیت را نگه‌دار
+        const isPng = file.type === 'image/png' || file.type === 'image/webp';
+        const dataUrl = canvas.toDataURL(isPng ? 'image/png' : 'image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = () => reject(new Error('خطا در خواندن تصویر'));
+      img.src = reader.result;
+    };
+    reader.onerror = () => reject(new Error('خطا در خواندن فایل'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function resetImageUI() {
+  anImageBase64 = '';
+  const previewBox = document.getElementById('imgPreview');
+  const uploadZone = document.getElementById('uploadZone');
+  const fileInput = document.getElementById('anImageFile');
+  if (previewBox) previewBox.style.display = 'none';
+  if (uploadZone) {
+    uploadZone.style.display = 'block';
+    const inner = uploadZone.querySelector('.upload-inner');
+    if (inner) inner.innerHTML = `<span style="font-size:2rem;">📸</span><span>عکس را انتخاب کنید یا اینجا بکشید</span><span style="font-size:0.75rem; color:var(--text-muted);">JPG, PNG, WEBP — حداکثر ۱۰MB</span>`;
+  }
+  if (fileInput) fileInput.value = '';
+  const imgUrl = document.getElementById('anImage');
+  if (imgUrl) imgUrl.value = '';
+}
+
+// تب‌ها
+document.querySelectorAll('.img-tab').forEach(tab => {
+  tab.onclick = () => {
+    document.querySelectorAll('.img-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const isUpload = tab.dataset.imode === 'upload';
+    document.getElementById('imgUploadMode').style.display = isUpload ? 'block' : 'none';
+    document.getElementById('imgUrlMode').style.display   = isUpload ? 'none'  : 'block';
+  };
+});
+
+// آپلود فایل
+const fileInput = document.getElementById('anImageFile');
+const uploadZone = document.getElementById('uploadZone');
+const previewBox = document.getElementById('imgPreview');
+const previewTag = document.getElementById('imgPreviewTag');
+const sizeInfo   = document.getElementById('imgSizeInfo');
+
+if (fileInput) {
+  fileInput.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const inner = uploadZone.querySelector('.upload-inner');
+    const originalHTML = inner.innerHTML;
+    inner.innerHTML = '<span style="font-size:2rem;">⏳</span><span>در حال پردازش و فشرده‌سازی...</span>';
+    try {
+      anImageBase64 = await compressImage(file);
+      previewTag.src = anImageBase64;
+      previewBox.style.display = 'flex';
+      uploadZone.style.display = 'none';
+      const bytes = Math.round(anImageBase64.length * 0.75);
+      sizeInfo.style.color = 'var(--text-muted)';
+      sizeInfo.textContent = `حجم نهایی: ${(bytes / 1024).toFixed(0)}KB • ${file.name}`;
+      if (bytes > 300 * 1024) {
+        sizeInfo.style.color = 'var(--accent-gold)';
+        sizeInfo.textContent += ' — ⚠️ عکس بزرگ است، ممکنه ثبت کند بشه';
+      }
+    } catch (err) {
+      showToast('❌ ' + (err.message || err));
+      inner.innerHTML = originalHTML;
+      fileInput.value = '';
+    }
+  };
+}
+
+// Drag & Drop
+if (uploadZone) {
+  ['dragover','dragenter'].forEach(ev => uploadZone.addEventListener(ev, e => {
+    e.preventDefault(); uploadZone.classList.add('dragover');
+  }));
+  ['dragleave','drop'].forEach(ev => uploadZone.addEventListener(ev, e => {
+    e.preventDefault(); uploadZone.classList.remove('dragover');
+  }));
+  uploadZone.addEventListener('drop', e => {
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      fileInput.files = e.dataTransfer.files;
+      fileInput.dispatchEvent(new Event('change'));
+    }
+  });
+}
+
+// حذف عکس
+const removeImgBtn = document.getElementById('removeImgBtn');
+if (removeImgBtn) removeImgBtn.onclick = resetImageUI;
+
+// فرم ثبت خبر
 document.getElementById('addNewsForm').onsubmit = async (e) => {
   e.preventDefault();
   const payload = {
     title: document.getElementById('anTitle').value.trim(),
     source: document.getElementById('anSource').value.trim() || 'خبر دستی',
     category: document.getElementById('anCategory').value,
-    image: document.getElementById('anImage').value.trim(),
+    image: anImageBase64 || document.getElementById('anImage').value.trim(),
     content: document.getElementById('anContent').value.trim(),
     published: true
   };
 
-  const btn = e.target.querySelector('button');
+  if (!payload.title || !payload.content) { showToast('عنوان و متن خبر الزامی است'); return; }
+
+  const btn = e.target.querySelector('button[type="submit"]');
+  const originalText = btn.textContent;
   btn.textContent = '⏳ در حال ثبت...'; btn.disabled = true;
 
   try {
-    const res = await fetchWithTimeout(MANUAL_NEWS_API, 10000, {
+    const res = await fetchWithTimeout(MANUAL_NEWS_API, 15000, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -1019,34 +1256,43 @@ document.getElementById('addNewsForm').onsubmit = async (e) => {
     if (res.ok) {
       showToast('✅ خبر با موفقیت ثبت شد');
       e.target.reset();
+      resetImageUI();
+      // ریست تب به حالت اولیه
+      document.querySelectorAll('.img-tab').forEach(t => t.classList.remove('active'));
+      const firstTab = document.querySelector('.img-tab[data-imode="upload"]');
+      if (firstTab) firstTab.classList.add('active');
+      document.getElementById('imgUploadMode').style.display = 'block';
+      document.getElementById('imgUrlMode').style.display = 'none';
       loadAdminData();
       loadAll();
     } else {
-      showToast('خطا در ثبت خبر');
+      const txt = await res.text().catch(() => '');
+      showToast('خطا در ثبت خبر: ' + (txt || res.status));
     }
   } catch (err) {
     showToast('خطای شبکه در ثبت خبر');
+    console.error(err);
   } finally {
-    btn.textContent = 'ثبت و انتشار در سایت'; btn.disabled = false;
+    btn.textContent = originalText; btn.disabled = false;
   }
 };
 
-window.deleteNews = async (id) => {
+async function deleteNews(id) {
+  if (!id) { showToast('شناسه نامعتبر'); return; }
   if (!confirm('این خبر حذف شود؟')) return;
   try {
-    const res = await fetchWithTimeout(MANUAL_NEWS_API + '?id=' + id, 10000, {
-      method: 'DELETE'
-    });
+    const res = await fetchWithTimeout(MANUAL_NEWS_API + '?id=' + encodeURIComponent(id), 10000, { method: 'DELETE' });
     if (res.ok) {
       showToast('🗑 خبر حذف شد');
       loadAdminData();
       loadAll();
     } else { showToast('خطا در حذف'); }
   } catch (e) { showToast('خطای شبکه در حذف'); }
-};
+}
+window.deleteNews = deleteNews;
 
 /* =========================================================
-   🌟 تایمر ۵ دقیقه‌ای (اگر لاگین نکرده باشد)
+   🌟 تایمر ۵ دقیقه‌ای
    ========================================================= */
 const TRIAL_TIME = 5 * 60 * 1000; 
 function startTrial() {
