@@ -247,7 +247,7 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v16.0</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v16.1</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -386,10 +386,11 @@
 
 <script>
 /* ==================== تنظیمات ==================== */
-const VERSION = '16.0';
+const VERSION = '16.1';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
-const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
-const MANUAL_NEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
+const VIEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/views';
+const MANUAL_NEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
+const ADMIN_KEY = 'Lrep@2026#Admin!Secure'; // کلید ادمین برای پنل
 const INITIAL_COUNT = 10; const DISPLAY_STEP = 10; const DISPLAY_INTERVAL = 5000; const TRENDING_VIEW_THRESHOLD = 1000;
 
 let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; let allNews = [];
@@ -397,8 +398,27 @@ let activeMode = 'all'; let activeCategory = 'همه'; let searchQuery = ''; let
 let isLoading = false; let readLinks = new Set(); let savedLinks = new Set();
 let ttsSpeaking = false, ttsPaused = false, ttsQueue = [], ttsCurrentIndex = 0;
 
+// 🌟 تعریف کاربر و دیتابیس کاربران (قبل از استفاده)
 let currentUser = null;
-let usersDB = JSON.parse(localStorage.getItem('lrep_users') || '[]');
+let usersDB = [];
+try {
+  const rawUsers = localStorage.getItem('lrep_users');
+  if (rawUsers) {
+    const parsed = JSON.parse(rawUsers);
+    if (Array.isArray(parsed)) usersDB = parsed;
+  }
+} catch (e) { usersDB = []; }
+
+try {
+  const rawUser = localStorage.getItem('lrep_current_user');
+  if (rawUser) currentUser = JSON.parse(rawUser);
+} catch (e) { currentUser = null; }
+
+// 🌟 گرفتن المان‌های DOM (قبل از استفاده)
+const authModal = document.getElementById('authModal');
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+const adminPanel = document.getElementById('adminPanel');
 
 const CATEGORIES = {
   'جنگ':    ['جنگ', 'حمله', 'موشک', 'آتش‌بس', 'غزه', 'اوکراین', 'انفجار', 'نظامی', 'پدافند', 'رزمایش'],
@@ -431,11 +451,7 @@ function safeParse(str, fallback) { try { return JSON.parse(str); } catch { retu
     localStorage.setItem('lrep_users', JSON.stringify(usersDB));
   }
   // چک کردن یوزر لاگین شده
-  const savedUser = localStorage.getItem('lrep_current_user');
-  if (savedUser) {
-    currentUser = JSON.parse(savedUser);
-    updateAuthUI();
-  }
+  updateAuthUI();
 })();
 
 function saveRead() { try { localStorage.setItem('lrep_read_v10', JSON.stringify([...readLinks].slice(-3000))); } catch {} }
@@ -597,7 +613,8 @@ async function fetchFallbackNews() {
     const feeds = [
       { name: 'ایرنا', url: 'https://www.irna.ir/rss' },
       { name: 'مهر', url: 'https://www.mehrnews.com/rss' },
-      { name: 'ایسنا', url: 'https://www.isna.ir/rss' }
+      { name: 'ایسنا', url: 'https://www.isna.ir/rss' },
+      { name: 'تابناک', url: 'https://www.tabnak.ir/fa/rss/allnews' }
     ];
     const results = await Promise.allSettled(feeds.map(f => 
       fetchWithTimeout(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(f.url)}`, 10000)
@@ -830,26 +847,22 @@ document.getElementById('statsClose').onclick = () => document.getElementById('s
    🌟 سیستم ثبت‌نام، ورود و پنل ادمین (جدید)
    ========================================================= */
 
-// باز و بسته کردن مودال Auth
-const authModal = document.getElementById('authModal');
 document.getElementById('userBtn').onclick = () => authModal.classList.add('open');
 document.getElementById('authClose').onclick = () => authModal.classList.remove('open');
 
-// تب‌های Login / Register
 document.getElementById('tabLogin').onclick = () => {
-  document.getElementById('loginForm').style.display = 'block';
-  document.getElementById('registerForm').style.display = 'none';
+  loginForm.style.display = 'block';
+  registerForm.style.display = 'none';
   document.getElementById('tabLogin').classList.add('active');
   document.getElementById('tabRegister').classList.remove('active');
 };
 document.getElementById('tabRegister').onclick = () => {
-  document.getElementById('loginForm').style.display = 'none';
-  document.getElementById('registerForm').style.display = 'block';
+  loginForm.style.display = 'none';
+  registerForm.style.display = 'block';
   document.getElementById('tabLogin').classList.remove('active');
   document.getElementById('tabRegister').classList.add('active');
 };
 
-// ثبت‌نام
 document.getElementById('registerForm').onsubmit = (e) => {
   e.preventDefault();
   const user = document.getElementById('regUser').value.trim();
@@ -864,7 +877,6 @@ document.getElementById('registerForm').onsubmit = (e) => {
   document.getElementById('loginUser').value = user;
 };
 
-// ورود
 document.getElementById('loginForm').onsubmit = (e) => {
   e.preventDefault();
   const user = document.getElementById('loginUser').value.trim();
@@ -882,7 +894,6 @@ document.getElementById('loginForm').onsubmit = (e) => {
   }
 };
 
-// آپدیت UI بعد از لاگین
 function updateAuthUI() {
   if (currentUser) {
     document.getElementById('userBtn').textContent = '👋';
@@ -899,28 +910,23 @@ function updateAuthUI() {
   }
 }
 
-// خروج
 function logout() {
   currentUser = null;
   localStorage.removeItem('lrep_current_user');
   updateAuthUI();
-  document.getElementById('adminPanel').classList.remove('open');
+  adminPanel.classList.remove('open');
   showToast('خارج شدید');
 }
 
-/* =========================================================
-   🌟 پنل ادمین کامل (KOLI KOLI)
-   ========================================================= */
 document.getElementById('adminBtn').onclick = () => {
   if (currentUser && currentUser.role === 'admin') {
-    document.getElementById('adminPanel').classList.add('open');
+    adminPanel.classList.add('open');
     loadAdminData();
   }
 };
 
 document.getElementById('adminLogout').onclick = logout;
 
-// تب‌های پنل ادمین
 document.querySelectorAll('.admin-nav-btn[data-tab]').forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
@@ -930,14 +936,11 @@ document.querySelectorAll('.admin-nav-btn[data-tab]').forEach(btn => {
   };
 });
 
-// بارگذاری دیتای پنل ادمین
 async function loadAdminData() {
-  // آمار
   document.getElementById('dashTotalNews').textContent = allNews.length.toLocaleString('fa-IR');
   document.getElementById('dashManualNews').textContent = allNews.filter(n => n._manual).length.toLocaleString('fa-IR');
   document.getElementById('dashUsers').textContent = usersDB.length.toLocaleString('fa-IR');
 
-  // لیست کاربران
   const userList = document.getElementById('adminUserList');
   userList.innerHTML = usersDB.map(u => `
     <tr>
@@ -947,12 +950,11 @@ async function loadAdminData() {
     </tr>
   `).join('');
 
-  // لیست اخبار دستی
   const newsList = document.getElementById('adminNewsList');
   newsList.innerHTML = '<tr><td colspan="4" style="text-align:center;">در حال بارگذاری...</td></tr>';
   
   try {
-    const res = await fetchWithTimeout(MANUAL_NEWS_API + '?all=1', 10000, { headers: { 'x-admin-key': 'Lrep@2026#Admin!Secure' } });
+    const res = await fetchWithTimeout(MANUAL_NEWS_API + '?all=1', 10000, { headers: { 'x-admin-key': ADMIN_KEY } });
     if (res.ok) {
       const manualNews = await res.json();
       if (Array.isArray(manualNews) && manualNews.length > 0) {
@@ -975,7 +977,6 @@ async function loadAdminData() {
   }
 }
 
-// افزودن خبر از پنل ادمین
 document.getElementById('addNewsForm').onsubmit = async (e) => {
   e.preventDefault();
   const payload = {
@@ -993,14 +994,14 @@ document.getElementById('addNewsForm').onsubmit = async (e) => {
   try {
     const res = await fetchWithTimeout(MANUAL_NEWS_API, 10000, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-key': 'Lrep@2026#Admin!Secure' },
+      headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY },
       body: JSON.stringify(payload)
     });
     if (res.ok) {
       showToast('✅ خبر با موفقیت ثبت شد');
       e.target.reset();
       loadAdminData();
-      loadAll(); // رفرش سایت اصلی
+      loadAll();
     } else {
       showToast('خطا در ثبت خبر (کلید امنیتی چک شود)');
     }
@@ -1011,13 +1012,12 @@ document.getElementById('addNewsForm').onsubmit = async (e) => {
   }
 };
 
-// حذف خبر دستی
 window.deleteNews = async (id) => {
   if (!confirm('این خبر حذف شود؟')) return;
   try {
     const res = await fetchWithTimeout(MANUAL_NEWS_API + '?id=' + id, 10000, {
       method: 'DELETE',
-      headers: { 'x-admin-key': 'Lrep@2026#Admin!Secure' }
+      headers: { 'x-admin-key': ADMIN_KEY }
     });
     if (res.ok) {
       showToast('🗑 خبر حذف شد');
@@ -1032,7 +1032,7 @@ window.deleteNews = async (id) => {
    ========================================================= */
 const TRIAL_TIME = 5 * 60 * 1000; 
 function startTrial() {
-  if (currentUser) return; // اگر لاگین است، تایمر کار نمی‌کند
+  if (currentUser) return; 
   setTimeout(() => {
     if (!currentUser) {
       authModal.classList.add('open');
