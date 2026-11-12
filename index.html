@@ -69,7 +69,7 @@
   .info-card .value { font-size: 0.95rem; font-weight: 800; }
   .info-card .sub { font-size: 0.75rem; color: var(--text-muted); }
 
-  /* 🎯 گیج نیم‌دایره‌ای (سرعت‌سنج) دقیقاً مثل قبلی */
+  /* گیج نیم‌دایره‌ای (سرعت‌سنج) */
   .aqi-card { padding: 12px 20px; }
   .gauge-container { width: 60px; height: 35px; position: relative; display: flex; justify-content: center; align-items: flex-end; flex-shrink: 0; }
   .gauge-bg { width: 60px; height: 30px; border-top-left-radius: 60px; border-top-right-radius: 60px; background: conic-gradient(from 270deg at 50% 100%, #10b981 0deg, #10b981 30deg, #fbbf24 30deg, #fbbf24 60deg, #f97316 60deg, #f97316 90deg, #ef4444 90deg, #ef4444 120deg, #8b5cf6 120deg, #8b5cf6 180deg); position: absolute; bottom: 0; opacity: 0.15; }
@@ -253,7 +253,7 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v13.2</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v14.0</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -387,8 +387,7 @@
 
 <script>
 /* ==================== تنظیمات ==================== */
-const VERSION = '13.2';
-// ✅ آدرس‌های اصلاح‌شده (حرف q و g درست شد)
+const VERSION = '14.0';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
 const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
 const MANUAL_NEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
@@ -521,7 +520,6 @@ async function loadMarketPrices() {
   }
 }
 
-// ✅ تابع اصلاح‌شده و ضدضربه آلودگی هوا (با عقربه نیم‌دایره)
 async function loadAQI() {
   const statusEl = document.getElementById('aqiStatus');
   const valEl = document.getElementById('aqiValue');
@@ -628,11 +626,52 @@ function findRelatedNews(current, list) {
   }).sort((a, b) => b._score - a._score).slice(0, 4);
 }
 
+// 🌟 سیستم پشتیبان (Fallback) در صورت قطعی سرور اصلی
+async function fetchFallbackNews() {
+  try {
+    const feeds = [
+      { name: 'ایرنا', url: 'https://www.irna.ir/rss' },
+      { name: 'مهر', url: 'https://www.mehrnews.com/rss' },
+      { name: 'ایسنا', url: 'https://www.isna.ir/rss' },
+      { name: 'تابناک', url: 'https://www.tabnak.ir/fa/rss/allnews' }
+    ];
+    const results = await Promise.allSettled(feeds.map(f => 
+      fetchWithTimeout(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(f.url)}`, 10000)
+        .then(r => r.json())
+    ));
+    
+    const fallbackNews = [];
+    results.forEach((res, index) => {
+      if (res.status === 'fulfilled' && res.value && res.value.items) {
+        res.value.items.forEach(item => {
+          let plain = item.description ? item.description.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : '';
+          fallbackNews.push({
+            title: item.title,
+            link: item.link,
+            summary: plain.slice(0, 250) + (plain.length > 250 ? '...' : ''),
+            content: item.content || item.description || '',
+            plain: plain,
+            image: item.thumbnail || '',
+            date: item.pubDate || new Date().toISOString(),
+            source: feeds[index].name,
+            category: detectCategory(item.title + ' ' + plain),
+            textLength: plain.length
+          });
+        });
+      }
+    });
+    return fallbackNews;
+  } catch (e) {
+    console.warn('Fallback news error:', e);
+    return [];
+  }
+}
+
 async function loadAll() {
   if (isLoading) return; isLoading = true;
   const badge = document.getElementById('liveBadge'); badge.classList.add('loading'); badge.innerHTML = '<span class="dot"></span> دریافت...';
   try {
-    const [resNews, resManual] = await Promise.allSettled([fetchWithTimeout(SUPABASE_URL, 30000), fetchWithTimeout(MANUAL_NEWS_API, 10000)]);
+    const [resNews, resManual] = await Promise.allSettled([fetchWithTimeout(SUPABASE_URL, 15000), fetchWithTimeout(MANUAL_NEWS_API, 10000)]);
     const knownLinks = new Set(allNews.map(n => n.link));
     
     if (resNews.status === 'fulfilled' && resNews.value.ok) {
@@ -659,12 +698,27 @@ async function loadAll() {
       }
     }
     
+    // اگر سرور اصلی جواب نداد یا خالی بود، از سیستم پشتیبان استفاده کن
+    if (allNews.length === 0) {
+      document.getElementById('status').textContent = 'دریافت از منابع پشتیبان...';
+      const fallback = await fetchFallbackNews();
+      for (const item of fallback) {
+        if (item.link && item.title && !knownLinks.has(item.link)) {
+          allNews.push(item); knownLinks.add(item.link);
+        }
+      }
+    }
+    
     allNews.sort((a, b) => (new Date(b.date).getTime() || 0) - (new Date(a.date).getTime() || 0));
     await fetchAllViews(); buildFilters(); render();
     
     document.getElementById('status').textContent = `آخرین بروزرسانی: ${new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })}`;
     startProgressiveDisplay();
-  } catch (err) { document.getElementById('status').textContent = '⚠️ خطا در دریافت'; } finally { isLoading = false; badge.classList.remove('loading'); badge.innerHTML = '<span class="dot"></span> زنده'; }
+  } catch (err) { 
+    document.getElementById('status').textContent = '⚠️ خطا در دریافت'; 
+  } finally { 
+    isLoading = false; badge.classList.remove('loading'); badge.innerHTML = '<span class="dot"></span> زنده'; 
+  }
 }
 
 function startProgressiveDisplay() {
