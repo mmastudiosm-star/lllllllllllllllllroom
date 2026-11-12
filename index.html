@@ -76,12 +76,12 @@
   .aqi-gauge-ring { 
     position: absolute; inset: 0; border-radius: 50%; 
     background: conic-gradient(
-      #10b981 0deg 60deg,       /* سبز */
-      #fbbf24 60deg 120deg,     /* زرد */
-      #f97316 120deg 180deg,    /* نارنجی */
-      #ef4444 180deg 240deg,    /* قرمز */
-      #8b5cf6 240deg 300deg,    /* بنفش */
-      #b91c1c 300deg 360deg     /* قرمز تیره */
+      #10b981 0deg 60deg,       /* سبز: پاک */
+      #fbbf24 60deg 120deg,     /* زرد: قابل قبول */
+      #f97316 120deg 180deg,    /* نارنجی: ناسالم برای گروه‌های حساس */
+      #ef4444 180deg 240deg,    /* قرمز: ناسالم */
+      #8b5cf6 240deg 300deg,    /* بنفش: بسیار ناسالم */
+      #b91c1c 300deg 360deg     /* قرمز تیره: خطرناک */
     ); 
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
   }
@@ -97,16 +97,13 @@
 
   .aqi-gauge-needle { 
     position: absolute; bottom: 50%; left: 50%; 
-    width: 3px; height: 24px; background: #fff; 
-    border-radius: 3px; transform-origin: bottom center; 
+    width: 4px; height: 26px; background: #fff; 
+    border-radius: 4px; transform-origin: bottom center; 
     transform: translateX(-50%) rotate(0deg); 
     transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
     z-index: 3; box-shadow: 0 0 8px rgba(0,0,0,0.8); border: 1px solid rgba(0,0,0,0.2); 
   }
-  .aqi-gauge-needle::after {
-    content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
-    width: 9px; height: 9px; background: #fff; border-radius: 50%; box-shadow: 0 0 8px rgba(0,0,0,0.8);
-  }
+  .demo-warning { font-size: 10px; color: #ef4444; margin-right: 4px; cursor: help; }
 
   .nav-wrap { max-width: 1400px; margin: 0 auto; padding: 16px 24px 8px; display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; }
   .nav-wrap::-webkit-scrollbar { display: none; }
@@ -177,15 +174,6 @@
   .skeleton::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); animation: shimmer 1.5s infinite; }
   @keyframes shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
 
-  /* 🌟 استایل‌های سیستم لاگین و پنل ادمین */
-  .auth-input { width: 100%; padding: 12px 16px; margin-bottom: 12px; background: var(--bg); border: 1px solid var(--glass-border); border-radius: 10px; color: var(--text-main); font-family: inherit; font-size: 1rem; outline: none; transition: 0.3s; }
-  .auth-input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px var(--accent-glow); }
-  
-  .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
-  .admin-table th, .admin-table td { padding: 12px; text-align: right; border-bottom: 1px solid var(--glass-border); }
-  .admin-table th { color: var(--accent-cyan); font-weight: 800; background: rgba(0,0,0,0.2); }
-  .admin-table tr:hover td { background: rgba(255,255,255,0.03); }
-
   @media (max-width: 768px) {
     .header-inner { padding: 12px 16px; }
     .search-box { order: 3; width: 100%; min-width: 100%; margin-top: 8px; }
@@ -199,7 +187,6 @@
     .modal { border-radius: 0; min-height: 100vh; max-width: 100%; overflow-y: auto; }
     .modal-content { padding: 24px 20px; }
     .share-grid { grid-template-columns: repeat(3, 1fr); }
-    .admin-table { font-size: 0.75rem; }
   }
   @media (max-width: 400px) { .infobar { grid-template-columns: 1fr; } }
   ::-webkit-scrollbar { width: 6px; }
@@ -216,7 +203,6 @@
     <div class="logo"><img class="logo-img" id="logoImg" alt="Lreporter"><span>Lreporter</span></div>
     <div class="search-box"><input type="text" id="searchInput" placeholder="جستجو در اخبار..."></div>
     <div class="header-actions">
-      <button class="icon-btn" id="adminBtn" title="پنل مدیریت" style="color:var(--accent-gold); border-color:var(--accent-gold);">🔒</button>
       <button class="icon-btn" id="themeBtn" title="تغییر تم">🌙</button>
       <button class="icon-btn" id="statsBtn" title="آمار">📊</button>
       <button class="icon-btn" id="settingsBtn" title="تنظیمات">⚙️</button>
@@ -256,6 +242,7 @@
     </div>
   </div>
 
+  <!-- کادر شاخص آلودگی هوا (AQI) با گیج دایره‌ای -->
   <div class="info-card aqi-card">
     <div class="aqi-gauge-wrap">
       <div class="aqi-gauge-ring"></div>
@@ -263,8 +250,8 @@
       <div class="aqi-gauge-needle" id="aqiNeedle"></div>
     </div>
     <div class="body">
-      <span class="label">آلودگی هوای تهران (AQI)</span>
-      <span class="sub" id="aqiStatus">در حال دریافت...</span>
+      <span class="label">آلودگی هوای تهران (AQI) <span id="aqiDemoWarning" class="demo-warning" style="display:none;" title="برای دقت ۱۰۰٪ توکن WAQI خود را در کد قرار دهید">*</span></span>
+      <span class="sub" id="aqiStatus" style="font-weight:800;">—</span>
     </div>
   </div>
 </div>
@@ -281,66 +268,11 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v14.2</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v11.2</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
-<!-- 🌟 مودال انتخاب نام کاربری و رمز عبور -->
-<div class="modal-overlay" id="loginGateModal" style="z-index:3000;">
-  <div class="modal" style="max-width:400px; text-align:center;">
-    <div class="modal-content">
-      <h2 style="font-size:1.4rem;margin-bottom:16px;color:var(--accent-cyan);">⏳ زمان آزمایش به پایان رسید</h2>
-      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:24px;">برای ادامه استفاده از سایت، لطفاً یک نام کاربری و رمز عبور برای خود انتخاب کنید.</p>
-      <form id="gateForm">
-        <input type="text" id="gateUser" class="auth-input" placeholder="نام کاربری جدید..." required autocomplete="off">
-        <input type="password" id="gatePass" class="auth-input" placeholder="رمز عبور جدید..." required autocomplete="new-password">
-        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:10px;">ثبت‌نام و ادامه</button>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- 🌟 مودال ورود ادمین -->
-<div class="modal-overlay" id="adminLoginModal" style="z-index:3000;">
-  <div class="modal" style="max-width:400px; text-align:center;">
-    <button class="modal-close" id="adminLoginClose">✕</button>
-    <div class="modal-content">
-      <h2 style="font-size:1.4rem;margin-bottom:16px;color:var(--accent-gold);">🔐 ورود به پنل مدیریت</h2>
-      <form id="adminLoginForm">
-        <input type="text" id="adminUser" class="auth-input" placeholder="نام کاربری ادمین" required autocomplete="off">
-        <input type="password" id="adminPass" class="auth-input" placeholder="رمز عبور ادمین" required autocomplete="new-password">
-        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:10px; background:var(--accent-gold); color:#000;">ورود</button>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- 🌟 مودال پنل ادمین -->
-<div class="modal-overlay" id="adminPanelModal" style="z-index:3000;">
-  <div class="modal" style="max-width:1000px;">
-    <button class="modal-close" id="adminPanelClose">✕</button>
-    <div class="modal-content">
-      <h2 style="font-size:1.5rem;margin-bottom:20px;color:var(--accent-gold);">📊 پنل مدیریت Lreporter</h2>
-      <p style="color:var(--text-muted); margin-bottom:15px; font-size:0.9rem;">لیست تمام اخبار موجود در دیتابیس (شامل RSS و اخبار دستی):</p>
-      
-      <div style="max-height: 60vh; overflow-y: auto; border: 1px solid var(--glass-border); border-radius: 10px;">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>عنوان خبر</th>
-              <th>منبع</th>
-              <th>دسته‌بندی</th>
-              <th>زمان</th>
-            </tr>
-          </thead>
-          <tbody id="adminNewsList"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- مودال تنظیمات -->
+<!-- مودال‌ها -->
 <div class="modal-overlay" id="settingsModal" style="z-index:2000;">
   <div class="modal" style="max-width:400px;">
     <button class="modal-close" id="settingsClose">✕</button>
@@ -358,7 +290,6 @@
   </div>
 </div>
 
-<!-- مودال آمار -->
 <div class="modal-overlay" id="statsModal" style="z-index:2000;">
   <div class="modal" style="max-width:450px;">
     <button class="modal-close" id="statsClose">✕</button>
@@ -369,7 +300,6 @@
   </div>
 </div>
 
-<!-- مودال خبر -->
 <div class="modal-overlay" id="modal">
   <div class="modal" id="modalBox">
     <button class="modal-close" id="modalClose">✕</button>
@@ -414,11 +344,12 @@
 </div>
 
 <script>
-/* ==================== تنظیمات ==================== */
-const VERSION = '14.2';
+const VERSION = '11.2';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
-const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
-const MANUAL_NEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
+const VIEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/views';
+const MANUAL_NEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
+// 🔑 توکن WAQI (دریافت رایگان از aqicn.org/data-platform/token)
+const WAQI_TOKEN = 'demo'; 
 const INITIAL_COUNT = 10; const DISPLAY_STEP = 10; const DISPLAY_INTERVAL = 5000; const TRENDING_VIEW_THRESHOLD = 1000;
 
 let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; let allNews = [];
@@ -548,52 +479,55 @@ async function loadMarketPrices() {
   }
 }
 
-// ✅ تابع آلودگی هوا با غیرفعال‌سازی کش و گیج دایره‌ای
 async function loadAQI() {
-  const statusEl = document.getElementById('aqiStatus');
-  const valEl = document.getElementById('aqiValue');
-  const needleEl = document.getElementById('aqiNeedle');
-
-  if (!statusEl || !valEl || !needleEl) return;
-
-  statusEl.textContent = 'در حال دریافت...';
-  statusEl.style.color = 'var(--text-muted)';
-
+  let aqi = null;
+  
+  // ۱. تلاش برای دریافت دیتای دقیق ایستگاه زمینی از WAQI
   try {
-    // اضافه کردن timestamp به URL برای جلوگیری از کش شدن
-    const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=35.6892&longitude=51.3890&current=us_aqi&t=${Date.now()}`;
-    const res = await fetchWithTimeout(url, 10000, { cache: 'no-store' });
-    if (!res.ok) throw new Error('API Error');
-    
-    const data = await res.json();
-    
-    if (data && data.current && typeof data.current.us_aqi === 'number') {
-      const aqi = data.current.us_aqi;
-      valEl.textContent = aqi.toLocaleString('fa-IR');
-      
-      let color = '#10b981'; let status = 'پاک';
-      if (aqi > 50) { color = '#fbbf24'; status = 'قابل قبول'; }
-      if (aqi > 100) { color = '#f97316'; status = 'ناسالم برای گروه‌های حساس'; }
-      if (aqi > 150) { color = '#ef4444'; status = 'ناسالم'; }
-      if (aqi > 200) { color = '#8b5cf6'; status = 'بسیار ناسالم'; }
-      if (aqi > 300) { color = '#b91c1c'; status = 'خطرناک'; }
-
-      statusEl.textContent = status;
-      statusEl.style.color = color;
-      
-      // چرخش عقربه در دایره کامل (۰ تا ۳۶۰ درجه)
-      const maxAqiForGauge = 300;
-      const cappedAqi = Math.min(aqi, maxAqiForGauge);
-      const deg = (cappedAqi / maxAqiForGauge) * 360;
-      
-      needleEl.style.transform = `translateX(-50%) rotate(${deg}deg)`;
-    } else {
-      throw new Error('Invalid data');
+    const res = await fetchWithTimeout(`https://api.waqi.info/feed/tehran/?token=${WAQI_TOKEN}`, 6000);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.status === 'ok' && data.data && data.data.aqi) {
+        aqi = data.data.aqi;
+        document.getElementById('aqiDemoWarning').style.display = WAQI_TOKEN === 'demo' ? 'inline' : 'none';
+      }
     }
-  } catch (err) {
-    console.warn('AQI Error:', err);
-    statusEl.textContent = 'خطا در دریافت';
-    valEl.textContent = '—';
+  } catch(e) {}
+
+  // ۲. اگر توکن demo بود یا خطا داد، از دیتای ماهواره‌ای استفاده میکنیم
+  if (aqi === null) {
+    try {
+      const res = await fetchWithTimeout('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=35.6892&longitude=51.3890&current=us_aqi', 8000);
+      if (res.ok) {
+        const data = await res.json();
+        aqi = data.current.us_aqi;
+        document.getElementById('aqiDemoWarning').style.display = 'inline'; // چون ماهواره‌ای است، ستاره نمایش داده میشود
+      }
+    } catch(e) {}
+  }
+
+  if (aqi !== null) {
+    document.getElementById('aqiValue').textContent = aqi.toLocaleString('fa-IR');
+    
+    let color = '#10b981'; // Good
+    let status = 'پاک';
+    if (aqi > 50) { color = '#fbbf24'; status = 'قابل قبول'; }
+    if (aqi > 100) { color = '#f97316'; status = 'ناسالم برای گروه‌های حساس'; }
+    if (aqi > 150) { color = '#ef4444'; status = 'ناسالم'; }
+    if (aqi > 200) { color = '#8b5cf6'; status = 'بسیار ناسالم'; }
+    if (aqi > 300) { color = '#b91c1c'; status = 'خطرناک'; }
+
+    document.getElementById('aqiStatus').textContent = status;
+    document.getElementById('aqiStatus').style.color = color;
+    
+    // محاسبه درجه چرخش عقربه (۰ تا ۳۶۰ درجه)
+    const maxAqiForGauge = 300;
+    const cappedAqi = Math.min(aqi, maxAqiForGauge);
+    const deg = (cappedAqi / maxAqiForGauge) * 360;
+    document.getElementById('aqiNeedle').style.transform = `translateX(-50%) rotate(${deg}deg)`;
+  } else {
+    document.getElementById('aqiValue').textContent = '—';
+    document.getElementById('aqiStatus').textContent = 'خطا در دریافت';
   }
 }
 
@@ -655,51 +589,11 @@ function findRelatedNews(current, list) {
   }).sort((a, b) => b._score - a._score).slice(0, 4);
 }
 
-async function fetchFallbackNews() {
-  try {
-    const feeds = [
-      { name: 'ایرنا', url: 'https://www.irna.ir/rss' },
-      { name: 'مهر', url: 'https://www.mehrnews.com/rss' },
-      { name: 'ایسنا', url: 'https://www.isna.ir/rss' },
-      { name: 'تابناک', url: 'https://www.tabnak.ir/fa/rss/allnews' }
-    ];
-    const results = await Promise.allSettled(feeds.map(f => 
-      fetchWithTimeout(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(f.url)}`, 10000)
-        .then(r => r.json())
-    ));
-    
-    const fallbackNews = [];
-    results.forEach((res, index) => {
-      if (res.status === 'fulfilled' && res.value && res.value.items) {
-        res.value.items.forEach(item => {
-          let plain = item.description ? item.description.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : '';
-          fallbackNews.push({
-            title: item.title,
-            link: item.link,
-            summary: plain.slice(0, 250) + (plain.length > 250 ? '...' : ''),
-            content: item.content || item.description || '',
-            plain: plain,
-            image: item.thumbnail || '',
-            date: item.pubDate || new Date().toISOString(),
-            source: feeds[index].name,
-            category: detectCategory(item.title + ' ' + plain),
-            textLength: plain.length
-          });
-        });
-      }
-    });
-    return fallbackNews;
-  } catch (e) {
-    console.warn('Fallback news error:', e);
-    return [];
-  }
-}
-
 async function loadAll() {
   if (isLoading) return; isLoading = true;
   const badge = document.getElementById('liveBadge'); badge.classList.add('loading'); badge.innerHTML = '<span class="dot"></span> دریافت...';
   try {
-    const [resNews, resManual] = await Promise.allSettled([fetchWithTimeout(SUPABASE_URL, 15000), fetchWithTimeout(MANUAL_NEWS_API, 10000)]);
+    const [resNews, resManual] = await Promise.allSettled([fetchWithTimeout(SUPABASE_URL, 30000), fetchWithTimeout(MANUAL_NEWS_API, 10000)]);
     const knownLinks = new Set(allNews.map(n => n.link));
     
     if (resNews.status === 'fulfilled' && resNews.value.ok) {
@@ -726,26 +620,12 @@ async function loadAll() {
       }
     }
     
-    if (allNews.length === 0) {
-      document.getElementById('status').textContent = 'دریافت از منابع پشتیبان...';
-      const fallback = await fetchFallbackNews();
-      for (const item of fallback) {
-        if (item.link && item.title && !knownLinks.has(item.link)) {
-          allNews.push(item); knownLinks.add(item.link);
-        }
-      }
-    }
-    
     allNews.sort((a, b) => (new Date(b.date).getTime() || 0) - (new Date(a.date).getTime() || 0));
     await fetchAllViews(); buildFilters(); render();
     
     document.getElementById('status').textContent = `آخرین بروزرسانی: ${new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })}`;
     startProgressiveDisplay();
-  } catch (err) { 
-    document.getElementById('status').textContent = '⚠️ خطا در دریافت'; 
-  } finally { 
-    isLoading = false; badge.classList.remove('loading'); badge.innerHTML = '<span class="dot"></span> زنده'; 
-  }
+  } catch (err) { document.getElementById('status').textContent = '⚠️ خطا در دریافت'; } finally { isLoading = false; badge.classList.remove('loading'); badge.innerHTML = '<span class="dot"></span> زنده'; }
 }
 
 function startProgressiveDisplay() {
@@ -874,7 +754,7 @@ document.getElementById('content').addEventListener('click', (e) => {
 
 document.querySelectorAll('.nav-btn').forEach(btn => btn.onclick = () => { activeMode = btn.dataset.mode; displayLimit = INITIAL_COUNT; buildFilters(); render(); });
 document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; displayLimit = INITIAL_COUNT; buildFilters(); render(); });
-document.getElementById('refreshBtn').onclick = () => { loadAll(); loadAQI(); };
+document.getElementById('refreshBtn').onclick = () => loadAll();
 document.getElementById('modalClose').onclick = closeModal; document.getElementById('modal').onclick = (e) => { if (e.target.id === 'modal') closeModal(); };
 document.getElementById('modalStar').onclick = () => { if (!currentNews) return; const saved = toggleSaved(currentNews.link); showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); document.getElementById('modalStar').textContent = saved ? '★' : '☆'; document.getElementById('modalStar').classList.toggle('saved', saved); render(); };
 document.getElementById('modalCopyBtn').onclick = () => { if (currentNews) navigator.clipboard.writeText(currentNews.link).then(() => showToast('📋 کپی شد')); };
@@ -917,68 +797,6 @@ document.getElementById('statsBtn').onclick = () => {
 };
 document.getElementById('statsClose').onclick = () => document.getElementById('statsModal').classList.remove('open');
 
-/* 🌟 سیستم لاگین ۵ دقیقه‌ای و پنل ادمین */
-
-const TRIAL_TIME = 5 * 60 * 1000; 
-function startTrial() {
-  if (localStorage.getItem('lrep_logged_in') === 'true') return; 
-  setTimeout(() => {
-    if (localStorage.getItem('lrep_logged_in') !== 'true') {
-      document.getElementById('loginGateModal').classList.add('open');
-    }
-  }, TRIAL_TIME);
-}
-
-document.getElementById('gateForm').onsubmit = (e) => {
-  e.preventDefault();
-  const user = document.getElementById('gateUser').value;
-  const pass = document.getElementById('gatePass').value;
-  if (user && pass) {
-    localStorage.setItem('lrep_logged_in', 'true');
-    localStorage.setItem('lrep_user', user);
-    document.getElementById('loginGateModal').classList.remove('open');
-    showToast('حساب کاربری با موفقیت ساخته شد. خوش آمدید!');
-  }
-};
-
-document.getElementById('adminBtn').onclick = () => document.getElementById('adminLoginModal').classList.add('open');
-document.getElementById('adminLoginClose').onclick = () => document.getElementById('adminLoginModal').classList.remove('open');
-
-document.getElementById('adminLoginForm').onsubmit = (e) => {
-  e.preventDefault();
-  const user = document.getElementById('adminUser').value;
-  const pass = document.getElementById('adminPass').value;
-  
-  if (user === 'mma' && pass === '1394') {
-    document.getElementById('adminLoginModal').classList.remove('open');
-    openAdminPanel();
-  } else {
-    showToast('نام کاربری یا رمز عبور اشتباه است!');
-  }
-};
-
-function openAdminPanel() {
-  document.getElementById('adminPanelModal').classList.add('open');
-  const list = document.getElementById('adminNewsList');
-  
-  if (allNews.length === 0) {
-    list.innerHTML = '<tr><td colspan="4" style="text-align:center;">هیچ خبری یافت نشد.</td></tr>';
-    return;
-  }
-
-  list.innerHTML = allNews.slice(0, 100).map(n => `
-    <tr>
-      <td style="font-weight:700;">${escapeHtml(n.title)}</td>
-      <td><span class="source-tag" style="font-size:10px;">${escapeHtml(n.source)}</span></td>
-      <td>${escapeHtml(n.category)}</td>
-      <td style="color:var(--text-muted); font-size:0.8rem;">${formatTime(n.date)}</td>
-    </tr>
-  `).join('');
-}
-
-document.getElementById('adminPanelClose').onclick = () => document.getElementById('adminPanelModal').classList.remove('open');
-
-/* شروع برنامه */
 document.getElementById('logoImg').src = ICON_URL;
 document.getElementById('appleIcon').href = ICON_URL;
 document.getElementById('fontVal').textContent = parseFloat(getComputedStyle(document.documentElement).fontSize).toLocaleString('fa-IR');
@@ -986,12 +804,10 @@ document.getElementById('fontVal').textContent = parseFloat(getComputedStyle(doc
 updatePersianDateTime(); setInterval(updatePersianDateTime, 1000); 
 loadWeather(); 
 loadMarketPrices(); setInterval(loadMarketPrices, 5 * 60 * 1000); 
-loadAQI(); setInterval(loadAQI, 15 * 60 * 1000); 
+loadAQI(); setInterval(loadAQI, 10 * 60 * 1000); 
 startCountdown(); 
 setupTTS();
 loadAll(); setInterval(loadAll, 5 * 60 * 1000);
-
-startTrial(); 
 
 try {
   const manifest = { name: 'Lreporter', short_name: 'Lreporter', start_url: location.pathname || '/', display: 'standalone', background_color: '#050810', theme_color: '#3b82f6', icons: [{ src: ICON_URL, sizes: '192x192', type: 'image/svg+xml' }, { src: ICON_URL, sizes: '512x512', type: 'image/svg+xml' }] };
