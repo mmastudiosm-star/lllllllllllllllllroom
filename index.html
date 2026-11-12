@@ -247,7 +247,7 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v16.3</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v16.4</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -416,11 +416,10 @@
 
 <script>
 /* ==================== تنظیمات ==================== */
-const VERSION = '16.3';
+const VERSION = '16.4';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
-const VIEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/views';
-const MANUAL_NEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
-const ADMIN_KEY = 'Lrep@2026#Admin!Secure';
+const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
+const MANUAL_NEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
 const INITIAL_COUNT = 10; const DISPLAY_STEP = 10; const DISPLAY_INTERVAL = 5000; const TRENDING_VIEW_THRESHOLD = 1000;
 
 let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; let allNews = [];
@@ -974,7 +973,7 @@ async function loadAdminData() {
   newsList.innerHTML = '<tr><td colspan="4" style="text-align:center;">در حال بارگذاری...</td></tr>';
   
   try {
-    const res = await fetchWithTimeout(MANUAL_NEWS_API + '?all=1', 10000, { headers: { 'x-admin-key': ADMIN_KEY } });
+    const res = await fetchWithTimeout(MANUAL_NEWS_API + '?all=1', 10000);
     if (res.ok) {
       const manualNews = await res.json();
       if (Array.isArray(manualNews) && manualNews.length > 0) {
@@ -993,7 +992,7 @@ async function loadAdminData() {
       throw new Error('API Error');
     }
   } catch (e) {
-    newsList.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--accent-red);">خطا در دریافت (کلید امنیتی یا سرور چک شود)</td></tr>';
+    newsList.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--accent-red);">خطا در دریافت اطلاعات از سرور</td></tr>';
   }
 }
 
@@ -1014,7 +1013,7 @@ document.getElementById('addNewsForm').onsubmit = async (e) => {
   try {
     const res = await fetchWithTimeout(MANUAL_NEWS_API, 10000, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     if (res.ok) {
@@ -1023,7 +1022,7 @@ document.getElementById('addNewsForm').onsubmit = async (e) => {
       loadAdminData();
       loadAll();
     } else {
-      showToast('خطا در ثبت خبر (کلید امنیتی چک شود)');
+      showToast('خطا در ثبت خبر');
     }
   } catch (err) {
     showToast('خطای شبکه در ثبت خبر');
@@ -1036,8 +1035,7 @@ window.deleteNews = async (id) => {
   if (!confirm('این خبر حذف شود؟')) return;
   try {
     const res = await fetchWithTimeout(MANUAL_NEWS_API + '?id=' + id, 10000, {
-      method: 'DELETE',
-      headers: { 'x-admin-key': ADMIN_KEY }
+      method: 'DELETE'
     });
     if (res.ok) {
       showToast('🗑 خبر حذف شد');
