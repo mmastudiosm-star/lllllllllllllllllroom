@@ -247,7 +247,7 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v17.0</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v18.0</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -420,11 +420,15 @@
 
 <script>
 /* ==================== تنظیمات ==================== */
-const VERSION = '17.0';
+const VERSION = '18.0';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
 const VIEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/views';
 const MANUAL_NEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
 const UPLOAD_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/upload-image';
+
+// ⚠️ اینجا کلید آنون خودت رو جایگزین کن
+const SUPABASE_ANON_KEY = 'sb_publishable_OsUd9T9GvvY6rvyycxlQSA_xFazoXBe';
+
 const INITIAL_COUNT = 10; const DISPLAY_STEP = 10; const DISPLAY_INTERVAL = 5000; const TRENDING_VIEW_THRESHOLD = 1000;
 
 let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; let allNews = [];
@@ -663,7 +667,9 @@ async function loadAll() {
   if (isLoading) return; isLoading = true;
   const badge = document.getElementById('liveBadge'); badge.classList.add('loading'); badge.innerHTML = '<span class="dot"></span> دریافت...';
   try {
-    const [resNews, resManual] = await Promise.allSettled([fetchWithTimeout(SUPABASE_URL, 15000), fetchWithTimeout(MANUAL_NEWS_API, 10000)]);
+    const [resNews, resManual] = await Promise.allSettled([fetchWithTimeout(SUPABASE_URL, 15000), fetchWithTimeout(MANUAL_NEWS_API, 10000, {
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
+    })]);
     const knownLinks = new Set(allNews.map(n => n.link));
     
     if (resNews.status === 'fulfilled' && resNews.value.ok) {
@@ -867,7 +873,7 @@ document.getElementById('statsBtn').onclick = () => {
 document.getElementById('statsClose').onclick = () => document.getElementById('statsModal').classList.remove('open');
 
 /* =========================================================
-   🌟 سیستم ثبت‌نام، ورود و پنل ادمین (جدید)
+   🌟 سیستم ثبت‌نام، ورود و پنل ادمین
    ========================================================= */
 
 const authModal = document.getElementById('authModal');
@@ -978,7 +984,12 @@ async function loadAdminData() {
   newsList.innerHTML = '<tr><td colspan="4" style="text-align:center;">در حال بارگذاری...</td></tr>';
   
   try {
-    const res = await fetchWithTimeout(MANUAL_NEWS_API + '?all=1', 10000);
+    const res = await fetchWithTimeout(MANUAL_NEWS_API + '?all=1', 10000, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+      }
+    });
     if (res.ok) {
       const manualNews = await res.json();
       if (Array.isArray(manualNews) && manualNews.length > 0) {
@@ -1029,7 +1040,11 @@ document.getElementById('addNewsForm').onsubmit = async (e) => {
 
       const uploadRes = await fetchWithTimeout(UPLOAD_API, 20000, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        },
         body: JSON.stringify({ base64, fileName: file.name })
       });
 
@@ -1052,7 +1067,11 @@ document.getElementById('addNewsForm').onsubmit = async (e) => {
 
     const res = await fetchWithTimeout(MANUAL_NEWS_API, 10000, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+      },
       body: JSON.stringify(payload)
     });
 
@@ -1078,7 +1097,11 @@ window.deleteNews = async (id) => {
   if (!confirm('این خبر حذف شود؟')) return;
   try {
     const res = await fetchWithTimeout(MANUAL_NEWS_API + '?id=' + id, 10000, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+      }
     });
     if (res.ok) {
       showToast('🗑 خبر حذف شد');
