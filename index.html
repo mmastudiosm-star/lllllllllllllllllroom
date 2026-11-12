@@ -247,11 +247,11 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v16.2</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v16.3</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
-<!-- 🌟 مودال تنظیمات (برگردانده شد) -->
+<!-- 🌟 مودال تنظیمات -->
 <div class="modal-overlay" id="settingsModal" style="z-index:2000;">
   <div class="modal" style="max-width:400px;">
     <button class="modal-close" id="settingsClose">✕</button>
@@ -269,7 +269,7 @@
   </div>
 </div>
 
-<!-- 🌟 مودال آمار (برگردانده شد) -->
+<!-- 🌟 مودال آمار -->
 <div class="modal-overlay" id="statsModal" style="z-index:2000;">
   <div class="modal" style="max-width:450px;">
     <button class="modal-close" id="statsClose">✕</button>
@@ -280,7 +280,7 @@
   </div>
 </div>
 
-<!-- 🌟 مودال ثبت‌نام و ورود (Auth) -->
+<!-- 🌟 مودال ثبت‌نام و ورود -->
 <div class="modal-overlay" id="authModal" style="z-index:5000;">
   <div class="modal" style="max-width:400px;">
     <button class="modal-close" id="authClose">✕</button>
@@ -304,7 +304,7 @@
   </div>
 </div>
 
-<!-- 🌟 پنل ادمین جدید (KOLI KOLI) -->
+<!-- 🌟 پنل ادمین -->
 <div class="admin-panel" id="adminPanel">
   <aside class="admin-sidebar">
     <div class="logo"><img class="logo-img" src="" alt=""><span>ادمین</span></div>
@@ -416,7 +416,7 @@
 
 <script>
 /* ==================== تنظیمات ==================== */
-const VERSION = '16.2';
+const VERSION = '16.3';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
 const VIEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/views';
 const MANUAL_NEWS_API = 'https://kemwkxuwhgqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
@@ -678,7 +678,8 @@ async function loadAll() {
       const mnews = await resManual.value.json();
       if (Array.isArray(mnews)) {
         for (const item of mnews) {
-          if (item.link && item.title && !knownLinks.has(item.link)) {
+          if (!item.link) item.link = 'manual:' + (item._id || Date.now());
+          if (item.title && !knownLinks.has(item.link)) {
             if (!item.category) item.category = detectCategory(item.title + ' ' + (item.plain || ''));
             allNews.push(item); knownLinks.add(item.link);
           }
