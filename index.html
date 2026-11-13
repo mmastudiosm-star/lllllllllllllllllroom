@@ -9,9 +9,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<!-- افزودن کتابخانه سوپابیس برای مدیریت کاربران -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
   :root {
     --bg: #050810; --bg-secondary: #0a0f1c; --glass-bg: rgba(18, 26, 43, 0.6);
@@ -44,7 +41,7 @@
   .header-inner { max-width: 1400px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
   .logo { display: flex; align-items: center; gap: 12px; font-weight: 900; font-size: 1.6rem; }
   .logo span { background: var(--gradient-main); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -1px; }
-  .logo-img { width: 40px; height: 40px; border-radius: 12px; box-shadow: var(--shadow-glow); }
+  .logo-img { width: 40px; height: 40px; border-radius: 12px; box-shadow: var(--shadow-glow); background: var(--gradient-main); display: grid; place-items: center; color: white; font-size: 1.2rem; }
   .search-box { flex: 1; min-width: 250px; position: relative; }
   .search-box input { width: 100%; padding: 14px 48px 14px 20px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem; outline: none; transition: 0.3s; }
   .search-box input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 4px rgba(59,130,246,0.15); }
@@ -142,7 +139,6 @@
   .btn:hover { background: var(--glass-hover); border-color: var(--accent-blue); transform: translateY(-2px); }
   .btn-primary { background: var(--gradient-main); border: none; color: #fff; box-shadow: 0 4px 15px rgba(59,130,246,0.3); }
 
-  /* استایل‌های لاگین */
   .auth-input { width: 100%; padding: 12px 16px; margin-bottom: 12px; background: var(--bg); border: 1px solid var(--glass-border); border-radius: 10px; color: var(--text-main); font-family: inherit; font-size: 1rem; outline: none; transition: 0.3s; }
   .auth-input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
 
@@ -171,7 +167,7 @@
 
 <header>
   <div class="header-inner">
-    <div class="logo"><img class="logo-img" id="logoImg" alt="Lreporter"><span>Lreporter</span></div>
+    <div class="logo"><div class="logo-img">L</div><span>Lreporter</span></div>
     <div class="search-box"><input type="text" id="searchInput" placeholder="جستجو در اخبار..."></div>
     <div class="header-actions">
       <button class="icon-btn" id="userBtn" title="ورود / پروفایل">👤</button>
@@ -253,14 +249,12 @@
         <button class="btn" id="tabRegister" style="flex:1; justify-content:center;">ثبت‌نام</button>
       </div>
       
-      <!-- فرم ورود -->
       <form id="loginForm">
         <input type="email" id="loginEmail" class="auth-input" placeholder="ایمیل..." required>
         <input type="password" id="loginPass" class="auth-input" placeholder="رمز عبور..." required>
         <button type="submit" class="btn btn-primary" id="loginBtn" style="width:100%; justify-content:center;">ورود به حساب</button>
       </form>
       
-      <!-- فرم ثبت‌نام -->
       <form id="registerForm" style="display:none;">
         <input type="email" id="regEmail" class="auth-input" placeholder="ایمیل..." required>
         <input type="password" id="regPass" class="auth-input" placeholder="رمز عبور جدید..." required>
@@ -301,15 +295,13 @@
   </div>
 </div>
 
+<!-- لود کردن کتابخانه Supabase از یک CDN جایگزین -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
 <script>
-// ==========================================
-// تنظیمات سوپابیس (برای لاگین کاربران)
-// ==========================================
+// تنظیمات و متغیرهای اولیه
 const SUPABASE_URL_AUTH = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_OsUd9T9GvvY6rvyycxlQSA_xFazoXBe';
-const supabase = window.supabase.createClient(SUPABASE_URL_AUTH, SUPABASE_ANON_KEY);
-
-// آدرس‌های دریافت اخبار
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
 const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
 const MANUAL_NEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
@@ -319,7 +311,18 @@ let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; l
 let activeMode = 'all'; let activeCategory = 'همه'; let searchQuery = ''; let currentNews = null;
 let isLoading = false; let readLinks = new Set(); let savedLinks = new Set();
 let ttsSpeaking = false, ttsPaused = false, ttsQueue = [], ttsCurrentIndex = 0;
-let currentUser = null; // کاربر فعلی
+let currentUser = null; let supabaseClient = null;
+
+// تلاش برای اتصال به سوپابیس
+try {
+    if (window.supabase) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL_AUTH, SUPABASE_ANON_KEY);
+    } else {
+        console.warn("کتابخانه Supabase لود نشد. سیستم لاگین غیرفعال است.");
+    }
+} catch (e) {
+    console.error("خطا در راه‌اندازی Supabase", e);
+}
 
 const CATEGORIES = {
   'جنگ':    ['جنگ', 'حمله', 'موشک', 'آتش‌بس', 'غزه', 'اوکراین', 'انفجار', 'نظامی', 'پدافند', 'رزمایش'],
@@ -332,40 +335,43 @@ const CATEGORIES = {
   'حوادث':  ['حادثه', 'تصادف', 'آتش‌سوزی', 'زلزله', 'قتل', 'پلیس']
 };
 
-const APP_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1a3a"/><stop offset="1" stop-color="#050a1a"/></linearGradient><linearGradient id="globeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e90ff"/><stop offset="1" stop-color="#0066cc"/></linearGradient><linearGradient id="lGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d0d8e8"/></linearGradient><radialGradient id="globeShine" cx="0.3" cy="0.3" r="0.7"><stop offset="0" stop-color="#4fb8ff" stop-opacity="0.9"/><stop offset="1" stop-color="#0066cc" stop-opacity="0"/></radialGradient><filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect width="512" height="512" rx="115" fill="url(#bgGrad)"/><rect x="4" y="4" width="504" height="504" rx="112" fill="none" stroke="#1e90ff" stroke-width="3" opacity="0.6"/><circle cx="320" cy="200" r="115" fill="url(#globeGrad)" filter="url(#glow)" opacity="0.95"/><circle cx="320" cy="200" r="115" fill="url(#globeShine)"/><g filter="url(#glow)"><path d="M 100 130 L 175 130 L 175 330 L 260 330 L 260 385 L 100 385 Z" fill="url(#lGrad)"/></g><path d="M 175 330 L 260 330 L 260 385 L 175 385 Z" fill="#e8302a"/></svg>`;
-const ICON_URL = 'data:image/svg+xml,' + encodeURIComponent(APP_ICON_SVG);
-
 function safeParse(str, fallback) { try { return JSON.parse(str); } catch { return fallback; } }
 
-// مقداردهی اولیه
-(function init() {
-  document.getElementById('logoImg').src = ICON_URL;
-  
-  // خواندن تنظیمات ظاهری
-  const savedFont = localStorage.getItem('lrep_font_v10');
-  if (savedFont) document.documentElement.style.setProperty('--base-font-size', savedFont + 'px');
-  const savedTheme = localStorage.getItem('lrep_theme_v10');
-  if (savedTheme === 'light') { document.documentElement.setAttribute('data-theme', 'light'); document.getElementById('themeBtn').textContent = '☀️'; }
+// شروع فرآیندها با تاخیر برای اطمینان از لود کامل DOM
+document.addEventListener('DOMContentLoaded', () => {
+    // تنظیمات ظاهری
+    const savedFont = localStorage.getItem('lrep_font_v10');
+    if (savedFont) document.documentElement.style.setProperty('--base-font-size', savedFont + 'px');
+    const savedTheme = localStorage.getItem('lrep_theme_v10');
+    if (savedTheme === 'light') { document.documentElement.setAttribute('data-theme', 'light'); document.getElementById('themeBtn').textContent = '☀️'; }
 
-  // بررسی وضعیت لاگین کاربر
-  checkUserSession();
-})();
+    // بررسی وضعیت لاگین
+    checkUserSession();
+    
+    // شروع بارگذاری داده‌های عمومی
+    updatePersianDateTime(); setInterval(updatePersianDateTime, 1000); 
+    loadWeather(); 
+    loadMarketPrices(); setInterval(loadMarketPrices, 5 * 60 * 1000); 
+    setupTTS();
+    loadAll(); setInterval(loadAll, 5 * 60 * 1000);
+});
 
-// تابع بررسی وضعیت لاگین
 async function checkUserSession() {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session) {
-    currentUser = session.user;
-    updateAuthUI(true);
-    loadUserData();
-  } else {
-    currentUser = null;
-    updateAuthUI(false);
-    loadUserData();
-  }
+    if (!supabaseClient) return; // اگر سوپابیس نبود، هیچ کاری نکن
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) {
+            currentUser = session.user;
+            updateAuthUI(true);
+            loadUserData();
+        } else {
+            currentUser = null;
+            updateAuthUI(false);
+            loadUserData();
+        }
+    } catch (e) { console.log("Auth check failed", e); }
 }
 
-// تغییر ظاهر دکمه کاربر
 function updateAuthUI(isLoggedIn) {
   const userBtn = document.getElementById('userBtn');
   if (isLoggedIn && currentUser) {
@@ -377,13 +383,11 @@ function updateAuthUI(isLoggedIn) {
   }
 }
 
-// بارگذاری داده‌های کاربر (ذخیره‌ها و خوانده‌ها)
 function loadUserData() {
   const userId = currentUser ? currentUser.id : 'guest';
   readLinks = new Set(safeParse(localStorage.getItem(`lrep_read_${userId}`) || '[]', []));
   savedLinks = new Set(safeParse(localStorage.getItem(`lrep_saved_${userId}`) || '[]', []));
   newsViews = safeParse(localStorage.getItem('lrep_views_v10') || '{}', {});
-  
   buildFilters();
   render();
   updateUI();
@@ -464,8 +468,13 @@ function updateViewsUI(link) {
 }
 
 function updatePersianDateTime() {
-  const now = new Date(); document.getElementById('persianDate').textContent = now.toLocaleDateString('fa-IR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-  document.getElementById('clockTime').textContent = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  try {
+    const now = new Date(); 
+    const pDate = document.getElementById('persianDate');
+    const cTime = document.getElementById('clockTime');
+    if(pDate) pDate.textContent = now.toLocaleDateString('fa-IR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    if(cTime) cTime.textContent = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  } catch(e) {}
 }
 
 async function loadWeather() {
@@ -624,83 +633,39 @@ document.getElementById('statsBtn').onclick = () => {
 };
 document.getElementById('statsClose').onclick = () => document.getElementById('statsModal').classList.remove('open');
 
-/* ==========================================
-   سیستم ثبت‌نام و ورود کاربران (Supabase Auth)
-   ========================================== */
+/* سیستم لاگین */
 const authModal = document.getElementById('authModal');
 document.getElementById('userBtn').onclick = () => {
+  if (!supabaseClient) return showToast('سیستم لاگین در حال حاضر در دسترس نیست', true);
   if (currentUser) {
     if (confirm(`شما با ایمیل ${currentUser.email} وارد شده‌اید. آیا می‌خواهید خارج شوید؟`)) {
-      supabase.auth.signOut().then(() => {
-        showToast('خارج شدید');
-        location.reload(); // رفرش برای پاکسازی
-      });
+      supabaseClient.auth.signOut().then(() => { showToast('خارج شدید'); location.reload(); });
     }
-  } else {
-    authModal.classList.add('open');
-  }
+  } else { authModal.classList.add('open'); }
 };
 document.getElementById('authClose').onclick = () => authModal.classList.remove('open');
 
-document.getElementById('tabLogin').onclick = () => {
-  document.getElementById('loginForm').style.display = 'block';
-  document.getElementById('registerForm').style.display = 'none';
-  document.getElementById('tabLogin').classList.add('active');
-  document.getElementById('tabRegister').classList.remove('active');
-};
-document.getElementById('tabRegister').onclick = () => {
-  document.getElementById('loginForm').style.display = 'none';
-  document.getElementById('registerForm').style.display = 'block';
-  document.getElementById('tabLogin').classList.remove('active');
-  document.getElementById('tabRegister').classList.add('active');
-};
+document.getElementById('tabLogin').onclick = () => { document.getElementById('loginForm').style.display = 'block'; document.getElementById('registerForm').style.display = 'none'; document.getElementById('tabLogin').classList.add('active'); document.getElementById('tabRegister').classList.remove('active'); };
+document.getElementById('tabRegister').onclick = () => { document.getElementById('loginForm').style.display = 'none'; document.getElementById('registerForm').style.display = 'block'; document.getElementById('tabLogin').classList.remove('active'); document.getElementById('tabRegister').classList.add('active'); };
 
 document.getElementById('registerForm').onsubmit = async (e) => {
-  e.preventDefault();
-  const btn = document.getElementById('regBtn');
-  btn.textContent = 'در حال ثبت‌نام...'; btn.disabled = true;
-  const email = document.getElementById('regEmail').value.trim();
-  const password = document.getElementById('regPass').value.trim();
-
-  if (password.length < 6) {
-    showToast('رمز عبور باید حداقل ۶ کاراکتر باشد', true); btn.textContent = 'ساخت حساب جدید'; btn.disabled = false; return;
-  }
-
-  const { data, error } = await supabase.auth.signUp({ email, password });
-  if (error) {
-    showToast('❌ ' + error.message, true);
-  } else {
-    showToast('✅ ثبت‌نام موفق! خوش آمدید.');
-    authModal.classList.remove('open');
-    checkUserSession(); // بروزرسانی وضعیت
-  }
+  e.preventDefault(); if (!supabaseClient) return;
+  const btn = document.getElementById('regBtn'); btn.textContent = 'در حال ثبت‌نام...'; btn.disabled = true;
+  const email = document.getElementById('regEmail').value.trim(); const password = document.getElementById('regPass').value.trim();
+  if (password.length < 6) { showToast('رمز عبور باید حداقل ۶ کاراکتر باشد', true); btn.textContent = 'ساخت حساب جدید'; btn.disabled = false; return; }
+  const { data, error } = await supabaseClient.auth.signUp({ email, password });
+  if (error) { showToast('❌ ' + error.message, true); } else { showToast('✅ ثبت‌نام موفق! خوش آمدید.'); authModal.classList.remove('open'); checkUserSession(); }
   btn.textContent = 'ساخت حساب جدید'; btn.disabled = false;
 };
 
 document.getElementById('loginForm').onsubmit = async (e) => {
-  e.preventDefault();
-  const btn = document.getElementById('loginBtn');
-  btn.textContent = 'در حال ورود...'; btn.disabled = true;
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPass').value.trim();
-
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) {
-    showToast('❌ ' + (error.message === 'Invalid login credentials' ? 'ایمیل یا رمز عبور اشتباه است' : error.message), true);
-  } else {
-    showToast('✅ خوش آمدید!');
-    authModal.classList.remove('open');
-    checkUserSession(); // بروزرسانی وضعیت
-  }
+  e.preventDefault(); if (!supabaseClient) return;
+  const btn = document.getElementById('loginBtn'); btn.textContent = 'در حال ورود...'; btn.disabled = true;
+  const email = document.getElementById('loginEmail').value.trim(); const password = document.getElementById('loginPass').value.trim();
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) { showToast('❌ ' + (error.message === 'Invalid login credentials' ? 'ایمیل یا رمز عبور اشتباه است' : error.message), true); } else { showToast('✅ خوش آمدید!'); authModal.classList.remove('open'); checkUserSession(); }
   btn.textContent = 'ورود به حساب'; btn.disabled = false;
 };
-
-/* شروع برنامه */
-updatePersianDateTime(); setInterval(updatePersianDateTime, 1000); 
-loadWeather(); 
-loadMarketPrices(); setInterval(loadMarketPrices, 5 * 60 * 1000); 
-setupTTS();
-loadAll(); setInterval(loadAll, 5 * 60 * 1000);
 </script>
 </body>
 </html>
