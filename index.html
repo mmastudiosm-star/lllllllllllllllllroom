@@ -6,11 +6,12 @@
 <meta name="theme-color" content="#0a0e1a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Lreporter">
-<link id="manifestLink" rel="manifest">
-<link id="appleIcon" rel="apple-touch-icon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- افزودن کتابخانه سوپابیس برای مدیریت کاربران -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
   :root {
     --bg: #050810; --bg-secondary: #0a0f1c; --glass-bg: rgba(18, 26, 43, 0.6);
@@ -105,27 +106,16 @@
   .card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.8; flex: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .card-footer { display: flex; justify-content: space-between; border-top: 1px solid var(--glass-border); padding-top: 14px; font-size: 0.8rem; color: var(--text-muted); }
 
-  /* 🌟 اسکلتون لودینگ */
-  .skeleton {
-    height: 380px; border-radius: var(--radius-lg);
-    background: linear-gradient(90deg, var(--glass-bg) 25%, rgba(255,255,255,0.06) 50%, var(--glass-bg) 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-    border: 1px solid var(--glass-border);
-  }
+  .skeleton { height: 380px; border-radius: var(--radius-lg); background: linear-gradient(90deg, var(--glass-bg) 25%, rgba(255,255,255,0.06) 50%, var(--glass-bg) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border: 1px solid var(--glass-border); }
   @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-  /* 🌟 توست */
   @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
   @keyframes slideOut { to { transform: translateX(120%); opacity: 0; } }
 
-  /* 🌟 اخبار مرتبط */
   .related-item { display: flex; gap: 10px; padding: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; cursor: pointer; transition: 0.25s; align-items: flex-start; }
   .related-item:hover { border-color: var(--accent-blue); background: var(--glass-hover); transform: translateX(-3px); }
   .related-item .ri-title { font-weight: 700; font-size: 0.9rem; line-height: 1.5; margin-bottom: 4px; }
   .related-item .ri-meta { font-size: 0.75rem; color: var(--text-muted); }
 
-  /* 🌟 مودال‌ها و فرم‌ها */
   .modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(5,8,16,0.85); backdrop-filter: blur(12px); display: none; align-items: flex-start; justify-content: center; padding: 20px; overflow-y: auto; }
   .modal-overlay.open { display: flex; animation: fadeIn 0.3s; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -151,6 +141,10 @@
   .btn { padding: 12px 24px; border-radius: var(--radius-md); font-weight: 700; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-main); transition: 0.3s; font-family: inherit; }
   .btn:hover { background: var(--glass-hover); border-color: var(--accent-blue); transform: translateY(-2px); }
   .btn-primary { background: var(--gradient-main); border: none; color: #fff; box-shadow: 0 4px 15px rgba(59,130,246,0.3); }
+
+  /* استایل‌های لاگین */
+  .auth-input { width: 100%; padding: 12px 16px; margin-bottom: 12px; background: var(--bg); border: 1px solid var(--glass-border); border-radius: 10px; color: var(--text-main); font-family: inherit; font-size: 1rem; outline: none; transition: 0.3s; }
+  .auth-input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
 
   @media (max-width: 768px) {
     .header-inner { padding: 12px 16px; }
@@ -180,6 +174,7 @@
     <div class="logo"><img class="logo-img" id="logoImg" alt="Lreporter"><span>Lreporter</span></div>
     <div class="search-box"><input type="text" id="searchInput" placeholder="جستجو در اخبار..."></div>
     <div class="header-actions">
+      <button class="icon-btn" id="userBtn" title="ورود / پروفایل">👤</button>
       <button class="icon-btn" id="themeBtn" title="تغییر تم">🌙</button>
       <button class="icon-btn" id="statsBtn" title="آمار">📊</button>
       <button class="icon-btn" id="settingsBtn" title="تنظیمات">⚙️</button>
@@ -214,7 +209,7 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v16.6</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v17</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -241,8 +236,36 @@
   <div class="modal" style="max-width:450px;">
     <button class="modal-close" id="statsClose">✕</button>
     <div class="modal-content">
-      <h2 style="font-size:1.2rem;margin-bottom:20px;color:var(--accent-cyan);">📊 آمار سیستم</h2>
+      <h2 style="font-size:1.2rem;margin-bottom:20px;color:var(--accent-cyan);">📊 آمار شما</h2>
       <div id="statsContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- مودال ثبت‌نام و ورود کاربران -->
+<div class="modal-overlay" id="authModal" style="z-index:5000;">
+  <div class="modal" style="max-width:400px;">
+    <button class="modal-close" id="authClose">✕</button>
+    <div class="modal-content">
+      <h2 style="font-size:1.5rem;margin-bottom:20px;color:var(--accent-cyan);text-align:center;">👤 حساب کاربری</h2>
+      <div style="display:flex; gap:10px; margin-bottom:20px;">
+        <button class="btn active" id="tabLogin" style="flex:1; justify-content:center;">ورود</button>
+        <button class="btn" id="tabRegister" style="flex:1; justify-content:center;">ثبت‌نام</button>
+      </div>
+      
+      <!-- فرم ورود -->
+      <form id="loginForm">
+        <input type="email" id="loginEmail" class="auth-input" placeholder="ایمیل..." required>
+        <input type="password" id="loginPass" class="auth-input" placeholder="رمز عبور..." required>
+        <button type="submit" class="btn btn-primary" id="loginBtn" style="width:100%; justify-content:center;">ورود به حساب</button>
+      </form>
+      
+      <!-- فرم ثبت‌نام -->
+      <form id="registerForm" style="display:none;">
+        <input type="email" id="regEmail" class="auth-input" placeholder="ایمیل..." required>
+        <input type="password" id="regPass" class="auth-input" placeholder="رمز عبور جدید..." required>
+        <button type="submit" class="btn btn-primary" id="regBtn" style="width:100%; justify-content:center;">ساخت حساب جدید</button>
+      </form>
     </div>
   </div>
 </div>
@@ -262,10 +285,6 @@
         <button class="btn" id="ttsStopBtn" style="padding:8px 16px;display:none;">⏹ پایان</button>
       </div>
       <div class="modal-body" id="modalBody"></div>
-      <div id="relatedSection" style="display:none;margin-top:30px;padding-top:20px;border-top:1px solid var(--glass-border);">
-        <div style="font-size:0.9rem;font-weight:700;margin-bottom:16px;color:var(--accent-cyan);">🎯 اخبار مرتبط:</div>
-        <div id="relatedGrid" style="display:flex;flex-direction:column;gap:10px;"></div>
-      </div>
       <div style="margin-top:30px;padding-top:24px;border-top:1px solid var(--glass-border);">
         <div class="share-grid">
           <button class="share-btn telegram" data-share="telegram"><svg viewBox="0 0 24 24" fill="#0088cc"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span>تلگرام</span></button>
@@ -283,7 +302,14 @@
 </div>
 
 <script>
-const VERSION = '16.6';
+// ==========================================
+// تنظیمات سوپابیس (برای لاگین کاربران)
+// ==========================================
+const SUPABASE_URL_AUTH = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_OsUd9T9GvvY6rvyycxlQSA_xFazoXBe';
+const supabase = window.supabase.createClient(SUPABASE_URL_AUTH, SUPABASE_ANON_KEY);
+
+// آدرس‌های دریافت اخبار
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
 const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
 const MANUAL_NEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
@@ -293,6 +319,7 @@ let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; l
 let activeMode = 'all'; let activeCategory = 'همه'; let searchQuery = ''; let currentNews = null;
 let isLoading = false; let readLinks = new Set(); let savedLinks = new Set();
 let ttsSpeaking = false, ttsPaused = false, ttsQueue = [], ttsCurrentIndex = 0;
+let currentUser = null; // کاربر فعلی
 
 const CATEGORIES = {
   'جنگ':    ['جنگ', 'حمله', 'موشک', 'آتش‌بس', 'غزه', 'اوکراین', 'انفجار', 'نظامی', 'پدافند', 'رزمایش'],
@@ -310,20 +337,62 @@ const ICON_URL = 'data:image/svg+xml,' + encodeURIComponent(APP_ICON_SVG);
 
 function safeParse(str, fallback) { try { return JSON.parse(str); } catch { return fallback; } }
 
-(function initStorage() {
-  readLinks = new Set(safeParse(localStorage.getItem('lrep_read_v10') || '[]', []));
-  savedLinks = new Set(safeParse(localStorage.getItem('lrep_saved_v10') || '[]', []));
-  newsViews = safeParse(localStorage.getItem('lrep_views_v10') || '{}', {});
+// مقداردهی اولیه
+(function init() {
+  document.getElementById('logoImg').src = ICON_URL;
+  
+  // خواندن تنظیمات ظاهری
   const savedFont = localStorage.getItem('lrep_font_v10');
   if (savedFont) document.documentElement.style.setProperty('--base-font-size', savedFont + 'px');
   const savedTheme = localStorage.getItem('lrep_theme_v10');
   if (savedTheme === 'light') { document.documentElement.setAttribute('data-theme', 'light'); document.getElementById('themeBtn').textContent = '☀️'; }
+
+  // بررسی وضعیت لاگین کاربر
+  checkUserSession();
 })();
 
-function saveRead() { try { localStorage.setItem('lrep_read_v10', JSON.stringify([...readLinks].slice(-3000))); } catch {} }
-function saveSaved() { try { localStorage.setItem('lrep_saved_v10', JSON.stringify([...savedLinks].slice(-1000))); } catch {} }
-function markAsRead(link) { if (!link || readLinks.has(link)) return false; readLinks.add(link); saveRead(); return true; }
-function toggleSaved(link) { if (!link) return false; if (savedLinks.has(link)) { savedLinks.delete(link); saveSaved(); return false; } savedLinks.add(link); saveSaved(); return true; }
+// تابع بررسی وضعیت لاگین
+async function checkUserSession() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    currentUser = session.user;
+    updateAuthUI(true);
+    loadUserData();
+  } else {
+    currentUser = null;
+    updateAuthUI(false);
+    loadUserData();
+  }
+}
+
+// تغییر ظاهر دکمه کاربر
+function updateAuthUI(isLoggedIn) {
+  const userBtn = document.getElementById('userBtn');
+  if (isLoggedIn && currentUser) {
+    userBtn.textContent = '👋';
+    userBtn.title = currentUser.email + ' (برای خروج کلیک کنید)';
+  } else {
+    userBtn.textContent = '👤';
+    userBtn.title = 'ورود / ثبت‌نام';
+  }
+}
+
+// بارگذاری داده‌های کاربر (ذخیره‌ها و خوانده‌ها)
+function loadUserData() {
+  const userId = currentUser ? currentUser.id : 'guest';
+  readLinks = new Set(safeParse(localStorage.getItem(`lrep_read_${userId}`) || '[]', []));
+  savedLinks = new Set(safeParse(localStorage.getItem(`lrep_saved_${userId}`) || '[]', []));
+  newsViews = safeParse(localStorage.getItem('lrep_views_v10') || '{}', {});
+  
+  buildFilters();
+  render();
+  updateUI();
+}
+
+function saveRead() { if (!currentUser) return showToast('برای ذخیره تاریخچه، وارد شوید'); const userId = currentUser.id; try { localStorage.setItem(`lrep_read_${userId}`, JSON.stringify([...readLinks].slice(-3000))); } catch {} }
+function saveSaved() { if (!currentUser) return showToast('برای ذخیره‌سازی، ابتدا وارد شوید'); const userId = currentUser.id; try { localStorage.setItem(`lrep_saved_${userId}`, JSON.stringify([...savedLinks].slice(-1000))); } catch {} }
+function markAsRead(link) { if (!link || readLinks.has(link) || !currentUser) return false; readLinks.add(link); saveRead(); return true; }
+function toggleSaved(link) { if (!link) return false; if (!currentUser) { showToast('برای ذخیره خبر، لطفاً وارد حساب خود شوید'); document.getElementById('authModal').classList.add('open'); return false; } if (savedLinks.has(link)) { savedLinks.delete(link); saveSaved(); return false; } savedLinks.add(link); saveSaved(); return true; }
 
 function fetchWithTimeout(url, ms = 10000, opts = {}) {
   const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), ms);
@@ -409,101 +478,38 @@ async function loadMarketPrices() {
     if (!res.ok) throw new Error('HTTP error');
     const payload = await res.json();
     if (!payload || !Array.isArray(payload.data)) throw new Error('bad payload');
-
     const usd = payload.data.find(item => item.symbol === 'USD_IRR_FREE');
-    if (usd) {
-      document.getElementById('dollarPrice').textContent = usd.price.toLocaleString('fa-IR') + ' تومان';
-      document.getElementById('dollarChange').textContent = 'بازار آزاد';
-    }
+    if (usd) { document.getElementById('dollarPrice').textContent = usd.price.toLocaleString('fa-IR') + ' تومان'; document.getElementById('dollarChange').textContent = 'بازار آزاد'; }
     const gold = payload.data.find(item => item.symbol === 'GOLD_18K_IRR');
-    if (gold) {
-      document.getElementById('goldPrice').textContent = gold.price.toLocaleString('fa-IR') + ' تومان';
-      const changeSign = gold.change_pct > 0 ? '▲' : (gold.change_pct < 0 ? '▼' : '');
-      document.getElementById('goldChange').textContent = `${changeSign} ${Math.abs(gold.change_pct || 0).toFixed(1)}% تغییر`;
-    }
-  } catch (e) {
-    console.warn('Market price error:', e);
-    document.getElementById('dollarPrice').textContent = '—'; document.getElementById('dollarChange').textContent = '—';
-    document.getElementById('goldPrice').textContent = '—'; document.getElementById('goldChange').textContent = '—';
-  }
+    if (gold) { document.getElementById('goldPrice').textContent = gold.price.toLocaleString('fa-IR') + ' تومان'; const changeSign = gold.change_pct > 0 ? '▲' : (gold.change_pct < 0 ? '▼' : ''); document.getElementById('goldChange').textContent = `${changeSign} ${Math.abs(gold.change_pct || 0).toFixed(1)}% تغییر`; }
+  } catch (e) { document.getElementById('dollarPrice').textContent = '—'; document.getElementById('dollarChange').textContent = '—'; document.getElementById('goldPrice').textContent = '—'; document.getElementById('goldChange').textContent = '—'; }
 }
 
-function getPersianVoice() {
-  if (!window.speechSynthesis) return null;
-  const voices = window.speechSynthesis.getVoices();
-  return voices.find(v => v.lang === 'fa-IR') || voices.find(v => v.lang.startsWith('fa')) || voices.find(v => v.lang.startsWith('ar')) || voices[0];
-}
+function getPersianVoice() { if (!window.speechSynthesis) return null; const voices = window.speechSynthesis.getVoices(); return voices.find(v => v.lang === 'fa-IR') || voices.find(v => v.lang.startsWith('fa')) || voices.find(v => v.lang.startsWith('ar')) || voices[0]; }
 function cleanTextForTTS(text) { return text ? text.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/[«»""'']/g, '').replace(/\[.*?\]/g, '').replace(/\(.*?\)/g, '').replace(/https?:\/\/\S+/g, '').replace(/\s+/g, ' ').trim() : ''; }
-function splitTextIntoChunks(text, maxLength = 200) {
-  const sentences = text.split(/[.!؟?\n]+/).filter(s => s.trim().length > 0); const chunks = []; let currentChunk = '';
-  for (const sentence of sentences) { const trimmed = sentence.trim(); if (!trimmed) continue; if ((currentChunk + ' ' + trimmed).length <= maxLength) { currentChunk = currentChunk ? currentChunk + '. ' + trimmed : trimmed; } else { if (currentChunk) chunks.push(currentChunk + '.'); if (trimmed.length > maxLength) { const words = trimmed.split(' '); let subChunk = ''; for (const word of words) { if ((subChunk + ' ' + word).length <= maxLength) { subChunk = subChunk ? subChunk + ' ' + word : word; } else { if (subChunk) chunks.push(subChunk); subChunk = word; } } if (subChunk) currentChunk = subChunk; } else currentChunk = trimmed; } }
-  if (currentChunk) chunks.push(currentChunk + '.'); return chunks;
-}
+function splitTextIntoChunks(text, maxLength = 200) { const sentences = text.split(/[.!؟?\n]+/).filter(s => s.trim().length > 0); const chunks = []; let currentChunk = ''; for (const sentence of sentences) { const trimmed = sentence.trim(); if (!trimmed) continue; if ((currentChunk + ' ' + trimmed).length <= maxLength) { currentChunk = currentChunk ? currentChunk + '. ' + trimmed : trimmed; } else { if (currentChunk) chunks.push(currentChunk + '.'); if (trimmed.length > maxLength) { const words = trimmed.split(' '); let subChunk = ''; for (const word of words) { if ((subChunk + ' ' + word).length <= maxLength) { subChunk = subChunk ? subChunk + ' ' + word : word; } else { if (subChunk) chunks.push(subChunk); subChunk = word; } } if (subChunk) currentChunk = subChunk; } else currentChunk = trimmed; } } if (currentChunk) chunks.push(currentChunk + '.'); return chunks; }
 function setupTTS() {
   const playBtn = document.getElementById('ttsPlayBtn'); const pauseBtn = document.getElementById('ttsPauseBtn'); const stopBtn = document.getElementById('ttsStopBtn');
   playBtn.onclick = () => {
     if (!currentNews) return;
     if (ttsSpeaking) { if (ttsPaused) { window.speechSynthesis.resume(); ttsPaused = false; playBtn.textContent = '🔊 در حال خواندن...'; } else { window.speechSynthesis.pause(); ttsPaused = true; playBtn.textContent = '▶ ادامه'; } return; }
-    let textToRead = currentNews.plain || '';
-    if (!textToRead && currentNews.content) { const temp = document.createElement('div'); temp.innerHTML = currentNews.content; textToRead = temp.textContent || temp.innerText || ''; }
-    if (!textToRead) textToRead = currentNews.title || '';
-    const cleanText = cleanTextForTTS(textToRead);
-    if (cleanText.length < 5) { showToast('متنی برای خواندن وجود ندارد'); return; }
+    let textToRead = currentNews.plain || ''; if (!textToRead && currentNews.content) { const temp = document.createElement('div'); temp.innerHTML = currentNews.content; textToRead = temp.textContent || temp.innerText || ''; } if (!textToRead) textToRead = currentNews.title || '';
+    const cleanText = cleanTextForTTS(textToRead); if (cleanText.length < 5) { showToast('متنی برای خواندن وجود ندارد'); return; }
     ttsQueue = splitTextIntoChunks(cleanText.slice(0, 5000), 200); ttsCurrentIndex = 0; ttsSpeaking = true; ttsPaused = false;
     playBtn.textContent = '🔊 در حال خواندن...'; pauseBtn.style.display = 'inline-flex'; stopBtn.style.display = 'inline-flex'; speakNextChunk();
   };
   pauseBtn.onclick = () => { if (ttsPaused) { window.speechSynthesis.resume(); ttsPaused = false; pauseBtn.textContent = '⏸ توقف'; playBtn.textContent = '🔊 در حال خواندن...'; } else { window.speechSynthesis.pause(); ttsPaused = true; pauseBtn.textContent = '▶ ادامه'; playBtn.textContent = '⏸ متوقف'; } };
   stopBtn.onclick = () => { window.speechSynthesis.cancel(); ttsSpeaking = false; ttsPaused = false; ttsQueue = []; ttsCurrentIndex = 0; playBtn.textContent = '🔊 خواندن'; pauseBtn.style.display = 'none'; stopBtn.style.display = 'none'; };
-  function speakNextChunk() {
-    if (ttsCurrentIndex >= ttsQueue.length) { ttsSpeaking = false; ttsPaused = false; playBtn.textContent = '🔊 خواندن'; pauseBtn.style.display = 'none'; stopBtn.style.display = 'none'; showToast('✅ خواندن تمام شد'); return; }
-    const chunk = ttsQueue[ttsCurrentIndex]; if (!chunk || !chunk.trim()) { ttsCurrentIndex++; speakNextChunk(); return; }
-    const u = new SpeechSynthesisUtterance(chunk); u.lang = 'fa-IR'; u.rate = 0.9; const voice = getPersianVoice(); if (voice) u.voice = voice;
-    u.onend = () => { if (!ttsSpeaking) return; ttsCurrentIndex++; if (!ttsPaused) setTimeout(speakNextChunk, 100); };
-    u.onerror = (e) => { console.warn('TTS error:', e); if (!ttsSpeaking) return; ttsCurrentIndex++; if (!ttsPaused) setTimeout(speakNextChunk, 100); };
-    window.speechSynthesis.speak(u);
-  }
+  function speakNextChunk() { if (ttsCurrentIndex >= ttsQueue.length) { ttsSpeaking = false; ttsPaused = false; playBtn.textContent = '🔊 خواندن'; pauseBtn.style.display = 'none'; stopBtn.style.display = 'none'; showToast('✅ خواندن تمام شد'); return; } const chunk = ttsQueue[ttsCurrentIndex]; if (!chunk || !chunk.trim()) { ttsCurrentIndex++; speakNextChunk(); return; } const u = new SpeechSynthesisUtterance(chunk); u.lang = 'fa-IR'; u.rate = 0.9; const voice = getPersianVoice(); if (voice) u.voice = voice; u.onend = () => { if (!ttsSpeaking) return; ttsCurrentIndex++; if (!ttsPaused) setTimeout(speakNextChunk, 100); }; u.onerror = () => { if (!ttsSpeaking) return; ttsCurrentIndex++; if (!ttsPaused) setTimeout(speakNextChunk, 100); }; window.speechSynthesis.speak(u); }
 }
 
-function getTrendingNews(limit = 30, sourceList = null) {
-  const base = sourceList || allNews;
-  return [...base].map(n => ({ ...n, views: getViewCount(n.link) })).filter(n => n.views >= TRENDING_VIEW_THRESHOLD).sort((a, b) => b.views - a.views).slice(0, limit);
-}
-function findRelatedNews(current, list) {
-  return list.filter(n => n.link !== current.link).map(n => {
-    let score = 0; if (n.category === current.category) score += 3; if (n.source === current.source) score += 1;
-    const t1 = current.title.toLowerCase().split(' '); const t2 = n.title.toLowerCase().split(' ');
-    score += t1.filter(w => w.length > 3 && t2.includes(w)).length;
-    return { ...n, _score: score };
-  }).sort((a, b) => b._score - a._score).slice(0, 4);
-}
+function getTrendingNews(limit = 30, sourceList = null) { const base = sourceList || allNews; return [...base].map(n => ({ ...n, views: getViewCount(n.link) })).filter(n => n.views >= TRENDING_VIEW_THRESHOLD).sort((a, b) => b.views - a.views).slice(0, limit); }
 
 async function fetchFallbackNews() {
   try {
-    const feeds = [
-      { name: 'ایرنا', url: 'https://www.irna.ir/rss' },
-      { name: 'مهر', url: 'https://www.mehrnews.com/rss' },
-      { name: 'ایسنا', url: 'https://www.isna.ir/rss' },
-      { name: 'تابناک', url: 'https://www.tabnak.ir/fa/rss/allnews' }
-    ];
-    const results = await Promise.allSettled(feeds.map(f => 
-      fetchWithTimeout(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(f.url)}`, 10000)
-        .then(r => r.json())
-    ));
-    
-    const fallbackNews = [];
-    results.forEach((res, index) => {
-      if (res.status === 'fulfilled' && res.value && res.value.items) {
-        res.value.items.forEach(item => {
-          let plain = item.description ? item.description.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : '';
-          fallbackNews.push({
-            title: item.title, link: item.link, summary: plain.slice(0, 250), content: item.content || item.description || '', plain: plain,
-            image: item.thumbnail || '', date: item.pubDate || new Date().toISOString(), source: feeds[index].name,
-            category: detectCategory(item.title + ' ' + plain), textLength: plain.length
-          });
-        });
-      }
-    });
-    return fallbackNews;
+    const feeds = [{ name: 'ایرنا', url: 'https://www.irna.ir/rss' }, { name: 'مهر', url: 'https://www.mehrnews.com/rss' }, { name: 'ایسنا', url: 'https://www.isna.ir/rss' }];
+    const results = await Promise.allSettled(feeds.map(f => fetchWithTimeout(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(f.url)}`, 10000).then(r => r.json())));
+    const fallbackNews = []; results.forEach((res, index) => { if (res.status === 'fulfilled' && res.value && res.value.items) { res.value.items.forEach(item => { let plain = item.description ? item.description.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : ''; fallbackNews.push({ title: item.title, link: item.link, summary: plain.slice(0, 250), content: item.content || item.description || '', plain: plain, image: item.thumbnail || '', date: item.pubDate || new Date().toISOString(), source: feeds[index].name, category: detectCategory(item.title + ' ' + plain), textLength: plain.length }); }); } }); return fallbackNews;
   } catch (e) { return []; }
 }
 
@@ -513,46 +519,11 @@ async function loadAll() {
   try {
     const [resNews, resManual] = await Promise.allSettled([fetchWithTimeout(SUPABASE_URL, 15000), fetchWithTimeout(MANUAL_NEWS_API, 10000)]);
     const knownLinks = new Set(allNews.map(n => n.link));
-    
-    if (resNews.status === 'fulfilled' && resNews.value.ok) {
-      const news = await resNews.value.json();
-      if (Array.isArray(news)) {
-        for (const item of news) {
-          if (item.link && item.title && !knownLinks.has(item.link)) {
-            if (!item.category) item.category = detectCategory(item.title + ' ' + (item.plain || ''));
-            allNews.push(item); knownLinks.add(item.link);
-          }
-        }
-      }
-    }
-    
-    if (resManual.status === 'fulfilled' && resManual.value.ok) {
-      const mnews = await resManual.value.json();
-      if (Array.isArray(mnews)) {
-        for (const item of mnews) {
-          if (!item.link) item.link = 'manual:' + (item._id || Date.now());
-          if (item.title && !knownLinks.has(item.link)) {
-            item._manual = true;
-            if (!item.category) item.category = detectCategory(item.title + ' ' + (item.plain || ''));
-            allNews.push(item); knownLinks.add(item.link);
-          }
-        }
-      }
-    }
-    
-    if (allNews.length === 0) {
-      document.getElementById('status').textContent = 'دریافت از منابع پشتیبان...';
-      const fallback = await fetchFallbackNews();
-      for (const item of fallback) {
-        if (item.link && item.title && !knownLinks.has(item.link)) {
-          allNews.push(item); knownLinks.add(item.link);
-        }
-      }
-    }
-    
+    if (resNews.status === 'fulfilled' && resNews.value.ok) { const news = await resNews.value.json(); if (Array.isArray(news)) { for (const item of news) { if (item.link && item.title && !knownLinks.has(item.link)) { if (!item.category) item.category = detectCategory(item.title + ' ' + (item.plain || '')); allNews.push(item); knownLinks.add(item.link); } } } }
+    if (resManual.status === 'fulfilled' && resManual.value.ok) { const mnews = await resManual.value.json(); if (Array.isArray(mnews)) { for (const item of mnews) { if (!item.link) item.link = 'manual:' + (item._id || Date.now()); if (item.title && !knownLinks.has(item.link)) { item._manual = true; if (!item.category) item.category = detectCategory(item.title + ' ' + (item.plain || '')); allNews.push(item); knownLinks.add(item.link); } } } }
+    if (allNews.length === 0) { document.getElementById('status').textContent = 'دریافت از منابع پشتیبان...'; const fallback = await fetchFallbackNews(); for (const item of fallback) { if (item.link && item.title && !knownLinks.has(item.link)) { allNews.push(item); knownLinks.add(item.link); } } }
     allNews.sort((a, b) => (new Date(b.date).getTime() || 0) - (new Date(a.date).getTime() || 0));
     await fetchAllViews(); buildFilters(); render();
-    
     document.getElementById('status').textContent = `آخرین بروزرسانی: ${new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })}`;
   } catch (err) { document.getElementById('status').textContent = '⚠️ خطا در دریافت'; } finally { isLoading = false; badge.classList.remove('loading'); badge.innerHTML = '<span class="dot"></span> زنده'; }
 }
@@ -562,22 +533,11 @@ function buildFilters() {
   if (activeMode === 'unread') baseList = baseList.filter(n => !readLinks.has(n.link));
   else if (activeMode === 'saved') baseList = baseList.filter(n => savedLinks.has(n.link));
   else if (activeMode === 'trending') baseList = getTrendingNews(30, baseList);
-
   if (searchQuery.trim()) { const q = searchQuery.trim().toLowerCase(); baseList = baseList.filter(n => (n.title || '').toLowerCase().includes(q) || (n.plain || '').toLowerCase().includes(q)); }
-
-  const counts = {};
-  baseList.forEach(n => { const cat = n.category || 'عمومی'; counts[cat] = (counts[cat] || 0) + 1; });
-
-  const totalCount = baseList.length;
-  const cats = ['همه', ...Object.keys(counts).sort((a, b) => counts[b] - counts[a])];
+  const counts = {}; baseList.forEach(n => { const cat = n.category || 'عمومی'; counts[cat] = (counts[cat] || 0) + 1; });
+  const totalCount = baseList.length; const cats = ['همه', ...Object.keys(counts).sort((a, b) => counts[b] - counts[a])];
   const box = document.getElementById('filtersWrap');
-  
-  box.innerHTML = cats.map(c => {
-    const count = c === 'همه' ? totalCount : (counts[c] || 0);
-    const label = `${c} (${count.toLocaleString('fa-IR')})`;
-    return `<button class="filter-btn ${c === activeCategory ? 'active' : ''}" data-cat="${escapeHtml(c)}">${escapeHtml(label)}</button>`;
-  }).join('');
-  
+  box.innerHTML = cats.map(c => { const count = c === 'همه' ? totalCount : (counts[c] || 0); const label = `${c} (${count.toLocaleString('fa-IR')})`; return `<button class="filter-btn ${c === activeCategory ? 'active' : ''}" data-cat="${escapeHtml(c)}">${escapeHtml(label)}</button>`; }).join('');
   box.querySelectorAll('button').forEach(btn => btn.onclick = () => { activeCategory = btn.dataset.cat; displayLimit = INITIAL_COUNT; buildFilters(); render(); });
 }
 
@@ -593,26 +553,12 @@ function getFilteredList() {
 
 function render() {
   const list = getFilteredList(); const box = document.getElementById('content');
-  if (!list.length) {
-    let msg = '📭 خبری یافت نشد';
-    if (activeMode === 'trending') msg = `🔥 هنوز خبری به ${TRENDING_VIEW_THRESHOLD} بازدید نرسیده است.`;
-    box.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);font-size:1.1rem;">${msg}</div>`; updateUI(); return;
-  }
+  if (!list.length) { let msg = '📭 خبری یافت نشد'; if (activeMode === 'trending') msg = `🔥 هنوز خبری به ${TRENDING_VIEW_THRESHOLD} بازدید نرسیده است.`; box.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);font-size:1.1rem;">${msg}</div>`; updateUI(); return; }
   const showing = Math.min(displayLimit, list.length); const display = list.slice(0, showing);
   box.innerHTML = display.map((n, i) => {
     const isRead = readLinks.has(n.link); const isSaved = savedLinks.has(n.link); const isManual = n._manual === true; const vHtml = viewsBadgeHtml(n.link);
     const img = n.image ? `<div class="card-img-wrap"><img class="card-img" src="${escapeHtml(n.image)}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : '';
-    return `
-      <article class="card ${isRead ? 'read' : ''} ${isSaved ? 'saved' : ''} ${isManual ? 'manual' : ''}" data-link="${escapeHtml(n.link)}" data-idx="${i}">
-        <button class="star-btn ${isSaved ? 'saved' : ''}" data-star="${i}">${isSaved ? '★' : '☆'}</button>
-        ${img}
-        <div class="card-body">
-          <div class="card-top"><span class="source-tag ${isManual ? 'manual' : ''}">${escapeHtml(n.source)}</span>${vHtml}</div>
-          <h2>${escapeHtml(n.title)}</h2><p>${escapeHtml(n.summary || '')}</p>
-          <div class="card-footer"><span>🕐 ${formatTime(n.date)}</span><span style="background:var(--glass-border);padding:4px 10px;border-radius:10px;">📖 ${Math.max(1, Math.ceil((n.textLength||0)/1000))} دقیقه</span></div>
-        </div>
-      </article>
-    `;
+    return `<article class="card ${isRead ? 'read' : ''} ${isSaved ? 'saved' : ''} ${isManual ? 'manual' : ''}" data-link="${escapeHtml(n.link)}" data-idx="${i}"><button class="star-btn ${isSaved ? 'saved' : ''}" data-star="${i}">${isSaved ? '★' : '☆'}</button>${img}<div class="card-body"><div class="card-top"><span class="source-tag ${isManual ? 'manual' : ''}">${escapeHtml(n.source)}</span>${vHtml}</div><h2>${escapeHtml(n.title)}</h2><p>${escapeHtml(n.summary || '')}</p><div class="card-footer"><span>🕐 ${formatTime(n.date)}</span><span style="background:var(--glass-border);padding:4px 10px;border-radius:10px;">📖 ${Math.max(1, Math.ceil((n.textLength||0)/1000))} دقیقه</span></div></div></article>`;
   }).join('');
   if (showing < list.length) box.innerHTML += `<div style="grid-column:1/-1;text-align:center;padding:20px;"><div class="btn" onclick="displayLimit+=10;render()">نمایش بیشتر ⏳</div></div>`;
   window.__currentList = display; updateUI();
@@ -631,20 +577,11 @@ function updateUI() {
 
 function openModal(idx) {
   const news = window.__currentList[idx]; if (!news) return; currentNews = news;
-  markAsRead(news.link); updateUI();
-  
+  if (currentUser) { markAsRead(news.link); updateUI(); }
   const hero = document.getElementById('modalHero'); if (news.image) { hero.src = news.image; hero.style.display = 'block'; } else hero.style.display = 'none';
   document.getElementById('modalTitle').textContent = news.title;
   document.getElementById('modalMeta').innerHTML = `<span class="source-tag ${news._manual ? 'manual' : ''}">${escapeHtml(news.source)}</span><span style="background:var(--glass-border);padding:4px 10px;border-radius:10px;font-size:0.8rem;">🕐 ${formatTime(news.date)}</span>${viewsBadgeHtml(news.link)}`;
   document.getElementById('modalBody').innerHTML = cleanContent(news.content || news.plain || '');
-  
-  const related = findRelatedNews(news, allNews); const relSection = document.getElementById('relatedSection'); const relGrid = document.getElementById('relatedGrid');
-  if (related.length) {
-    relSection.style.display = 'block';
-    relGrid.innerHTML = related.map(r => `<div class="related-item" data-rel-link="${escapeHtml(r.link)}"><span>📰</span><div><div class="ri-title">${escapeHtml(r.title)}</div><div class="ri-meta">${escapeHtml(r.source)} • ${formatTime(r.date)}</div></div></div>`).join('');
-    relGrid.querySelectorAll('[data-rel-link]').forEach(el => el.onclick = () => { const n = allNews.find(x => x.link === el.dataset.relLink); if (n) { closeModal(); setTimeout(() => { window.__currentList.unshift(n); openModal(0); }, 300); } });
-  } else relSection.style.display = 'none';
-
   const srcBtn = document.getElementById('modalSourceBtn'); if (news._manual && (!news.link || news.link.startsWith('manual:'))) srcBtn.style.display = 'none'; else { srcBtn.style.display = 'flex'; srcBtn.href = news.link; }
   document.getElementById('modal').classList.add('open'); document.body.style.overflow = 'hidden';
   document.getElementById('modalStar').textContent = savedLinks.has(news.link) ? '★' : '☆';
@@ -652,40 +589,18 @@ function openModal(idx) {
   incrementView(news.link);
 }
 
-function closeModal() {
-  document.getElementById('modal').classList.remove('open');
-  document.body.style.overflow = '';
-  window.speechSynthesis.cancel();
-  ttsSpeaking = false; ttsPaused = false; ttsQueue = []; ttsCurrentIndex = 0;
-  document.getElementById('ttsPlayBtn').textContent = '🔊 خواندن';
-  document.getElementById('ttsPauseBtn').style.display = 'none';
-  document.getElementById('ttsStopBtn').style.display = 'none';
-}
+function closeModal() { document.getElementById('modal').classList.remove('open'); document.body.style.overflow = ''; window.speechSynthesis.cancel(); ttsSpeaking = false; ttsPaused = false; ttsQueue = []; ttsCurrentIndex = 0; document.getElementById('ttsPlayBtn').textContent = '🔊 خواندن'; document.getElementById('ttsPauseBtn').style.display = 'none'; document.getElementById('ttsStopBtn').style.display = 'none'; }
 
-document.getElementById('content').addEventListener('click', (e) => {
-  const star = e.target.closest('.star-btn');
-  if (star) { e.stopPropagation(); const idx = +star.dataset.star; const saved = toggleSaved(window.__currentList[idx].link); showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); star.classList.toggle('saved', saved); star.textContent = saved ? '★' : '☆'; updateUI(); return; }
-  const card = e.target.closest('.card'); if (card) openModal(+card.dataset.idx);
-});
-
+document.getElementById('content').addEventListener('click', (e) => { const star = e.target.closest('.star-btn'); if (star) { e.stopPropagation(); const idx = +star.dataset.star; const saved = toggleSaved(window.__currentList[idx].link); if(!currentUser) return; showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); star.classList.toggle('saved', saved); star.textContent = saved ? '★' : '☆'; updateUI(); return; } const card = e.target.closest('.card'); if (card) openModal(+card.dataset.idx); });
 document.querySelectorAll('.nav-btn').forEach(btn => btn.onclick = () => { activeMode = btn.dataset.mode; displayLimit = INITIAL_COUNT; buildFilters(); render(); });
 document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; displayLimit = INITIAL_COUNT; buildFilters(); render(); });
 document.getElementById('refreshBtn').onclick = () => { loadAll(); };
 document.getElementById('modalClose').onclick = closeModal; document.getElementById('modal').onclick = (e) => { if (e.target.id === 'modal') closeModal(); };
-document.getElementById('modalStar').onclick = () => { if (!currentNews) return; const saved = toggleSaved(currentNews.link); showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); document.getElementById('modalStar').textContent = saved ? '★' : '☆'; document.getElementById('modalStar').classList.toggle('saved', saved); render(); };
-document.getElementById('modalStarBtn').onclick = () => { if (!currentNews) return; const saved = toggleSaved(currentNews.link); showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); document.getElementById('modalStar').textContent = saved ? '★' : '☆'; document.getElementById('modalStar').classList.toggle('saved', saved); render(); };
+document.getElementById('modalStar').onclick = () => { if (!currentNews) return; const saved = toggleSaved(currentNews.link); if(!currentUser) return; showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); document.getElementById('modalStar').textContent = saved ? '★' : '☆'; document.getElementById('modalStar').classList.toggle('saved', saved); render(); };
+document.getElementById('modalStarBtn').onclick = () => { if (!currentNews) return; const saved = toggleSaved(currentNews.link); if(!currentUser) return; showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); document.getElementById('modalStar').textContent = saved ? '★' : '☆'; document.getElementById('modalStar').classList.toggle('saved', saved); render(); };
 document.getElementById('modalCopyBtn').onclick = () => { if (currentNews) navigator.clipboard.writeText(currentNews.link).then(() => showToast('📋 کپی شد')); };
 
-document.querySelectorAll('[data-share]').forEach(btn => {
-  btn.onclick = () => {
-    if (!currentNews) return; const url = encodeURIComponent(currentNews.link); const text = encodeURIComponent(currentNews.title); let shareUrl = '';
-    const p = btn.dataset.share;
-    if (p === 'telegram') shareUrl = `https://t.me/share/url?url=${url}&text=${text}`;
-    if (p === 'whatsapp') shareUrl = `https://wa.me/?text=${text}%20${url}`;
-    if (p === 'twitter') shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
-    if (shareUrl) window.open(shareUrl, '_blank');
-  };
-});
+document.querySelectorAll('[data-share]').forEach(btn => { btn.onclick = () => { if (!currentNews) return; const url = encodeURIComponent(currentNews.link); const text = encodeURIComponent(currentNews.title); let shareUrl = ''; const p = btn.dataset.share; if (p === 'telegram') shareUrl = `https://t.me/share/url?url=${url}&text=${text}`; if (p === 'whatsapp') shareUrl = `https://wa.me/?text=${text}%20${url}`; if (p === 'twitter') shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`; if (shareUrl) window.open(shareUrl, '_blank'); }; });
 
 document.getElementById('themeBtn').onclick = () => { const html = document.documentElement; const isLight = html.getAttribute('data-theme') === 'light'; html.setAttribute('data-theme', isLight ? 'dark' : 'light'); document.getElementById('themeBtn').textContent = isLight ? '🌙' : '☀️'; localStorage.setItem('lrep_theme_v10', isLight ? 'dark' : 'light'); };
 document.getElementById('settingsBtn').onclick = () => document.getElementById('settingsModal').classList.add('open');
@@ -699,21 +614,88 @@ document.getElementById('statsBtn').onclick = () => {
   const totalViews = Object.values(newsViews).reduce((a, b) => a + (Number(b) || 0), 0); const hotCount = allNews.filter(n => isHotNews(n.link)).length;
   document.getElementById('statsContent').innerHTML = `
     <div style="display:flex;flex-direction:column;gap:10px;">
+      ${currentUser ? `<div style="display:flex;justify-content:space-between;padding:10px;background:rgba(59,130,246,0.2);border-radius:10px;"><span>کاربر:</span><b>${currentUser.email}</b></div>` : ''}
       <div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>کل اخبار</span><b>${allNews.length.toLocaleString('fa-IR')}</b></div>
       <div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>خوانده شده</span><b>${totalRead.toLocaleString('fa-IR')}</b></div>
       <div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>ذخیره شده</span><b>${totalSaved.toLocaleString('fa-IR')}</b></div>
       <div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>👁 مجموع بازدید</span><b>${totalViews.toLocaleString('fa-IR')}</b></div>
-      <div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>🔥 داغ (≥۱۰۰۰)</span><b>${hotCount.toLocaleString('fa-IR')}</b></div>
     </div>
   `;
 };
 document.getElementById('statsClose').onclick = () => document.getElementById('statsModal').classList.remove('open');
 
-/* شروع برنامه */
-document.getElementById('logoImg').src = ICON_URL;
-document.getElementById('appleIcon').href = ICON_URL;
-document.getElementById('fontVal').textContent = parseFloat(getComputedStyle(document.documentElement).fontSize).toLocaleString('fa-IR');
+/* ==========================================
+   سیستم ثبت‌نام و ورود کاربران (Supabase Auth)
+   ========================================== */
+const authModal = document.getElementById('authModal');
+document.getElementById('userBtn').onclick = () => {
+  if (currentUser) {
+    if (confirm(`شما با ایمیل ${currentUser.email} وارد شده‌اید. آیا می‌خواهید خارج شوید؟`)) {
+      supabase.auth.signOut().then(() => {
+        showToast('خارج شدید');
+        location.reload(); // رفرش برای پاکسازی
+      });
+    }
+  } else {
+    authModal.classList.add('open');
+  }
+};
+document.getElementById('authClose').onclick = () => authModal.classList.remove('open');
 
+document.getElementById('tabLogin').onclick = () => {
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('registerForm').style.display = 'none';
+  document.getElementById('tabLogin').classList.add('active');
+  document.getElementById('tabRegister').classList.remove('active');
+};
+document.getElementById('tabRegister').onclick = () => {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('registerForm').style.display = 'block';
+  document.getElementById('tabLogin').classList.remove('active');
+  document.getElementById('tabRegister').classList.add('active');
+};
+
+document.getElementById('registerForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('regBtn');
+  btn.textContent = 'در حال ثبت‌نام...'; btn.disabled = true;
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPass').value.trim();
+
+  if (password.length < 6) {
+    showToast('رمز عبور باید حداقل ۶ کاراکتر باشد', true); btn.textContent = 'ساخت حساب جدید'; btn.disabled = false; return;
+  }
+
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) {
+    showToast('❌ ' + error.message, true);
+  } else {
+    showToast('✅ ثبت‌نام موفق! خوش آمدید.');
+    authModal.classList.remove('open');
+    checkUserSession(); // بروزرسانی وضعیت
+  }
+  btn.textContent = 'ساخت حساب جدید'; btn.disabled = false;
+};
+
+document.getElementById('loginForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('loginBtn');
+  btn.textContent = 'در حال ورود...'; btn.disabled = true;
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPass').value.trim();
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {
+    showToast('❌ ' + (error.message === 'Invalid login credentials' ? 'ایمیل یا رمز عبور اشتباه است' : error.message), true);
+  } else {
+    showToast('✅ خوش آمدید!');
+    authModal.classList.remove('open');
+    checkUserSession(); // بروزرسانی وضعیت
+  }
+  btn.textContent = 'ورود به حساب'; btn.disabled = false;
+};
+
+/* شروع برنامه */
 updatePersianDateTime(); setInterval(updatePersianDateTime, 1000); 
 loadWeather(); 
 loadMarketPrices(); setInterval(loadMarketPrices, 5 * 60 * 1000); 
