@@ -238,7 +238,7 @@
   </div>
 </div>
 
-<!-- مودال ثبت‌نام و ورود کاربران -->
+<!-- مودال ثبت‌نام و ورود کاربران (تغییر یافته به نام کاربری) -->
 <div class="modal-overlay" id="authModal" style="z-index:5000;">
   <div class="modal" style="max-width:400px;">
     <button class="modal-close" id="authClose">✕</button>
@@ -250,13 +250,13 @@
       </div>
       
       <form id="loginForm">
-        <input type="email" id="loginEmail" class="auth-input" placeholder="ایمیل..." required>
+        <input type="text" id="loginUsername" class="auth-input" placeholder="نام کاربری..." required>
         <input type="password" id="loginPass" class="auth-input" placeholder="رمز عبور..." required>
         <button type="submit" class="btn btn-primary" id="loginBtn" style="width:100%; justify-content:center;">ورود به حساب</button>
       </form>
       
       <form id="registerForm" style="display:none;">
-        <input type="email" id="regEmail" class="auth-input" placeholder="ایمیل..." required>
+        <input type="text" id="regUsername" class="auth-input" placeholder="نام کاربری جدید (انگلیسی)..." required>
         <input type="password" id="regPass" class="auth-input" placeholder="رمز عبور جدید..." required>
         <button type="submit" class="btn btn-primary" id="regBtn" style="width:100%; justify-content:center;">ساخت حساب جدید</button>
       </form>
@@ -295,11 +295,10 @@
   </div>
 </div>
 
-<!-- لود کردن کتابخانه Supabase از یک CDN جایگزین -->
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <script>
-// تنظیمات و متغیرهای اولیه
+// تنظیمات
 const SUPABASE_URL_AUTH = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_OsUd9T9GvvY6rvyycxlQSA_xFazoXBe';
 const SUPABASE_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/rapid-processor';
@@ -307,22 +306,20 @@ const VIEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/views';
 const MANUAL_NEWS_API = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co/functions/v1/manual-news';
 const INITIAL_COUNT = 10; const DISPLAY_STEP = 10; const DISPLAY_INTERVAL = 5000; const TRENDING_VIEW_THRESHOLD = 1000;
 
+// تنظیمات نام کاربری (تبدیل به ایمیل مخفی)
+const FAKE_EMAIL_DOMAIN = '@lreporter.local';
+
 let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; let allNews = [];
 let activeMode = 'all'; let activeCategory = 'همه'; let searchQuery = ''; let currentNews = null;
 let isLoading = false; let readLinks = new Set(); let savedLinks = new Set();
 let ttsSpeaking = false, ttsPaused = false, ttsQueue = [], ttsCurrentIndex = 0;
 let currentUser = null; let supabaseClient = null;
+let isInitialLoad = true; 
 
-// تلاش برای اتصال به سوپابیس
 try {
-    if (window.supabase) {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL_AUTH, SUPABASE_ANON_KEY);
-    } else {
-        console.warn("کتابخانه Supabase لود نشد. سیستم لاگین غیرفعال است.");
-    }
-} catch (e) {
-    console.error("خطا در راه‌اندازی Supabase", e);
-}
+    if (window.supabase) { supabaseClient = window.supabase.createClient(SUPABASE_URL_AUTH, SUPABASE_ANON_KEY); } 
+    else { console.warn("کتابخانه Supabase لود نشد."); }
+} catch (e) { console.error("خطا در راه‌اندازی Supabase", e); }
 
 const CATEGORIES = {
   'جنگ':    ['جنگ', 'حمله', 'موشک', 'آتش‌بس', 'غزه', 'اوکراین', 'انفجار', 'نظامی', 'پدافند', 'رزمایش'],
@@ -337,18 +334,13 @@ const CATEGORIES = {
 
 function safeParse(str, fallback) { try { return JSON.parse(str); } catch { return fallback; } }
 
-// شروع فرآیندها با تاخیر برای اطمینان از لود کامل DOM
 document.addEventListener('DOMContentLoaded', () => {
-    // تنظیمات ظاهری
     const savedFont = localStorage.getItem('lrep_font_v10');
     if (savedFont) document.documentElement.style.setProperty('--base-font-size', savedFont + 'px');
     const savedTheme = localStorage.getItem('lrep_theme_v10');
     if (savedTheme === 'light') { document.documentElement.setAttribute('data-theme', 'light'); document.getElementById('themeBtn').textContent = '☀️'; }
 
-    // بررسی وضعیت لاگین
     checkUserSession();
-    
-    // شروع بارگذاری داده‌های عمومی
     updatePersianDateTime(); setInterval(updatePersianDateTime, 1000); 
     loadWeather(); 
     loadMarketPrices(); setInterval(loadMarketPrices, 5 * 60 * 1000); 
@@ -357,30 +349,24 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function checkUserSession() {
-    if (!supabaseClient) return; // اگر سوپابیس نبود، هیچ کاری نکن
+    if (!supabaseClient) { loadUserData(); return; }
     try {
         const { data: { session } } = await supabaseClient.auth.getSession();
-        if (session) {
-            currentUser = session.user;
-            updateAuthUI(true);
-            loadUserData();
-        } else {
-            currentUser = null;
-            updateAuthUI(false);
-            loadUserData();
-        }
-    } catch (e) { console.log("Auth check failed", e); }
+        if (session) { currentUser = session.user; updateAuthUI(true); } 
+        else { currentUser = null; updateAuthUI(false); }
+        loadUserData();
+    } catch (e) { console.log("Auth check failed", e); loadUserData(); }
 }
 
 function updateAuthUI(isLoggedIn) {
   const userBtn = document.getElementById('userBtn');
   if (isLoggedIn && currentUser) {
-    userBtn.textContent = '👋';
-    userBtn.title = currentUser.email + ' (برای خروج کلیک کنید)';
-  } else {
-    userBtn.textContent = '👤';
-    userBtn.title = 'ورود / ثبت‌نام';
-  }
+    // استخراج نام کاربری از ایمیل مخفی
+    const displayName = currentUser.email.replace(FAKE_EMAIL_DOMAIN, '');
+    userBtn.textContent = '👋'; 
+    userBtn.title = displayName + ' (برای خروج کلیک کنید)'; 
+  } 
+  else { userBtn.textContent = '👤'; userBtn.title = 'ورود / ثبت‌نام'; }
 }
 
 function loadUserData() {
@@ -534,7 +520,11 @@ async function loadAll() {
     allNews.sort((a, b) => (new Date(b.date).getTime() || 0) - (new Date(a.date).getTime() || 0));
     await fetchAllViews(); buildFilters(); render();
     document.getElementById('status').textContent = `آخرین بروزرسانی: ${new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })}`;
-  } catch (err) { document.getElementById('status').textContent = '⚠️ خطا در دریافت'; } finally { isLoading = false; badge.classList.remove('loading'); badge.innerHTML = '<span class="dot"></span> زنده'; }
+  } catch (err) { document.getElementById('status').textContent = '⚠️ خطا در دریافت'; } finally { 
+      isLoading = false; 
+      isInitialLoad = false; 
+      badge.classList.remove('loading'); badge.innerHTML = '<span class="dot"></span> زنده'; 
+  }
 }
 
 function buildFilters() {
@@ -562,7 +552,19 @@ function getFilteredList() {
 
 function render() {
   const list = getFilteredList(); const box = document.getElementById('content');
-  if (!list.length) { let msg = '📭 خبری یافت نشد'; if (activeMode === 'trending') msg = `🔥 هنوز خبری به ${TRENDING_VIEW_THRESHOLD} بازدید نرسیده است.`; box.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);font-size:1.1rem;">${msg}</div>`; updateUI(); return; }
+  
+  if (isInitialLoad && allNews.length === 0) {
+      box.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+      return;
+  }
+
+  if (!list.length) { 
+      let msg = '📭 خبری یافت نشد'; 
+      if (activeMode === 'trending') msg = `🔥 هنوز خبری به ${TRENDING_VIEW_THRESHOLD} بازدید نرسیده است.`; 
+      box.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);font-size:1.1rem;">${msg}</div>`; 
+      updateUI(); return; 
+  }
+  
   const showing = Math.min(displayLimit, list.length); const display = list.slice(0, showing);
   box.innerHTML = display.map((n, i) => {
     const isRead = readLinks.has(n.link); const isSaved = savedLinks.has(n.link); const isManual = n._manual === true; const vHtml = viewsBadgeHtml(n.link);
@@ -621,9 +623,12 @@ document.getElementById('statsBtn').onclick = () => {
   document.getElementById('statsModal').classList.add('open');
   const totalRead = allNews.filter(n => readLinks.has(n.link)).length; const totalSaved = allNews.filter(n => savedLinks.has(n.link)).length;
   const totalViews = Object.values(newsViews).reduce((a, b) => a + (Number(b) || 0), 0); const hotCount = allNews.filter(n => isHotNews(n.link)).length;
+  
+  const displayName = currentUser ? currentUser.email.replace(FAKE_EMAIL_DOMAIN, '') : '';
+
   document.getElementById('statsContent').innerHTML = `
     <div style="display:flex;flex-direction:column;gap:10px;">
-      ${currentUser ? `<div style="display:flex;justify-content:space-between;padding:10px;background:rgba(59,130,246,0.2);border-radius:10px;"><span>کاربر:</span><b>${currentUser.email}</b></div>` : ''}
+      ${currentUser ? `<div style="display:flex;justify-content:space-between;padding:10px;background:rgba(59,130,246,0.2);border-radius:10px;"><span>کاربر:</span><b>${displayName}</b></div>` : ''}
       <div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>کل اخبار</span><b>${allNews.length.toLocaleString('fa-IR')}</b></div>
       <div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>خوانده شده</span><b>${totalRead.toLocaleString('fa-IR')}</b></div>
       <div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>ذخیره شده</span><b>${totalSaved.toLocaleString('fa-IR')}</b></div>
@@ -633,12 +638,13 @@ document.getElementById('statsBtn').onclick = () => {
 };
 document.getElementById('statsClose').onclick = () => document.getElementById('statsModal').classList.remove('open');
 
-/* سیستم لاگین */
+/* سیستم لاگین (نام کاربری) */
 const authModal = document.getElementById('authModal');
 document.getElementById('userBtn').onclick = () => {
   if (!supabaseClient) return showToast('سیستم لاگین در حال حاضر در دسترس نیست', true);
   if (currentUser) {
-    if (confirm(`شما با ایمیل ${currentUser.email} وارد شده‌اید. آیا می‌خواهید خارج شوید؟`)) {
+    const displayName = currentUser.email.replace(FAKE_EMAIL_DOMAIN, '');
+    if (confirm(`شما با نام کاربری ${displayName} وارد شده‌اید. آیا می‌خواهید خارج شوید؟`)) {
       supabaseClient.auth.signOut().then(() => { showToast('خارج شدید'); location.reload(); });
     }
   } else { authModal.classList.add('open'); }
@@ -651,19 +657,52 @@ document.getElementById('tabRegister').onclick = () => { document.getElementById
 document.getElementById('registerForm').onsubmit = async (e) => {
   e.preventDefault(); if (!supabaseClient) return;
   const btn = document.getElementById('regBtn'); btn.textContent = 'در حال ثبت‌نام...'; btn.disabled = true;
-  const email = document.getElementById('regEmail').value.trim(); const password = document.getElementById('regPass').value.trim();
-  if (password.length < 6) { showToast('رمز عبور باید حداقل ۶ کاراکتر باشد', true); btn.textContent = 'ساخت حساب جدید'; btn.disabled = false; return; }
+  
+  const username = document.getElementById('regUsername').value.trim();
+  const password = document.getElementById('regPass').value.trim();
+  
+  // اعتبارسنجی نام کاربری (فقط حروف انگلیسی، اعداد و آندرلاین)
+  if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+    showToast('نام کاربری فقط می‌تواند شامل حروف انگلیسی، اعداد و آندرلاین باشد', true);
+    btn.textContent = 'ساخت حساب جدید'; btn.disabled = false; return;
+  }
+  if (password.length < 6) { 
+    showToast('رمز عبور باید حداقل ۶ کاراکتر باشد', true); 
+    btn.textContent = 'ساخت حساب جدید'; btn.disabled = false; return; 
+  }
+
+  // تبدیل نام کاربری به ایمیل ساختگی
+  const email = username + FAKE_EMAIL_DOMAIN;
+  
   const { data, error } = await supabaseClient.auth.signUp({ email, password });
-  if (error) { showToast('❌ ' + error.message, true); } else { showToast('✅ ثبت‌نام موفق! خوش آمدید.'); authModal.classList.remove('open'); checkUserSession(); }
+  if (error) { 
+    showToast('❌ ' + error.message, true); 
+  } else { 
+    showToast('✅ ثبت‌نام موفق! خوش آمدید.'); 
+    authModal.classList.remove('open'); 
+    checkUserSession(); 
+  }
   btn.textContent = 'ساخت حساب جدید'; btn.disabled = false;
 };
 
 document.getElementById('loginForm').onsubmit = async (e) => {
   e.preventDefault(); if (!supabaseClient) return;
   const btn = document.getElementById('loginBtn'); btn.textContent = 'در حال ورود...'; btn.disabled = true;
-  const email = document.getElementById('loginEmail').value.trim(); const password = document.getElementById('loginPass').value.trim();
+  
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPass').value.trim();
+  
+  // تبدیل نام کاربری به ایمیل ساختگی
+  const email = username + FAKE_EMAIL_DOMAIN;
+  
   const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-  if (error) { showToast('❌ ' + (error.message === 'Invalid login credentials' ? 'ایمیل یا رمز عبور اشتباه است' : error.message), true); } else { showToast('✅ خوش آمدید!'); authModal.classList.remove('open'); checkUserSession(); }
+  if (error) { 
+    showToast('❌ ' + (error.message === 'Invalid login credentials' ? 'نام کاربری یا رمز عبور اشتباه است' : error.message), true); 
+  } else { 
+    showToast('✅ خوش آمدید!'); 
+    authModal.classList.remove('open'); 
+    checkUserSession(); 
+  }
   btn.textContent = 'ورود به حساب'; btn.disabled = false;
 };
 </script>
