@@ -100,8 +100,10 @@
   .source-tag { font-size: 11px; font-weight: 800; color: #fff; background: var(--gradient-main); padding: 5px 14px; border-radius: 20px; }
   .source-tag.featured { background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #000; }
   
-  .views-tag { font-size: 11px; font-weight: 700; color: var(--text-main); background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px; border: 1px solid var(--glass-border); }
+  .stats-tag-group { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .views-tag { font-size: 11px; font-weight: 700; color: var(--text-main); background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px; border: 1px solid var(--glass-border); display: inline-flex; align-items: center; gap: 4px; }
   .views-tag.hot { background: var(--gradient-hot); color: #fff; animation: pulse-hot 2s infinite; }
+  .like-tag { color: #f472b6; background: rgba(244, 114, 182, 0.1); border-color: rgba(244, 114, 182, 0.3); }
   @keyframes pulse-hot { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
   
   .card h2 { font-size: 1.15rem; font-weight: 800; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -293,7 +295,8 @@
 <!-- مودال خبر -->
 <div class="modal-overlay" id="modal">
   <div class="modal" id="modalBox">
-    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">✕</button>
+    <!-- اینجا دکمه بستن را به تابع closeModal وصل کردیم تا باگ اسکرول رفع شود -->
+    <button class="modal-close" onclick="closeModal()">✕</button>
     <button class="modal-star" id="modalStar">☆</button>
     <img class="modal-hero" id="modalHero" style="display:none" alt="">
     <div class="modal-content">
@@ -352,7 +355,9 @@ const MANUAL_NEWS_API = `${BASE_API}/manual-news`;
 
 const INITIAL_COUNT = 10; const DISPLAY_STEP = 10; const DISPLAY_INTERVAL = 5000; const TRENDING_VIEW_THRESHOLD = 1000;
 
-let newsViews = {}; let displayLimit = INITIAL_COUNT; let displayTimer = null; let allNews = [];
+let newsViews = {}; 
+let newsLikes = {}; // برای ذخیره تعداد لایک‌ها
+let displayLimit = INITIAL_COUNT; let displayTimer = null; let allNews = [];
 let activeMode = 'all'; let activeCategory = 'همه'; let searchQuery = ''; let currentNews = null;
 let isLoading = false; let readLinks = new Set(); let savedLinks = new Set();
 let ttsSpeaking = false, ttsPaused = false, ttsQueue = [], ttsCurrentIndex = 0;
@@ -433,6 +438,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadMarketPrices(); setInterval(loadMarketPrices, 5 * 60 * 1000); 
     setupTTS();
     loadAll(); setInterval(loadAll, 5 * 60 * 1000);
+    
+    fetchAllLikes(); // دریافت اولیه لایک‌ها
 
     if (supabaseClient) {
         try {
@@ -461,13 +468,29 @@ function loadUserData() {
   updateUI();
 }
 
+async function fetchAllLikes() {
+    if (!supabaseClient) return;
+    try {
+        const { data, error } = await supabaseClient.from('likes').select('news_link');
+        if (data && !error) {
+            newsLikes = {};
+            data.forEach(item => {
+                newsLikes[item.news_link] = (newsLikes[item.news_link] || 0) + 1;
+            });
+            render(); // رندر مجدد برای نمایش تعداد جدید
+        }
+    } catch (e) { console.warn("Error fetching likes:", e); }
+}
+
 async function fetchAllViews() { try { const res = await fetchWithTimeout(VIEWS_API, 10000); if (res.ok) { const data = await res.json(); if (data && typeof data === 'object') { newsViews = { ...newsViews, ...data }; localStorage.setItem('lrep_views_v10', JSON.stringify(newsViews)); } } } catch {} }
 async function incrementView(link) { if (!link) return 0; newsViews[link] = (newsViews[link] || 0) + 1; updateViewsUI(link); try { const res = await fetchWithTimeout(VIEWS_API, 8000, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ link }) }); if (res.ok) { const data = await res.json(); if (data && typeof data.count === 'number') { newsViews[link] = data.count; updateViewsUI(link); return data.count; } } } catch {} return newsViews[link] || 0; }
 function getViewCount(link) { return newsViews[link] || 0; }
+function getLikeCount(link) { return newsLikes[link] || 0; }
 function isHotNews(link) { return getViewCount(link) >= TRENDING_VIEW_THRESHOLD; }
 function formatViews(n) { n = Number(n) || 0; if (n < 1) return '۰'; if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.0', '') + 'M'; if (n >= 1000) return (n / 1000).toFixed(1).replace('.0', '') + 'K'; return n.toLocaleString('fa-IR'); }
 function viewsBadgeHtml(link) { const v = getViewCount(link); if (v < 1) return ''; const hot = v >= TRENDING_VIEW_THRESHOLD; return `<span class="views-tag${hot ? ' hot' : ''}">👁 ${formatViews(v)}${hot ? ' 🔥' : ''}</span>`; }
-function updateViewsUI(link) { const html = viewsBadgeHtml(link); document.querySelectorAll(`.card[data-link="${CSS.escape(link)}"]`).forEach(card => { const top = card.querySelector('.card-top'); if (top) { const old = top.querySelector('.views-tag'); if (old) old.remove(); if (html) top.insertAdjacentHTML('beforeend', html); } }); if (currentNews && currentNews.link === link) { const meta = document.getElementById('modalMeta'); if (meta) { const old = meta.querySelector('.views-tag'); if (old) old.remove(); if (html) meta.insertAdjacentHTML('beforeend', html); } } }
+function likesBadgeHtml(link) { const l = getLikeCount(link); if (l < 1) return ''; return `<span class="views-tag like-tag">❤️ ${formatViews(l)}</span>`; }
+function updateViewsUI(link) { const html = viewsBadgeHtml(link); document.querySelectorAll(`.card[data-link="${CSS.escape(link)}"]`).forEach(card => { const top = card.querySelector('.stats-tag-group'); if (top) { const old = top.querySelector('.views-tag:not(.like-tag)'); if (old) old.remove(); if (html) top.insertAdjacentHTML('beforeend', html); } }); if (currentNews && currentNews.link === link) { const meta = document.getElementById('modalMeta'); if (meta) { const old = meta.querySelector('.views-tag'); if (old) old.remove(); if (html) meta.insertAdjacentHTML('beforeend', html); } } }
 function updatePersianDateTime() { try { const now = new Date(); const pDate = document.getElementById('persianDate'); const cTime = document.getElementById('clockTime'); if(pDate) pDate.textContent = now.toLocaleDateString('fa-IR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }); if(cTime) cTime.textContent = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); } catch(e) {} }
 async function loadWeather() { try { const url = 'https://api.open-meteo.com/v1/forecast?latitude=35.6892&longitude=51.3890&current=temperature_2m,weather_code&timezone=Asia/Tehran'; const res = await fetchWithTimeout(url, 8000); if (!res.ok) throw 0; const data = await res.json(); document.getElementById('weatherTemp').textContent = `${Math.round(data.current.temperature_2m)}°C`; const codes = { 0: 'صاف ☀️', 1: 'صاف 🌤️', 2: 'نیمه ابری ⛅', 3: 'ابری ☁️', 61: 'باران 🌧️', 80: 'رگبار 🌦️', 95: 'رعد ⛈️' }; document.getElementById('weatherDesc').textContent = codes[data.current.weather_code] || `کد ${data.current.weather_code}`; } catch { document.getElementById('weatherTemp').textContent = '—'; document.getElementById('weatherDesc').textContent = '—'; } }
 async function loadMarketPrices() { try { const res = await fetchWithTimeout('https://raw.githubusercontent.com/iran-market/iran-market.github.io/main/data/popular.json', 8000); if (!res.ok) throw new Error('HTTP error'); const payload = await res.json(); if (!payload || !Array.isArray(payload.data)) throw new Error('bad payload'); const usd = payload.data.find(item => item.symbol === 'USD_IRR_FREE'); if (usd) { document.getElementById('dollarPrice').textContent = usd.price.toLocaleString('fa-IR') + ' تومان'; document.getElementById('dollarChange').textContent = 'بازار آزاد'; } const gold = payload.data.find(item => item.symbol === 'GOLD_18K_IRR'); if (gold) { document.getElementById('goldPrice').textContent = gold.price.toLocaleString('fa-IR') + ' تومان'; const changeSign = gold.change_pct > 0 ? '▲' : (gold.change_pct < 0 ? '▼' : ''); document.getElementById('goldChange').textContent = `${changeSign} ${Math.abs(gold.change_pct || 0).toFixed(1)}% تغییر`; } } catch (e) { document.getElementById('dollarPrice').textContent = '—'; document.getElementById('dollarChange').textContent = '—'; document.getElementById('goldPrice').textContent = '—'; document.getElementById('goldChange').textContent = '—'; } }
@@ -506,16 +529,91 @@ async function loadAll() {
 function startProgressiveDisplay() { if (displayTimer) return; displayTimer = setInterval(() => { if (displayLimit >= getFilteredList().length) { clearInterval(displayTimer); displayTimer = null; return; } displayLimit += DISPLAY_STEP; render(); }, DISPLAY_INTERVAL); }
 function buildFilters() { let baseList = allNews; if (activeMode === 'unread') baseList = baseList.filter(n => !readLinks.has(n.link)); else if (activeMode === 'saved') baseList = baseList.filter(n => savedLinks.has(n.link)); else if (activeMode === 'trending') baseList = getTrendingNews(30, baseList); if (searchQuery.trim()) { const q = searchQuery.trim().toLowerCase(); baseList = baseList.filter(n => (n.title || '').toLowerCase().includes(q) || (n.plain || '').toLowerCase().includes(q)); } const counts = {}; baseList.forEach(n => { const cat = n.category || 'عمومی'; counts[cat] = (counts[cat] || 0) + 1; }); const totalCount = baseList.length; const cats = ['همه', ...Object.keys(counts).sort((a, b) => counts[b] - counts[a])]; const box = document.getElementById('filtersWrap'); box.innerHTML = cats.map(c => { const count = c === 'همه' ? totalCount : (counts[c] || 0); const label = `${c} (${count.toLocaleString('fa-IR')})`; return `<button class="filter-btn ${c === activeCategory ? 'active' : ''}" data-cat="${escapeHtml(c)}">${escapeHtml(label)}</button>`; }).join(''); box.querySelectorAll('button').forEach(btn => btn.onclick = () => { activeCategory = btn.dataset.cat; displayLimit = INITIAL_COUNT; buildFilters(); render(); }); }
 function getFilteredList() { let list = allNews; if (activeMode === 'unread') list = list.filter(n => !readLinks.has(n.link)); else if (activeMode === 'saved') list = list.filter(n => savedLinks.has(n.link)); else if (activeMode === 'trending') return getTrendingNews(30, list); if (activeCategory !== 'همه') list = list.filter(n => n.category === activeCategory); if (searchQuery.trim()) { const q = searchQuery.trim().toLowerCase(); list = list.filter(n => (n.title || '').toLowerCase().includes(q) || (n.plain || '').toLowerCase().includes(q)); } return list; }
-function render() { const list = getFilteredList(); const box = document.getElementById('content'); if (!list.length) { let msg = '📭 خبری یافت نشد'; if (activeMode === 'trending') msg = `🔥 هنوز خبری به ${TRENDING_VIEW_THRESHOLD} بازدید نرسیده است.`; box.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);font-size:1.1rem;">${msg}</div>`; updateUI(); return; } const showing = Math.min(displayLimit, list.length); const display = list.slice(0, showing); box.innerHTML = display.map((n, i) => { const isRead = readLinks.has(n.link); const isSaved = savedLinks.has(n.link); const isManual = n._manual === true; const vHtml = viewsBadgeHtml(n.link); const isFeatured = n.is_featured === true; const img = n.image ? `<div class="card-img-wrap"><img class="card-img" src="${escapeHtml(n.image)}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : ''; return `<article class="card ${isRead ? 'read' : ''} ${isSaved ? 'saved' : ''} ${isFeatured ? 'featured' : ''}" data-link="${escapeHtml(n.link)}" data-idx="${i}"><button class="star-btn ${isSaved ? 'saved' : ''}" data-star="${i}">${isSaved ? '★' : '☆'}</button>${img}<div class="card-body"><div class="card-top"><span class="source-tag ${isFeatured ? 'featured' : (isManual ? 'manual' : '')}">${isFeatured ? '⭐ خبر ویژه' : escapeHtml(n.source)}</span>${vHtml}</div><h2>${escapeHtml(n.title)}</h2><p>${escapeHtml(n.summary || '')}</p><div class="card-footer"><span>🕐 ${formatTime(n.date)}</span><span style="background:var(--glass-border);padding:4px 10px;border-radius:10px;">📖 ${Math.max(1, Math.ceil((n.textLength||0)/1000))} دقیقه</span></div></div></article>`; }).join(''); if (showing < list.length) box.innerHTML += `<div style="grid-column:1/-1;text-align:center;padding:20px;"><div class="btn" onclick="displayLimit+=10;render()">نمایش بیشتر ⏳</div></div>`; window.__currentList = display; updateUI(); }
+function render() { 
+  const list = getFilteredList(); 
+  const box = document.getElementById('content'); 
+  if (!list.length) { 
+    let msg = '📭 خبری یافت نشد'; 
+    if (activeMode === 'trending') msg = `🔥 هنوز خبری به ${TRENDING_VIEW_THRESHOLD} بازدید نرسیده است.`; 
+    box.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);font-size:1.1rem;">${msg}</div>`; 
+    updateUI(); 
+    return; 
+  } 
+  const showing = Math.min(displayLimit, list.length); 
+  const display = list.slice(0, showing); 
+  
+  box.innerHTML = display.map((n, i) => { 
+    const isRead = readLinks.has(n.link); 
+    const isSaved = savedLinks.has(n.link); 
+    const isManual = n._manual === true; 
+    const vHtml = viewsBadgeHtml(n.link); 
+    const lHtml = likesBadgeHtml(n.link); 
+    const isFeatured = n.is_featured === true; 
+    const img = n.image ? `<div class="card-img-wrap"><img class="card-img" src="${escapeHtml(n.image)}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : ''; 
+    
+    return `<article class="card ${isRead ? 'read' : ''} ${isSaved ? 'saved' : ''} ${isFeatured ? 'featured' : ''}" data-link="${escapeHtml(n.link)}" data-idx="${i}">
+      <button class="star-btn ${isSaved ? 'saved' : ''}" data-star="${i}">${isSaved ? '★' : '☆'}</button>
+      ${img}
+      <div class="card-body">
+        <div class="card-top">
+          <span class="source-tag ${isFeatured ? 'featured' : (isManual ? 'manual' : '')}">${isFeatured ? '⭐ خبر ویژه' : escapeHtml(n.source)}</span>
+          <div class="stats-tag-group">
+            ${lHtml}
+            ${vHtml}
+          </div>
+        </div>
+        <h2>${escapeHtml(n.title)}</h2>
+        <p>${escapeHtml(n.summary || '')}</p>
+        <div class="card-footer">
+          <span>🕐 ${formatTime(n.date)}</span>
+          <span style="background:var(--glass-border);padding:4px 10px;border-radius:10px;">📖 ${Math.max(1, Math.ceil((n.textLength||0)/1000))} دقیقه</span>
+        </div>
+      </div>
+    </article>`; 
+  }).join(''); 
+  
+  if (showing < list.length) box.innerHTML += `<div style="grid-column:1/-1;text-align:center;padding:20px;"><div class="btn" onclick="displayLimit+=10;render()">نمایش بیشتر ⏳</div></div>`; 
+  window.__currentList = display; 
+  updateUI(); 
+}
 function updateUI() { document.getElementById('cntAll').textContent = getFilteredList().length.toLocaleString('fa-IR'); document.getElementById('cntUnread').textContent = allNews.filter(n => !readLinks.has(n.link)).length.toLocaleString('fa-IR'); document.getElementById('cntSaved').textContent = savedLinks.size.toLocaleString('fa-IR'); document.getElementById('cntTrending').textContent = allNews.filter(n => isHotNews(n.link)).length.toLocaleString('fa-IR'); document.getElementById('unreadCount').textContent = allNews.filter(n => !readLinks.has(n.link)).length.toLocaleString('fa-IR'); document.getElementById('savedBadge').style.display = savedLinks.size > 0 ? 'block' : 'none'; document.getElementById('savedBadge').textContent = savedLinks.size; document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === activeMode)); }
-function openModal(idx) { const news = window.__currentList[idx]; if (!news) return; currentNews = news; if (currentUser) { markAsRead(news.link); updateUI(); } const hero = document.getElementById('modalHero'); if (news.image) { hero.src = news.image; hero.style.display = 'block'; } else hero.style.display = 'none'; document.getElementById('modalTitle').textContent = news.title; document.getElementById('modalMeta').innerHTML = `<span class="source-tag ${news.is_featured ? 'featured' : (news._manual ? 'manual' : '')}">${news.is_featured ? '⭐ ویژه' : escapeHtml(news.source)}</span><span style="background:var(--glass-border);padding:4px 10px;border-radius:10px;font-size:0.8rem;">🕐 ${formatTime(news.date)}</span>${viewsBadgeHtml(news.link)}`; document.getElementById('modalBody').innerHTML = cleanContent(news.content || news.plain || ''); const srcBtn = document.getElementById('modalSourceBtn'); if (news._manual && (!news.link || news.link.startsWith('manual:'))) srcBtn.style.display = 'none'; else { srcBtn.style.display = 'flex'; srcBtn.href = news.link; } document.getElementById('modal').classList.add('open'); document.body.style.overflow = 'hidden'; document.getElementById('modalStar').textContent = savedLinks.has(news.link) ? '★' : '☆'; document.getElementById('modalStar').classList.toggle('saved', savedLinks.has(news.link)); incrementView(news.link); loadEngagement(news.link); }
-function closeModal() { document.getElementById('modal').classList.remove('open'); document.body.style.overflow = ''; window.speechSynthesis.cancel(); ttsSpeaking = false; ttsPaused = false; ttsQueue = []; ttsCurrentIndex = 0; document.getElementById('ttsPlayBtn').textContent = '🔊 خواندن'; document.getElementById('ttsPauseBtn').style.display = 'none'; document.getElementById('ttsStopBtn').style.display = 'none'; }
+function openModal(idx) { 
+  const news = window.__currentList[idx]; 
+  if (!news) return; 
+  currentNews = news; 
+  if (currentUser) { markAsRead(news.link); updateUI(); } 
+  const hero = document.getElementById('modalHero'); 
+  if (news.image) { hero.src = news.image; hero.style.display = 'block'; } else hero.style.display = 'none'; 
+  document.getElementById('modalTitle').textContent = news.title; 
+  document.getElementById('modalMeta').innerHTML = `<span class="source-tag ${news.is_featured ? 'featured' : (news._manual ? 'manual' : '')}">${news.is_featured ? '⭐ ویژه' : escapeHtml(news.source)}</span><span style="background:var(--glass-border);padding:4px 10px;border-radius:10px;font-size:0.8rem;">🕐 ${formatTime(news.date)}</span>${viewsBadgeHtml(news.link)}`; 
+  document.getElementById('modalBody').innerHTML = cleanContent(news.content || news.plain || ''); 
+  const srcBtn = document.getElementById('modalSourceBtn'); 
+  if (news._manual && (!news.link || news.link.startsWith('manual:'))) srcBtn.style.display = 'none'; else { srcBtn.style.display = 'flex'; srcBtn.href = news.link; } 
+  
+  document.getElementById('modal').classList.add('open'); 
+  document.body.style.overflow = 'hidden'; 
+  
+  document.getElementById('modalStar').textContent = savedLinks.has(news.link) ? '★' : '☆'; 
+  document.getElementById('modalStar').classList.toggle('saved', savedLinks.has(news.link)); 
+  incrementView(news.link); 
+  loadEngagement(news.link); 
+}
+
+// **این تابع مشکل قفل شدن اسکرول را حل می‌کند**
+function closeModal() { 
+  document.getElementById('modal').classList.remove('open'); 
+  document.body.style.overflow = ''; 
+  window.speechSynthesis.cancel(); 
+  ttsSpeaking = false; ttsPaused = false; ttsQueue = []; ttsCurrentIndex = 0; 
+  document.getElementById('ttsPlayBtn').textContent = '🔊 خواندن'; 
+  document.getElementById('ttsPauseBtn').style.display = 'none'; 
+  document.getElementById('ttsStopBtn').style.display = 'none'; 
+}
 
 document.getElementById('content').addEventListener('click', (e) => { const star = e.target.closest('.star-btn'); if (star) { e.stopPropagation(); const idx = +star.dataset.star; const saved = toggleSaved(window.__currentList[idx].link); if(!currentUser) return; showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); star.classList.toggle('saved', saved); star.textContent = saved ? '★' : '☆'; updateUI(); return; } const card = e.target.closest('.card'); if (card) openModal(+card.dataset.idx); });
 document.querySelectorAll('.nav-btn').forEach(btn => btn.onclick = () => { activeMode = btn.dataset.mode; displayLimit = INITIAL_COUNT; buildFilters(); render(); });
 document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; displayLimit = INITIAL_COUNT; buildFilters(); render(); });
 document.getElementById('refreshBtn').onclick = () => { loadAll(); };
-document.getElementById('modalClose') ? document.getElementById('modalClose').onclick = closeModal : null;
 document.getElementById('modal').onclick = (e) => { if (e.target.id === 'modal') closeModal(); };
 document.getElementById('modalStar').onclick = () => { if (!currentNews) return; const saved = toggleSaved(currentNews.link); if(!currentUser) return; showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); document.getElementById('modalStar').textContent = saved ? '★' : '☆'; document.getElementById('modalStar').classList.toggle('saved', saved); render(); };
 document.getElementById('modalStarBtn').onclick = () => { if (!currentNews) return; const saved = toggleSaved(currentNews.link); if(!currentUser) return; showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); document.getElementById('modalStar').textContent = saved ? '★' : '☆'; document.getElementById('modalStar').classList.toggle('saved', saved); render(); };
@@ -527,9 +625,59 @@ document.getElementById('fontMinus').onclick = () => { const cur = parseFloat(ge
 
 document.getElementById('statsBtn').onclick = () => { document.getElementById('statsModal').classList.add('open'); const totalRead = allNews.filter(n => readLinks.has(n.link)).length; const totalSaved = allNews.filter(n => savedLinks.has(n.link)).length; const totalViews = Object.values(newsViews).reduce((a, b) => a + (Number(b) || 0), 0); const hotCount = allNews.filter(n => isHotNews(n.link)).length; document.getElementById('statsContent').innerHTML = `<div style="display:flex;flex-direction:column;gap:10px;">${currentUser ? `<div style="display:flex;justify-content:space-between;padding:10px;background:rgba(59,130,246,0.2);border-radius:10px;"><span>کاربر:</span><b>${currentUser.email.replace(EMAIL_DOMAIN, '')}</b></div>` : ''}<div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>کل اخبار</span><b>${allNews.length.toLocaleString('fa-IR')}</b></div><div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>خوانده شده</span><b>${totalRead.toLocaleString('fa-IR')}</b></div><div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>ذخیره شده</span><b>${totalSaved.toLocaleString('fa-IR')}</b></div><div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>👁 مجموع بازدید</span><b>${totalViews.toLocaleString('fa-IR')}</b></div></div>`; };
 
-async function loadEngagement(link) { if (!supabaseClient) return; const { count } = await supabaseClient.from('likes').select('*', { count: 'exact', head: true }).eq('news_link', link); document.getElementById('likeCount').textContent = count || 0; if (currentUser) { const { data } = await supabaseClient.from('likes').select('*').eq('news_link', link).eq('user_id', currentUser.id).single(); if (data) document.getElementById('likeBtn').classList.add('liked'); else document.getElementById('likeBtn').classList.remove('liked'); } const commentsList = document.getElementById('commentsList'); commentsList.innerHTML = 'در حال بارگذاری...'; const { data: comments } = await supabaseClient.from('comments').select('*').eq('news_link', link).order('created_at', { ascending: false }); if (!comments || comments.length === 0) { commentsList.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">اولین دیدگاه را شما ثبت کنید!</p>'; } else { commentsList.innerHTML = comments.map(c => `<div class="comment-item"><div class="comment-header"><span class="comment-username">👤 ${escapeHtml(c.username)}</span><span class="comment-date">${new Date(c.created_at).toLocaleDateString('fa-IR')}</span></div><div class="comment-text">${escapeHtml(c.content)}</div></div>`).join(''); } }
-document.getElementById('likeBtn').onclick = async () => { if (!currentUser) { showToast('برای لایک ابتدا وارد شوید', true); document.getElementById('authModal').classList.add('open'); return; } const btn = document.getElementById('likeBtn'); const isLiked = btn.classList.contains('liked'); if (isLiked) { await supabaseClient.from('likes').delete().eq('news_link', currentNews.link).eq('user_id', currentUser.id); btn.classList.remove('liked'); } else { await supabaseClient.from('likes').insert([{ news_link: currentNews.link, user_id: currentUser.id }]); btn.classList.add('liked'); } loadEngagement(currentNews.link); };
-document.getElementById('submitCommentBtn').onclick = async () => { if (!currentUser) { showToast('برای ثبت دیدگاه ابتدا وارد شوید', true); document.getElementById('authModal').classList.add('open'); return; } const input = document.getElementById('commentInput'); const text = input.value.trim(); if (!text) return; const username = currentUser.email.replace(EMAIL_DOMAIN, ''); await supabaseClient.from('comments').insert([{ news_link: currentNews.link, username: username, content: text }]); input.value = ''; loadEngagement(currentNews.link); };
+async function loadEngagement(link) { 
+  if (!supabaseClient) return; 
+  const { count } = await supabaseClient.from('likes').select('*', { count: 'exact', head: true }).eq('news_link', link); 
+  document.getElementById('likeCount').textContent = count || 0; 
+  newsLikes[link] = count || 0; 
+  
+  if (currentUser) { 
+    const { data } = await supabaseClient.from('likes').select('*').eq('news_link', link).eq('user_id', currentUser.id).single(); 
+    if (data) document.getElementById('likeBtn').classList.add('liked'); 
+    else document.getElementById('likeBtn').classList.remove('liked'); 
+  } 
+  
+  const commentsList = document.getElementById('commentsList'); 
+  commentsList.innerHTML = 'در حال بارگذاری...'; 
+  const { data: comments } = await supabaseClient.from('comments').select('*').eq('news_link', link).order('created_at', { ascending: false }); 
+  if (!comments || comments.length === 0) { 
+    commentsList.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">اولین دیدگاه را شما ثبت کنید!</p>'; 
+  } else { 
+    commentsList.innerHTML = comments.map(c => `<div class="comment-item"><div class="comment-header"><span class="comment-username">👤 ${escapeHtml(c.username)}</span><span class="comment-date">${new Date(c.created_at).toLocaleDateString('fa-IR')}</span></div><div class="comment-text">${escapeHtml(c.content)}</div></div>`).join(''); 
+  } 
+}
+
+document.getElementById('likeBtn').onclick = async () => { 
+  if (!currentUser) { showToast('برای لایک ابتدا وارد شوید'); document.getElementById('authModal').classList.add('open'); return; } 
+  const btn = document.getElementById('likeBtn'); 
+  const isLiked = btn.classList.contains('liked'); 
+  
+  if (isLiked) { 
+    await supabaseClient.from('likes').delete().eq('news_link', currentNews.link).eq('user_id', currentUser.id); 
+    btn.classList.remove('liked'); 
+    newsLikes[currentNews.link] = Math.max(0, (newsLikes[currentNews.link] || 0) - 1);
+  } else { 
+    await supabaseClient.from('likes').insert([{ news_link: currentNews.link, user_id: currentUser.id }]); 
+    btn.classList.add('liked'); 
+    newsLikes[currentNews.link] = (newsLikes[currentNews.link] || 0) + 1;
+  } 
+  
+  document.getElementById('likeCount').textContent = newsLikes[currentNews.link];
+  
+  const cardElement = document.querySelector(`.card[data-link="${CSS.escape(currentNews.link)}"]`);
+  if (cardElement) {
+      const group = cardElement.querySelector('.stats-tag-group');
+      if (group) {
+          const oldLike = group.querySelector('.like-tag');
+          if (oldLike) oldLike.remove();
+          if (newsLikes[currentNews.link] > 0) {
+              group.insertAdjacentHTML('afterbegin', `<span class="views-tag like-tag">❤️ ${formatViews(newsLikes[currentNews.link])}</span>`);
+          }
+      }
+  }
+};
+
+document.getElementById('submitCommentBtn').onclick = async () => { if (!currentUser) { showToast('برای ثبت دیدگاه ابتدا وارد شوید'); document.getElementById('authModal').classList.add('open'); return; } const input = document.getElementById('commentInput'); const text = input.value.trim(); if (!text) return; const username = currentUser.email.replace(EMAIL_DOMAIN, ''); await supabaseClient.from('comments').insert([{ news_link: currentNews.link, username: username, content: text }]); input.value = ''; loadEngagement(currentNews.link); };
 
 function getProperEmail(input) { if (input.includes('@')) return input; return input + EMAIL_DOMAIN; }
 const authModal = document.getElementById('authModal');
