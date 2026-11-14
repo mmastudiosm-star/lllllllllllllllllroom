@@ -8,10 +8,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<!-- استفاده از CDN جایگزین برای پایداری بیشتر در ایران -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  /* ... (تمام استایل‌های قبلی بدون هیچ تغییری اینجا هستند) ... */
+  /* ... (همان استایل‌های قبلی) ... */
   :root {
     --bg: #050810; --bg-secondary: #0a0f1c; --glass-bg: rgba(18, 26, 43, 0.6);
     --glass-border: rgba(255, 255, 255, 0.08); --glass-hover: rgba(30, 144, 255, 0.15);
@@ -181,18 +180,6 @@
 </head>
 <body>
 
-<!-- 🌟 این بخش اضافه شده تا اگر هر خطایی رخ داد، خودش به ما بگوید -->
-<div id="error-box" style="display:none; position:fixed; top:0; left:0; right:0; background:#ef4444; color:white; padding:10px; text-align:center; z-index:99999; font-weight:bold; font-family:Tahoma;"></div>
-<script>
-    window.onerror = function(message, source, lineno, colno, error) {
-        const errBox = document.getElementById('error-box');
-        if(errBox) {
-            errBox.style.display = 'block';
-            errBox.textContent = 'خطای کد: ' + message + ' (خط ' + lineno + ')';
-        }
-    };
-</script>
-
 <div class="bg-mesh"></div><div class="bg-grid"></div>
 
 <header>
@@ -236,7 +223,7 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v21</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v23</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -336,6 +323,12 @@
       </div>
 
       <div style="margin-top:30px;padding-top:24px;border-top:1px solid var(--glass-border);">
+        <div class="share-grid">
+          <button class="share-btn telegram" data-share="telegram"><svg viewBox="0 0 24 24" fill="#0088cc"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span>تلگرام</span></button>
+          <button class="share-btn whatsapp" data-share="whatsapp"><svg viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg><span>واتساپ</span></button>
+          <button class="share-btn twitter" data-share="twitter"><svg viewBox="0 0 24 24" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span>توییتر</span></button>
+          <button class="share-btn copy" id="modalCopyBtn"><svg viewBox="0 0 24 24" fill="var(--accent-blue)"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg><span>کپی لینک</span></button>
+        </div>
         <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
           <a class="btn btn-primary" id="modalSourceBtn" target="_blank" rel="noopener" style="flex:1;justify-content:center;">🔗 مشاهده در منبع</a>
           <button class="btn" id="modalStarBtn">⭐ ذخیره</button>
@@ -346,9 +339,6 @@
 </div>
 
 <script>
-// ==========================================
-// تنظیمات
-// ==========================================
 const SB_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co';
 const SB_KEY = 'sb_publishable_OsUd9T9GvvY6rvyycxlQSA_xFazoXBe';
 const BASE_API = `${SB_URL}/functions/v1`;
@@ -367,7 +357,6 @@ let ttsSpeaking = false, ttsPaused = false, ttsQueue = [], ttsCurrentIndex = 0;
 let currentUser = null; let supabaseClient = null;
 let lastCheck = new Date().toISOString();
 
-// تلاش برای اتصال به سوپابیس
 try {
     if (window.supabase) { supabaseClient = window.supabase.createClient(SB_URL, SB_KEY); } 
 } catch (e) { console.warn("Supabase failed to load", e); }
@@ -426,9 +415,6 @@ function cleanContent(html) {
   return doc.body.innerHTML;
 }
 
-// ==========================================
-// شروع برنامه
-// ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
     const savedFont = localStorage.getItem('lrep_font_v10');
     if (savedFont) document.documentElement.style.setProperty('--base-font-size', savedFont + 'px');
@@ -455,47 +441,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-async function fetchAllViews() {
-  try { const res = await fetchWithTimeout(VIEWS_API, 10000); if (res.ok) { const data = await res.json(); if (data && typeof data === 'object') { newsViews = { ...newsViews, ...data }; localStorage.setItem('lrep_views_v10', JSON.stringify(newsViews)); } } } catch {}
-}
-async function incrementView(link) {
-  if (!link) return 0; newsViews[link] = (newsViews[link] || 0) + 1; updateViewsUI(link);
-  try { const res = await fetchWithTimeout(VIEWS_API, 8000, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ link }) }); if (res.ok) { const data = await res.json(); if (data && typeof data.count === 'number') { newsViews[link] = data.count; updateViewsUI(link); return data.count; } } } catch {}
-  return newsViews[link] || 0;
-}
+async function fetchAllViews() { try { const res = await fetchWithTimeout(VIEWS_API, 10000); if (res.ok) { const data = await res.json(); if (data && typeof data === 'object') { newsViews = { ...newsViews, ...data }; localStorage.setItem('lrep_views_v10', JSON.stringify(newsViews)); } } } catch {} }
+async function incrementView(link) { if (!link) return 0; newsViews[link] = (newsViews[link] || 0) + 1; updateViewsUI(link); try { const res = await fetchWithTimeout(VIEWS_API, 8000, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ link }) }); if (res.ok) { const data = await res.json(); if (data && typeof data.count === 'number') { newsViews[link] = data.count; updateViewsUI(link); return data.count; } } } catch {} return newsViews[link] || 0; }
 function getViewCount(link) { return newsViews[link] || 0; }
 function isHotNews(link) { return getViewCount(link) >= TRENDING_VIEW_THRESHOLD; }
 function formatViews(n) { n = Number(n) || 0; if (n < 1) return '۰'; if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.0', '') + 'M'; if (n >= 1000) return (n / 1000).toFixed(1).replace('.0', '') + 'K'; return n.toLocaleString('fa-IR'); }
 function viewsBadgeHtml(link) { const v = getViewCount(link); if (v < 1) return ''; const hot = v >= TRENDING_VIEW_THRESHOLD; return `<span class="views-tag${hot ? ' hot' : ''}">👁 ${formatViews(v)}${hot ? ' 🔥' : ''}</span>`; }
-function updateViewsUI(link) {
-  const html = viewsBadgeHtml(link);
-  document.querySelectorAll(`.card[data-link="${CSS.escape(link)}"]`).forEach(card => { const top = card.querySelector('.card-top'); if (top) { const old = top.querySelector('.views-tag'); if (old) old.remove(); if (html) top.insertAdjacentHTML('beforeend', html); } });
-  if (currentNews && currentNews.link === link) { const meta = document.getElementById('modalMeta'); if (meta) { const old = meta.querySelector('.views-tag'); if (old) old.remove(); if (html) meta.insertAdjacentHTML('beforeend', html); } }
-}
-function updatePersianDateTime() {
-  try {
-    const now = new Date(); 
-    const pDate = document.getElementById('persianDate');
-    const cTime = document.getElementById('clockTime');
-    if(pDate) pDate.textContent = now.toLocaleDateString('fa-IR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    if(cTime) cTime.textContent = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  } catch(e) {}
-}
-async function loadWeather() {
-  try { const url = 'https://api.open-meteo.com/v1/forecast?latitude=35.6892&longitude=51.3890&current=temperature_2m,weather_code&timezone=Asia/Tehran'; const res = await fetchWithTimeout(url, 8000); if (!res.ok) throw 0; const data = await res.json(); document.getElementById('weatherTemp').textContent = `${Math.round(data.current.temperature_2m)}°C`; const codes = { 0: 'صاف ☀️', 1: 'صاف 🌤️', 2: 'نیمه ابری ⛅', 3: 'ابری ☁️', 61: 'باران 🌧️', 80: 'رگبار 🌦️', 95: 'رعد ⛈️' }; document.getElementById('weatherDesc').textContent = codes[data.current.weather_code] || `کد ${data.current.weather_code}`; } catch { document.getElementById('weatherTemp').textContent = '—'; document.getElementById('weatherDesc').textContent = '—'; }
-}
-async function loadMarketPrices() {
-  try {
-    const res = await fetchWithTimeout('https://raw.githubusercontent.com/iran-market/iran-market.github.io/main/data/popular.json', 8000);
-    if (!res.ok) throw new Error('HTTP error');
-    const payload = await res.json();
-    if (!payload || !Array.isArray(payload.data)) throw new Error('bad payload');
-    const usd = payload.data.find(item => item.symbol === 'USD_IRR_FREE');
-    if (usd) { document.getElementById('dollarPrice').textContent = usd.price.toLocaleString('fa-IR') + ' تومان'; document.getElementById('dollarChange').textContent = 'بازار آزاد'; }
-    const gold = payload.data.find(item => item.symbol === 'GOLD_18K_IRR');
-    if (gold) { document.getElementById('goldPrice').textContent = gold.price.toLocaleString('fa-IR') + ' تومان'; const changeSign = gold.change_pct > 0 ? '▲' : (gold.change_pct < 0 ? '▼' : ''); document.getElementById('goldChange').textContent = `${changeSign} ${Math.abs(gold.change_pct || 0).toFixed(1)}% تغییر`; }
-  } catch (e) { document.getElementById('dollarPrice').textContent = '—'; document.getElementById('dollarChange').textContent = '—'; document.getElementById('goldPrice').textContent = '—'; document.getElementById('goldChange').textContent = '—'; }
-}
+function updateViewsUI(link) { const html = viewsBadgeHtml(link); document.querySelectorAll(`.card[data-link="${CSS.escape(link)}"]`).forEach(card => { const top = card.querySelector('.card-top'); if (top) { const old = top.querySelector('.views-tag'); if (old) old.remove(); if (html) top.insertAdjacentHTML('beforeend', html); } }); if (currentNews && currentNews.link === link) { const meta = document.getElementById('modalMeta'); if (meta) { const old = meta.querySelector('.views-tag'); if (old) old.remove(); if (html) meta.insertAdjacentHTML('beforeend', html); } } }
+function updatePersianDateTime() { try { const now = new Date(); const pDate = document.getElementById('persianDate'); const cTime = document.getElementById('clockTime'); if(pDate) pDate.textContent = now.toLocaleDateString('fa-IR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }); if(cTime) cTime.textContent = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); } catch(e) {} }
+async function loadWeather() { try { const url = 'https://api.open-meteo.com/v1/forecast?latitude=35.6892&longitude=51.3890&current=temperature_2m,weather_code&timezone=Asia/Tehran'; const res = await fetchWithTimeout(url, 8000); if (!res.ok) throw 0; const data = await res.json(); document.getElementById('weatherTemp').textContent = `${Math.round(data.current.temperature_2m)}°C`; const codes = { 0: 'صاف ☀️', 1: 'صاف 🌤️', 2: 'نیمه ابری ⛅', 3: 'ابری ☁️', 61: 'باران 🌧️', 80: 'رگبار 🌦️', 95: 'رعد ⛈️' }; document.getElementById('weatherDesc').textContent = codes[data.current.weather_code] || `کد ${data.current.weather_code}`; } catch { document.getElementById('weatherTemp').textContent = '—'; document.getElementById('weatherDesc').textContent = '—'; } }
+async function loadMarketPrices() { try { const res = await fetchWithTimeout('https://raw.githubusercontent.com/iran-market/iran-market.github.io/main/data/popular.json', 8000); if (!res.ok) throw new Error('HTTP error'); const payload = await res.json(); if (!payload || !Array.isArray(payload.data)) throw new Error('bad payload'); const usd = payload.data.find(item => item.symbol === 'USD_IRR_FREE'); if (usd) { document.getElementById('dollarPrice').textContent = usd.price.toLocaleString('fa-IR') + ' تومان'; document.getElementById('dollarChange').textContent = 'بازار آزاد'; } const gold = payload.data.find(item => item.symbol === 'GOLD_18K_IRR'); if (gold) { document.getElementById('goldPrice').textContent = gold.price.toLocaleString('fa-IR') + ' تومان'; const changeSign = gold.change_pct > 0 ? '▲' : (gold.change_pct < 0 ? '▼' : ''); document.getElementById('goldChange').textContent = `${changeSign} ${Math.abs(gold.change_pct || 0).toFixed(1)}% تغییر`; } } catch (e) { document.getElementById('dollarPrice').textContent = '—'; document.getElementById('dollarChange').textContent = '—'; document.getElementById('goldPrice').textContent = '—'; document.getElementById('goldChange').textContent = '—'; } }
 function getPersianVoice() { if (!window.speechSynthesis) return null; const voices = window.speechSynthesis.getVoices(); return voices.find(v => v.lang === 'fa-IR') || voices.find(v => v.lang.startsWith('fa')) || voices.find(v => v.lang.startsWith('ar')) || voices[0]; }
 function cleanTextForTTS(text) { return text ? text.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/[«»""'']/g, '').replace(/\[.*?\]/g, '').replace(/\(.*?\)/g, '').replace(/https?:\/\/\S+/g, '').replace(/\s+/g, ' ').trim() : ''; }
 function splitTextIntoChunks(text, maxLength = 200) { const sentences = text.split(/[.!؟?\n]+/).filter(s => s.trim().length > 0); const chunks = []; let currentChunk = ''; for (const sentence of sentences) { const trimmed = sentence.trim(); if (!trimmed) continue; if ((currentChunk + ' ' + trimmed).length <= maxLength) { currentChunk = currentChunk ? currentChunk + '. ' + trimmed : trimmed; } else { if (currentChunk) chunks.push(currentChunk + '.'); if (trimmed.length > maxLength) { const words = trimmed.split(' '); let subChunk = ''; for (const word of words) { if ((subChunk + ' ' + word).length <= maxLength) { subChunk = subChunk ? subChunk + ' ' + word : word; } else { if (subChunk) chunks.push(subChunk); subChunk = word; } } if (subChunk) currentChunk = subChunk; } else currentChunk = trimmed; } } if (currentChunk) chunks.push(currentChunk + '.'); return chunks; }
@@ -513,193 +468,30 @@ function setupTTS() {
   stopBtn.onclick = () => { window.speechSynthesis.cancel(); ttsSpeaking = false; ttsPaused = false; ttsQueue = []; ttsCurrentIndex = 0; playBtn.textContent = '🔊 خواندن'; pauseBtn.style.display = 'none'; stopBtn.style.display = 'none'; };
   function speakNextChunk() { if (ttsCurrentIndex >= ttsQueue.length) { ttsSpeaking = false; ttsPaused = false; playBtn.textContent = '🔊 خواندن'; pauseBtn.style.display = 'none'; stopBtn.style.display = 'none'; showToast('✅ خواندن تمام شد'); return; } const chunk = ttsQueue[ttsCurrentIndex]; if (!chunk || !chunk.trim()) { ttsCurrentIndex++; speakNextChunk(); return; } const u = new SpeechSynthesisUtterance(chunk); u.lang = 'fa-IR'; u.rate = 0.9; const voice = getPersianVoice(); if (voice) u.voice = voice; u.onend = () => { if (!ttsSpeaking) return; ttsCurrentIndex++; if (!ttsPaused) setTimeout(speakNextChunk, 100); }; u.onerror = () => { if (!ttsSpeaking) return; ttsCurrentIndex++; if (!ttsPaused) setTimeout(speakNextChunk, 100); }; window.speechSynthesis.speak(u); }
 }
-
 function getTrendingNews(limit = 30, sourceList = null) { const base = sourceList || allNews; return [...base].map(n => ({ ...n, views: getViewCount(n.link) })).filter(n => n.views >= TRENDING_VIEW_THRESHOLD).sort((a, b) => b.views - a.views).slice(0, limit); }
 
 async function loadAll() {
   if (isLoading) return; isLoading = true;
-  const badge = document.getElementById('liveBadge'); 
-  if(badge) { badge.classList.add('loading'); badge.innerHTML = '<span class="dot"></span> دریافت...'; }
-  
+  const badge = document.getElementById('liveBadge'); if(badge) { badge.classList.add('loading'); badge.innerHTML = '<span class="dot"></span> دریافت...'; }
   try {
     const [resNews, resManual] = await Promise.allSettled([fetchWithTimeout(SUPABASE_URL, 10000), fetchWithTimeout(MANUAL_NEWS_API, 10000)]);
     const knownLinks = new Set(allNews.map(n => n.link));
-    
-    if (resNews.status === 'fulfilled' && resNews.value.ok) {
-      const news = await resNews.value.json();
-      if (Array.isArray(news)) {
-        for (const item of news) {
-          if (item.link && item.title && !knownLinks.has(item.link)) {
-            if (!item.category) item.category = detectCategory(item.title + ' ' + (item.plain || ''));
-            item.is_featured = false;
-            allNews.push(item); knownLinks.add(item.link);
-          }
-        }
-      }
-    }
-    
-    if (resManual.status === 'fulfilled' && resManual.value.ok) {
-      const mnews = await resManual.value.json();
-      if (Array.isArray(mnews)) {
-        for (const item of mnews) {
-          if (!item.link) item.link = 'manual:' + (item._id || item.id || Date.now());
-          if (item.title && !knownLinks.has(item.link)) {
-            if (!item.category) item.category = detectCategory(item.title + ' ' + (item.plain || ''));
-            item._manual = true;
-            item.is_featured = (item.is_featured === true || item.is_featured === 'true');
-            allNews.push(item); knownLinks.add(item.link);
-          }
-        }
-      }
-    }
-    
-    allNews.sort((a, b) => {
-      if (a.is_featured && !b.is_featured) return -1;
-      if (!a.is_featured && b.is_featured) return 1;
-      return (new Date(b.date || b.pubDate || 0).getTime() || 0) - (new Date(a.date || a.pubDate || 0).getTime() || 0);
-    });
-
+    if (resNews.status === 'fulfilled' && resNews.value.ok) { const news = await resNews.value.json(); if (Array.isArray(news)) { for (const item of news) { if (item.link && item.title && !knownLinks.has(item.link)) { if (!item.category) item.category = detectCategory(item.title + ' ' + (item.plain || '')); item.is_featured = false; allNews.push(item); knownLinks.add(item.link); } } } }
+    if (resManual.status === 'fulfilled' && resManual.value.ok) { const mnews = await resManual.value.json(); if (Array.isArray(mnews)) { for (const item of mnews) { if (!item.link) item.link = 'manual:' + (item._id || item.id || Date.now()); if (item.title && !knownLinks.has(item.link)) { if (!item.category) item.category = detectCategory(item.title + ' ' + (item.plain || '')); item._manual = true; item.is_featured = (item.is_featured === true || item.is_featured === 'true'); allNews.push(item); knownLinks.add(item.link); } } } }
+    allNews.sort((a, b) => { if (a.is_featured && !b.is_featured) return -1; if (!a.is_featured && b.is_featured) return 1; return (new Date(b.date || b.pubDate || 0).getTime() || 0) - (new Date(a.date || a.pubDate || 0).getTime() || 0); });
     await fetchAllViews(); buildFilters(); render();
-    
-    document.getElementById('status').textContent = `آخرین بروزرسانی: ${new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })}`;
-    startProgressiveDisplay();
-  } catch (err) { document.getElementById('status').textContent = '⚠️ خطا در دریافت'; } 
-  finally { 
-      isLoading = false; 
-      if(badge) { badge.classList.remove('loading'); badge.innerHTML = '<span class="dot"></span> زنده'; }
-  }
+    document.getElementById('status').textContent = `آخرین بروزرسانی: ${new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })}`; startProgressiveDisplay();
+  } catch (err) { document.getElementById('status').textContent = '⚠️ خطا در دریافت'; } finally { isLoading = false; if(badge) { badge.classList.remove('loading'); badge.innerHTML = '<span class="dot"></span> زنده'; } }
 }
+function startProgressiveDisplay() { if (displayTimer) return; displayTimer = setInterval(() => { if (displayLimit >= getFilteredList().length) { clearInterval(displayTimer); displayTimer = null; return; } displayLimit += DISPLAY_STEP; render(); }, DISPLAY_INTERVAL); }
+function buildFilters() { let baseList = allNews; if (activeMode === 'unread') baseList = baseList.filter(n => !readLinks.has(n.link)); else if (activeMode === 'saved') baseList = baseList.filter(n => savedLinks.has(n.link)); else if (activeMode === 'trending') baseList = getTrendingNews(30, baseList); if (searchQuery.trim()) { const q = searchQuery.trim().toLowerCase(); baseList = baseList.filter(n => (n.title || '').toLowerCase().includes(q) || (n.plain || '').toLowerCase().includes(q)); } const counts = {}; baseList.forEach(n => { const cat = n.category || 'عمومی'; counts[cat] = (counts[cat] || 0) + 1; }); const totalCount = baseList.length; const cats = ['همه', ...Object.keys(counts).sort((a, b) => counts[b] - counts[a])]; const box = document.getElementById('filtersWrap'); box.innerHTML = cats.map(c => { const count = c === 'همه' ? totalCount : (counts[c] || 0); const label = `${c} (${count.toLocaleString('fa-IR')})`; return `<button class="filter-btn ${c === activeCategory ? 'active' : ''}" data-cat="${escapeHtml(c)}">${escapeHtml(label)}</button>`; }).join(''); box.querySelectorAll('button').forEach(btn => btn.onclick = () => { activeCategory = btn.dataset.cat; displayLimit = INITIAL_COUNT; buildFilters(); render(); }); }
+function getFilteredList() { let list = allNews; if (activeMode === 'unread') list = list.filter(n => !readLinks.has(n.link)); else if (activeMode === 'saved') list = list.filter(n => savedLinks.has(n.link)); else if (activeMode === 'trending') return getTrendingNews(30, list); if (activeCategory !== 'همه') list = list.filter(n => n.category === activeCategory); if (searchQuery.trim()) { const q = searchQuery.trim().toLowerCase(); list = list.filter(n => (n.title || '').toLowerCase().includes(q) || (n.plain || '').toLowerCase().includes(q)); } return list; }
+function render() { const list = getFilteredList(); const box = document.getElementById('content'); if (!list.length) { let msg = '📭 خبری یافت نشد'; if (activeMode === 'trending') msg = `🔥 هنوز خبری به ${TRENDING_VIEW_THRESHOLD} بازدید نرسیده است.`; box.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);font-size:1.1rem;">${msg}</div>`; updateUI(); return; } const showing = Math.min(displayLimit, list.length); const display = list.slice(0, showing); box.innerHTML = display.map((n, i) => { const isRead = readLinks.has(n.link); const isSaved = savedLinks.has(n.link); const isManual = n._manual === true; const vHtml = viewsBadgeHtml(n.link); const isFeatured = n.is_featured === true; const img = n.image ? `<div class="card-img-wrap"><img class="card-img" src="${escapeHtml(n.image)}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : ''; return `<article class="card ${isRead ? 'read' : ''} ${isSaved ? 'saved' : ''} ${isFeatured ? 'featured' : ''}" data-link="${escapeHtml(n.link)}" data-idx="${i}"><button class="star-btn ${isSaved ? 'saved' : ''}" data-star="${i}">${isSaved ? '★' : '☆'}</button>${img}<div class="card-body"><div class="card-top"><span class="source-tag ${isFeatured ? 'featured' : (isManual ? 'manual' : '')}">${isFeatured ? '⭐ خبر ویژه' : escapeHtml(n.source)}</span>${vHtml}</div><h2>${escapeHtml(n.title)}</h2><p>${escapeHtml(n.summary || '')}</p><div class="card-footer"><span>🕐 ${formatTime(n.date)}</span><span style="background:var(--glass-border);padding:4px 10px;border-radius:10px;">📖 ${Math.max(1, Math.ceil((n.textLength||0)/1000))} دقیقه</span></div></div></article>`; }).join(''); if (showing < list.length) box.innerHTML += `<div style="grid-column:1/-1;text-align:center;padding:20px;"><div class="btn" onclick="displayLimit+=10;render()">نمایش بیشتر ⏳</div></div>`; window.__currentList = display; updateUI(); }
+function updateUI() { document.getElementById('cntAll').textContent = getFilteredList().length.toLocaleString('fa-IR'); document.getElementById('cntUnread').textContent = allNews.filter(n => !readLinks.has(n.link)).length.toLocaleString('fa-IR'); document.getElementById('cntSaved').textContent = savedLinks.size.toLocaleString('fa-IR'); document.getElementById('cntTrending').textContent = allNews.filter(n => isHotNews(n.link)).length.toLocaleString('fa-IR'); document.getElementById('unreadCount').textContent = allNews.filter(n => !readLinks.has(n.link)).length.toLocaleString('fa-IR'); document.getElementById('savedBadge').style.display = savedLinks.size > 0 ? 'block' : 'none'; document.getElementById('savedBadge').textContent = savedLinks.size; document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === activeMode)); }
+function openModal(idx) { const news = window.__currentList[idx]; if (!news) return; currentNews = news; if (currentUser) { markAsRead(news.link); updateUI(); } const hero = document.getElementById('modalHero'); if (news.image) { hero.src = news.image; hero.style.display = 'block'; } else hero.style.display = 'none'; document.getElementById('modalTitle').textContent = news.title; document.getElementById('modalMeta').innerHTML = `<span class="source-tag ${news.is_featured ? 'featured' : (news._manual ? 'manual' : '')}">${news.is_featured ? '⭐ ویژه' : escapeHtml(news.source)}</span><span style="background:var(--glass-border);padding:4px 10px;border-radius:10px;font-size:0.8rem;">🕐 ${formatTime(news.date)}</span>${viewsBadgeHtml(news.link)}`; document.getElementById('modalBody').innerHTML = cleanContent(news.content || news.plain || ''); const srcBtn = document.getElementById('modalSourceBtn'); if (news._manual && (!news.link || news.link.startsWith('manual:'))) srcBtn.style.display = 'none'; else { srcBtn.style.display = 'flex'; srcBtn.href = news.link; } document.getElementById('modal').classList.add('open'); document.body.style.overflow = 'hidden'; document.getElementById('modalStar').textContent = savedLinks.has(news.link) ? '★' : '☆'; document.getElementById('modalStar').classList.toggle('saved', savedLinks.has(news.link)); incrementView(news.link); loadEngagement(news.link); }
+function closeModal() { document.getElementById('modal').classList.remove('open'); document.body.style.overflow = ''; window.speechSynthesis.cancel(); ttsSpeaking = false; ttsPaused = false; ttsQueue = []; ttsCurrentIndex = 0; document.getElementById('ttsPlayBtn').textContent = '🔊 خواندن'; document.getElementById('ttsPauseBtn').style.display = 'none'; document.getElementById('ttsStopBtn').style.display = 'none'; }
 
-function startProgressiveDisplay() {
-  if (displayTimer) return;
-  displayTimer = setInterval(() => {
-    if (displayLimit >= getFilteredList().length) { clearInterval(displayTimer); displayTimer = null; return; }
-    displayLimit += DISPLAY_STEP; render();
-  }, DISPLAY_INTERVAL);
-}
-
-function buildFilters() {
-  let baseList = allNews;
-  if (activeMode === 'unread') baseList = baseList.filter(n => !readLinks.has(n.link));
-  else if (activeMode === 'saved') baseList = baseList.filter(n => savedLinks.has(n.link));
-  else if (activeMode === 'trending') baseList = getTrendingNews(30, baseList);
-  if (searchQuery.trim()) { const q = searchQuery.trim().toLowerCase(); baseList = baseList.filter(n => (n.title || '').toLowerCase().includes(q) || (n.plain || '').toLowerCase().includes(q)); }
-  const counts = {}; baseList.forEach(n => { const cat = n.category || 'عمومی'; counts[cat] = (counts[cat] || 0) + 1; });
-  const totalCount = baseList.length; const cats = ['همه', ...Object.keys(counts).sort((a, b) => counts[b] - counts[a])];
-  const box = document.getElementById('filtersWrap');
-  box.innerHTML = cats.map(c => { const count = c === 'همه' ? totalCount : (counts[c] || 0); const label = `${c} (${count.toLocaleString('fa-IR')})`; return `<button class="filter-btn ${c === activeCategory ? 'active' : ''}" data-cat="${escapeHtml(c)}">${escapeHtml(label)}</button>`; }).join('');
-  box.querySelectorAll('button').forEach(btn => btn.onclick = () => { activeCategory = btn.dataset.cat; displayLimit = INITIAL_COUNT; buildFilters(); render(); });
-}
-
-function getFilteredList() {
-  let list = allNews;
-  if (activeMode === 'unread') list = list.filter(n => !readLinks.has(n.link));
-  else if (activeMode === 'saved') list = list.filter(n => savedLinks.has(n.link));
-  else if (activeMode === 'trending') return getTrendingNews(30, list);
-  if (activeCategory !== 'همه') list = list.filter(n => n.category === activeCategory);
-  if (searchQuery.trim()) { const q = searchQuery.trim().toLowerCase(); list = list.filter(n => (n.title || '').toLowerCase().includes(q) || (n.plain || '').toLowerCase().includes(q)); }
-  return list;
-}
-
-function render() {
-  const list = getFilteredList(); const box = document.getElementById('content');
-  if (!list.length) { 
-      let msg = '📭 خبری یافت نشد'; 
-      if (activeMode === 'trending') msg = `🔥 هنوز خبری به ${TRENDING_VIEW_THRESHOLD} بازدید نرسیده است.`; 
-      box.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);font-size:1.1rem;">${msg}</div>`; updateUI(); return; 
-  }
-  
-  const showing = Math.min(displayLimit, list.length); const display = list.slice(0, showing);
-  box.innerHTML = display.map((n, i) => {
-    const isRead = readLinks.has(n.link); 
-    const isSaved = savedLinks.has(n.link); 
-    const isManual = n._manual === true; 
-    const vHtml = viewsBadgeHtml(n.link);
-    const isFeatured = n.is_featured === true;
-    
-    const img = n.image ? `<div class="card-img-wrap"><img class="card-img" src="${escapeHtml(n.image)}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : '';
-    return `
-      <article class="card ${isRead ? 'read' : ''} ${isSaved ? 'saved' : ''} ${isFeatured ? 'featured' : ''}" data-link="${escapeHtml(n.link)}" data-idx="${i}">
-        <button class="star-btn ${isSaved ? 'saved' : ''}" data-star="${i}">${isSaved ? '★' : '☆'}</button>
-        ${img}
-        <div class="card-body">
-          <div class="card-top">
-            <span class="source-tag ${isFeatured ? 'featured' : (isManual ? 'manual' : '')}">
-              ${isFeatured ? '⭐ خبر ویژه' : escapeHtml(n.source)}
-            </span>
-            ${vHtml}
-          </div>
-          <h2>${escapeHtml(n.title)}</h2><p>${escapeHtml(n.summary || '')}</p>
-          <div class="card-footer"><span>🕐 ${formatTime(n.date)}</span><span style="background:var(--glass-border);padding:4px 10px;border-radius:10px;">📖 ${Math.max(1, Math.ceil((n.textLength||0)/1000))} دقیقه</span></div>
-        </div>
-      </article>
-    `;
-  }).join('');
-  if (showing < list.length) box.innerHTML += `<div style="grid-column:1/-1;text-align:center;padding:20px;"><div class="btn" onclick="displayLimit+=10;render()">نمایش بیشتر ⏳</div></div>`;
-  window.__currentList = display; updateUI();
-}
-
-function updateUI() {
-  document.getElementById('cntAll').textContent = getFilteredList().length.toLocaleString('fa-IR'); 
-  document.getElementById('cntUnread').textContent = allNews.filter(n => !readLinks.has(n.link)).length.toLocaleString('fa-IR');
-  document.getElementById('cntSaved').textContent = savedLinks.size.toLocaleString('fa-IR');
-  document.getElementById('cntTrending').textContent = allNews.filter(n => isHotNews(n.link)).length.toLocaleString('fa-IR');
-  document.getElementById('unreadCount').textContent = allNews.filter(n => !readLinks.has(n.link)).length.toLocaleString('fa-IR');
-  document.getElementById('savedBadge').style.display = savedLinks.size > 0 ? 'block' : 'none';
-  document.getElementById('savedBadge').textContent = savedLinks.size;
-  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === activeMode));
-}
-
-function openModal(idx) {
-  const news = window.__currentList[idx]; if (!news) return; currentNews = news;
-  if (currentUser) { markAsRead(news.link); updateUI(); }
-  
-  const hero = document.getElementById('modalHero'); 
-  if (news.image) { hero.src = news.image; hero.style.display = 'block'; } else hero.style.display = 'none';
-  
-  document.getElementById('modalTitle').textContent = news.title;
-  document.getElementById('modalMeta').innerHTML = `<span class="source-tag ${news.is_featured ? 'featured' : (news._manual ? 'manual' : '')}">${news.is_featured ? '⭐ ویژه' : escapeHtml(news.source)}</span><span style="background:var(--glass-border);padding:4px 10px;border-radius:10px;font-size:0.8rem;">🕐 ${formatTime(news.date)}</span>${viewsBadgeHtml(news.link)}`;
-  document.getElementById('modalBody').innerHTML = cleanContent(news.content || news.plain || '');
-  
-  const srcBtn = document.getElementById('modalSourceBtn'); 
-  if (news._manual && (!news.link || news.link.startsWith('manual:'))) srcBtn.style.display = 'none'; else { srcBtn.style.display = 'flex'; srcBtn.href = news.link; }
-  
-  document.getElementById('modal').classList.add('open'); 
-  document.body.style.overflow = 'hidden';
-  document.getElementById('modalStar').textContent = savedLinks.has(news.link) ? '★' : '☆';
-  document.getElementById('modalStar').classList.toggle('saved', savedLinks.has(news.link));
-  incrementView(news.link);
-  
-  loadEngagement(news.link);
-}
-
-function closeModal() { 
-  document.getElementById('modal').classList.remove('open'); 
-  document.body.style.overflow = ''; 
-  window.speechSynthesis.cancel(); 
-  ttsSpeaking = false; ttsPaused = false; ttsQueue = []; ttsCurrentIndex = 0; 
-  document.getElementById('ttsPlayBtn').textContent = '🔊 خواندن'; 
-  document.getElementById('ttsPauseBtn').style.display = 'none'; 
-  document.getElementById('ttsStopBtn').style.display = 'none'; 
-}
-
-document.getElementById('content').addEventListener('click', (e) => { 
-    const star = e.target.closest('.star-btn'); 
-    if (star) { 
-        e.stopPropagation(); 
-        const idx = +star.dataset.star; 
-        const saved = toggleSaved(window.__currentList[idx].link); 
-        if(!currentUser) return; 
-        showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); 
-        star.classList.toggle('saved', saved); 
-        star.textContent = saved ? '★' : '☆'; 
-        updateUI(); 
-        return; 
-    } 
-    const card = e.target.closest('.card'); 
-    if (card) openModal(+card.dataset.idx); 
-});
-
+document.getElementById('content').addEventListener('click', (e) => { const star = e.target.closest('.star-btn'); if (star) { e.stopPropagation(); const idx = +star.dataset.star; const saved = toggleSaved(window.__currentList[idx].link); if(!currentUser) return; showToast(saved ? '⭐ ذخیره شد' : 'حذف شد'); star.classList.toggle('saved', saved); star.textContent = saved ? '★' : '☆'; updateUI(); return; } const card = e.target.closest('.card'); if (card) openModal(+card.dataset.idx); });
 document.querySelectorAll('.nav-btn').forEach(btn => btn.onclick = () => { activeMode = btn.dataset.mode; displayLimit = INITIAL_COUNT; buildFilters(); render(); });
 document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; displayLimit = INITIAL_COUNT; buildFilters(); render(); });
 document.getElementById('refreshBtn').onclick = () => { loadAll(); };
@@ -713,181 +505,57 @@ document.getElementById('settingsBtn').onclick = () => document.getElementById('
 document.getElementById('fontPlus').onclick = () => { const cur = parseFloat(getComputedStyle(document.documentElement).fontSize); const next = Math.min(cur + 2, 24); document.documentElement.style.setProperty('--base-font-size', next + 'px'); localStorage.setItem('lrep_font_v10', next); document.getElementById('fontVal').textContent = next.toLocaleString('fa-IR'); };
 document.getElementById('fontMinus').onclick = () => { const cur = parseFloat(getComputedStyle(document.documentElement).fontSize); const next = Math.max(cur - 2, 12); document.documentElement.style.setProperty('--base-font-size', next + 'px'); localStorage.setItem('lrep_font_v10', next); document.getElementById('fontVal').textContent = next.toLocaleString('fa-IR'); };
 
-document.getElementById('statsBtn').onclick = () => {
-  document.getElementById('statsModal').classList.add('open');
-  const totalRead = allNews.filter(n => readLinks.has(n.link)).length; const totalSaved = allNews.filter(n => savedLinks.has(n.link)).length;
-  const totalViews = Object.values(newsViews).reduce((a, b) => a + (Number(b) || 0), 0); const hotCount = allNews.filter(n => isHotNews(n.link)).length;
-  document.getElementById('statsContent').innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      ${currentUser ? `<div style="display:flex;justify-content:space-between;padding:10px;background:rgba(59,130,246,0.2);border-radius:10px;"><span>کاربر:</span><b>${currentUser.email.replace(EMAIL_DOMAIN, '')}</b></div>` : ''}
-      <div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>کل اخبار</span><b>${allNews.length.toLocaleString('fa-IR')}</b></div>
-      <div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>خوانده شده</span><b>${totalRead.toLocaleString('fa-IR')}</b></div>
-      <div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>ذخیره شده</span><b>${totalSaved.toLocaleString('fa-IR')}</b></div>
-      <div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>👁 مجموع بازدید</span><b>${totalViews.toLocaleString('fa-IR')}</b></div>
-    </div>
-  `;
-};
+document.getElementById('statsBtn').onclick = () => { document.getElementById('statsModal').classList.add('open'); const totalRead = allNews.filter(n => readLinks.has(n.link)).length; const totalSaved = allNews.filter(n => savedLinks.has(n.link)).length; const totalViews = Object.values(newsViews).reduce((a, b) => a + (Number(b) || 0), 0); const hotCount = allNews.filter(n => isHotNews(n.link)).length; document.getElementById('statsContent').innerHTML = `<div style="display:flex;flex-direction:column;gap:10px;">${currentUser ? `<div style="display:flex;justify-content:space-between;padding:10px;background:rgba(59,130,246,0.2);border-radius:10px;"><span>کاربر:</span><b>${currentUser.email.replace(EMAIL_DOMAIN, '')}</b></div>` : ''}<div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>کل اخبار</span><b>${allNews.length.toLocaleString('fa-IR')}</b></div><div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>خوانده شده</span><b>${totalRead.toLocaleString('fa-IR')}</b></div><div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>ذخیره شده</span><b>${totalSaved.toLocaleString('fa-IR')}</b></div><div style="display:flex;justify-content:space-between;padding:10px;background:var(--glass-bg);border-radius:10px;"><span>👁 مجموع بازدید</span><b>${totalViews.toLocaleString('fa-IR')}</b></div></div>`; };
 
-// ==========================================
-// 🌟 لایک و کامنت
-// ==========================================
-async function loadEngagement(link) {
-    if (!supabaseClient) return;
-    
-    // ۱. لود لایک‌ها
-    const { count } = await supabaseClient.from('likes').select('*', { count: 'exact', head: true }).eq('news_link', link);
-    document.getElementById('likeCount').textContent = count || 0;
-    
-    if (currentUser) {
-        const { data } = await supabaseClient.from('likes').select('*').eq('news_link', link).eq('user_id', currentUser.id).single();
-        if (data) document.getElementById('likeBtn').classList.add('liked');
-        else document.getElementById('likeBtn').classList.remove('liked');
-    }
+async function loadEngagement(link) { if (!supabaseClient) return; const { count } = await supabaseClient.from('likes').select('*', { count: 'exact', head: true }).eq('news_link', link); document.getElementById('likeCount').textContent = count || 0; if (currentUser) { const { data } = await supabaseClient.from('likes').select('*').eq('news_link', link).eq('user_id', currentUser.id).single(); if (data) document.getElementById('likeBtn').classList.add('liked'); else document.getElementById('likeBtn').classList.remove('liked'); } const commentsList = document.getElementById('commentsList'); commentsList.innerHTML = 'در حال بارگذاری...'; const { data: comments } = await supabaseClient.from('comments').select('*').eq('news_link', link).order('created_at', { ascending: false }); if (!comments || comments.length === 0) { commentsList.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">اولین دیدگاه را شما ثبت کنید!</p>'; } else { commentsList.innerHTML = comments.map(c => `<div class="comment-item"><div class="comment-header"><span class="comment-username">👤 ${escapeHtml(c.username)}</span><span class="comment-date">${new Date(c.created_at).toLocaleDateString('fa-IR')}</span></div><div class="comment-text">${escapeHtml(c.content)}</div></div>`).join(''); } }
+document.getElementById('likeBtn').onclick = async () => { if (!currentUser) { showToast('برای لایک ابتدا وارد شوید', true); document.getElementById('authModal').classList.add('open'); return; } const btn = document.getElementById('likeBtn'); const isLiked = btn.classList.contains('liked'); if (isLiked) { await supabaseClient.from('likes').delete().eq('news_link', currentNews.link).eq('user_id', currentUser.id); btn.classList.remove('liked'); } else { await supabaseClient.from('likes').insert([{ news_link: currentNews.link, user_id: currentUser.id }]); btn.classList.add('liked'); } loadEngagement(currentNews.link); };
+document.getElementById('submitCommentBtn').onclick = async () => { if (!currentUser) { showToast('برای ثبت دیدگاه ابتدا وارد شوید', true); document.getElementById('authModal').classList.add('open'); return; } const input = document.getElementById('commentInput'); const text = input.value.trim(); if (!text) return; const username = currentUser.email.replace(EMAIL_DOMAIN, ''); await supabaseClient.from('comments').insert([{ news_link: currentNews.link, username: username, content: text }]); input.value = ''; loadEngagement(currentNews.link); };
 
-    // ۲. لود کامنت‌ها
-    const commentsList = document.getElementById('commentsList');
-    commentsList.innerHTML = 'در حال بارگذاری...';
-    const { data: comments } = await supabaseClient.from('comments').select('*').eq('news_link', link).order('created_at', { ascending: false });
-    
-    if (!comments || comments.length === 0) {
-        commentsList.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">اولین دیدگاه را شما ثبت کنید!</p>';
-    } else {
-        commentsList.innerHTML = comments.map(c => `
-            <div class="comment-item">
-                <div class="comment-header">
-                    <span class="comment-username">👤 ${escapeHtml(c.username)}</span>
-                    <span class="comment-date">${new Date(c.created_at).toLocaleDateString('fa-IR')}</span>
-                </div>
-                <div class="comment-text">${escapeHtml(c.content)}</div>
-            </div>
-        `).join('');
-    }
-}
-
-document.getElementById('likeBtn').onclick = async () => {
-    if (!currentUser) { showToast('برای لایک ابتدا وارد شوید', true); document.getElementById('authModal').classList.add('open'); return; }
-    
-    const btn = document.getElementById('likeBtn');
-    const isLiked = btn.classList.contains('liked');
-    
-    if (isLiked) {
-        await supabaseClient.from('likes').delete().eq('news_link', currentNews.link).eq('user_id', currentUser.id);
-        btn.classList.remove('liked');
-    } else {
-        await supabaseClient.from('likes').insert([{ news_link: currentNews.link, user_id: currentUser.id }]);
-        btn.classList.add('liked');
-    }
-    loadEngagement(currentNews.link);
-};
-
-document.getElementById('submitCommentBtn').onclick = async () => {
-    if (!currentUser) { showToast('برای ثبت دیدگاه ابتدا وارد شوید', true); document.getElementById('authModal').classList.add('open'); return; }
-    
-    const input = document.getElementById('commentInput');
-    const text = input.value.trim();
-    if (!text) return;
-    
-    const username = currentUser.email.replace(EMAIL_DOMAIN, '');
-    await supabaseClient.from('comments').insert([{ news_link: currentNews.link, username: username, content: text }]);
-    
-    input.value = '';
-    loadEngagement(currentNews.link);
-};
-
-// ==========================================
-// سیستم لاگین و پیام‌ها
-// ==========================================
-function getProperEmail(input) {
-    if (input.includes('@')) return input;
-    return input + EMAIL_DOMAIN;
-}
-
+// 🌟 سیستم لاگین و ثبت‌نام با هشدارهای دقیق
+function getProperEmail(input) { if (input.includes('@')) return input; return input + EMAIL_DOMAIN; }
 const authModal = document.getElementById('authModal');
-document.getElementById('userBtn').onclick = () => {
-  if (!supabaseClient) return showToast('سیستم لاگین در دسترس نیست', true);
-  if (currentUser) {
-    if (confirm('از حساب خارج می‌شوید؟')) { supabaseClient.auth.signOut().then(() => location.reload()); }
-  } else { authModal.classList.add('open'); }
-};
-
+document.getElementById('userBtn').onclick = () => { if (!supabaseClient) return alert('سیستم لاگین در دسترس نیست. اینترنت یا فیلترشکن خود را بررسی کنید.'); if (currentUser) { if (confirm('از حساب خارج می‌شوید؟')) { supabaseClient.auth.signOut().then(() => location.reload()); } } else { authModal.classList.add('open'); } };
 document.getElementById('tabLogin').onclick = () => { document.getElementById('loginForm').style.display = 'block'; document.getElementById('registerForm').style.display = 'none'; document.getElementById('tabLogin').classList.add('active'); document.getElementById('tabRegister').classList.remove('active'); };
 document.getElementById('tabRegister').onclick = () => { document.getElementById('loginForm').style.display = 'none'; document.getElementById('registerForm').style.display = 'block'; document.getElementById('tabLogin').classList.remove('active'); document.getElementById('tabRegister').classList.add('active'); };
 
 document.getElementById('registerForm').onsubmit = async (e) => {
-  e.preventDefault(); if (!supabaseClient) return;
+  e.preventDefault(); 
+  if (!supabaseClient) return alert('❌ خطا: ارتباط با سرور برقرار نشد. لطفاً فیلترشکن خود را روشن/خاموش کنید و صفحه را رفرش کنید.');
+  
   const btn = document.getElementById('regBtn'); btn.textContent = 'در حال ثبت‌نام...'; btn.disabled = true;
   const userInput = document.getElementById('regUser').value.trim(); 
   const password = document.getElementById('regPass').value.trim();
   const finalEmail = getProperEmail(userInput);
   
-  if (password.length < 6) { showToast('رمز عبور باید حداقل ۶ کاراکتر باشد', true); btn.textContent = 'ثبت‌نام'; btn.disabled = false; return; }
+  if (password.length < 6) { alert('رمز عبور باید حداقل ۶ کاراکتر باشد'); btn.textContent = 'ثبت‌نام'; btn.disabled = false; return; }
   
   const { error } = await supabaseClient.auth.signUp({ email: finalEmail, password });
-  if (error) { showToast('❌ ' + error.message, true); } else { showToast('✅ ثبت‌نام موفق! خوش آمدید.'); authModal.classList.remove('open'); location.reload(); }
+  if (error) { alert('❌ خطا در ثبت‌نام: ' + error.message); } else { alert('✅ ثبت‌نام موفق! خوش آمدید.'); authModal.classList.remove('open'); location.reload(); }
   btn.textContent = 'ثبت‌نام'; btn.disabled = false;
 };
 
 document.getElementById('loginForm').onsubmit = async (e) => {
-  e.preventDefault(); if (!supabaseClient) return;
+  e.preventDefault(); 
+  if (!supabaseClient) return alert('❌ خطا: ارتباط با سرور برقرار نشد. لطفاً فیلترشکن خود را روشن/خاموش کنید و صفحه را رفرش کنید.');
+  
   const btn = document.getElementById('loginBtn'); btn.textContent = 'در حال ورود...'; btn.disabled = true;
   const userInput = document.getElementById('loginUser').value.trim(); 
   const password = document.getElementById('loginPass').value.trim();
   const finalEmail = getProperEmail(userInput);
   
   const { error } = await supabaseClient.auth.signInWithPassword({ email: finalEmail, password });
-  if (error) { showToast('❌ ' + (error.message === 'Invalid login credentials' ? 'نام کاربری/ایمیل یا رمز اشتباه است' : error.message), true); } else { showToast('✅ خوش آمدید!'); authModal.classList.remove('open'); location.reload(); }
+  if (error) { 
+      alert('❌ خطا در ورود: ' + (error.message === 'Invalid login credentials' ? 'نام کاربری/ایمیل یا رمز اشتباه است' : error.message)); 
+  } else { 
+      alert('✅ خوش آمدید!'); authModal.classList.remove('open'); location.reload(); 
+  }
   btn.textContent = 'ورود'; btn.disabled = false;
 };
 
-// پیام‌ها
-async function checkNotifs() {
-    if (!supabaseClient) return;
-    let q = supabaseClient.from('notifications').select('*').gt('created_at', lastCheck);
-    if (currentUser) { const username = currentUser.email.replace(EMAIL_DOMAIN, ''); q = q.or(`target_user.eq.all,target_user.eq.${username}`); } else { q = q.eq('target_user', 'all'); }
+async function checkNotifs() { if (!supabaseClient) return; let q = supabaseClient.from('notifications').select('*').gt('created_at', lastCheck); if (currentUser) { const username = currentUser.email.replace(EMAIL_DOMAIN, ''); q = q.or(`target_user.eq.all,target_user.eq.${username}`); } else { q = q.eq('target_user', 'all'); } const { data } = await q; if (data && data.length > 0) { data.forEach(m => showToast('🔔 پیام: ' + m.message)); lastCheck = new Date().toISOString(); const badge = document.getElementById('notifBadge'); badge.style.display = 'block'; badge.textContent = parseInt(badge.textContent || 0) + data.length; } }
+document.getElementById('notifBtn').onclick = async () => { document.getElementById('notifModal').classList.add('open'); document.getElementById('notifBadge').style.display = 'none'; document.getElementById('notifBadge').textContent = '0'; if (!supabaseClient) return; let q = supabaseClient.from('notifications').select('*').order('created_at', { ascending: false }).limit(20); if (currentUser) { const username = currentUser.email.replace(EMAIL_DOMAIN, ''); q = q.or(`target_user.eq.all,target_user.eq.${username}`); } else { q = q.eq('target_user', 'all'); } const { data } = await q; const list = document.getElementById('notifList'); if (data && data.length > 0) { list.innerHTML = data.map(m => `<div style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; border-right:3px solid var(--accent-blue); font-size:0.9rem;">${m.message}</div>`).join(''); } else { list.innerHTML = '<p style="text-align:center; color:var(--text-muted);">پیامی ندارید.</p>'; } };
 
-    const { data } = await q;
-    if (data && data.length > 0) {
-        data.forEach(m => showToast('🔔 پیام: ' + m.message));
-        lastCheck = new Date().toISOString();
-        const badge = document.getElementById('notifBadge');
-        badge.style.display = 'block';
-        badge.textContent = parseInt(badge.textContent || 0) + data.length;
-    }
-}
-
-document.getElementById('notifBtn').onclick = async () => {
-    document.getElementById('notifModal').classList.add('open');
-    document.getElementById('notifBadge').style.display = 'none';
-    document.getElementById('notifBadge').textContent = '0';
-    if (!supabaseClient) return;
-
-    let q = supabaseClient.from('notifications').select('*').order('created_at', { ascending: false }).limit(20);
-    if (currentUser) { const username = currentUser.email.replace(EMAIL_DOMAIN, ''); q = q.or(`target_user.eq.all,target_user.eq.${username}`); } else { q = q.eq('target_user', 'all'); }
-
-    const { data } = await q;
-    const list = document.getElementById('notifList');
-    if (data && data.length > 0) {
-        list.innerHTML = data.map(m => `<div style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; border-right:3px solid var(--accent-blue); font-size:0.9rem;">${m.message}</div>`).join('');
-    } else {
-        list.innerHTML = '<p style="text-align:center; color:var(--text-muted);">پیامی ندارید.</p>';
-    }
-};
-
-// اشتراک‌گذاری
-document.querySelectorAll('[data-share]').forEach(btn => { 
-    btn.onclick = () => { 
-        if (!currentNews) return; 
-        const url = encodeURIComponent(currentNews.link); 
-        const text = encodeURIComponent(currentNews.title); 
-        let shareUrl = ''; 
-        const p = btn.dataset.share; 
-        if (p === 'telegram') shareUrl = `https://t.me/share/url?url=${url}&text=${text}`; 
-        if (p === 'whatsapp') shareUrl = `https://wa.me/?text=${text}%20${url}`; 
-        if (p === 'twitter') shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`; 
-        if (shareUrl) window.open(shareUrl, '_blank'); 
-    }; 
-});
-
+document.querySelectorAll('[data-share]').forEach(btn => { btn.onclick = () => { if (!currentNews) return; const url = encodeURIComponent(currentNews.link); const text = encodeURIComponent(currentNews.title); let shareUrl = ''; const p = btn.dataset.share; if (p === 'telegram') shareUrl = `https://t.me/share/url?url=${url}&text=${text}`; if (p === 'whatsapp') shareUrl = `https://wa.me/?text=${text}%20${url}`; if (p === 'twitter') shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`; if (shareUrl) window.open(shareUrl, '_blank'); }; });
 document.getElementById('modalCopyBtn').onclick = () => { if (currentNews) navigator.clipboard.writeText(currentNews.link).then(() => showToast('📋 کپی شد')); };
 </script>
 </body>
