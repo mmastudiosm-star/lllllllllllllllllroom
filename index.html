@@ -104,6 +104,7 @@
   .views-tag { font-size: 11px; font-weight: 700; color: var(--text-main); background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px; border: 1px solid var(--glass-border); display: inline-flex; align-items: center; gap: 4px; }
   .views-tag.hot { background: var(--gradient-hot); color: #fff; animation: pulse-hot 2s infinite; }
   .like-tag { color: #f472b6; background: rgba(244, 114, 182, 0.1); border-color: rgba(244, 114, 182, 0.3); }
+  .comment-tag { color: var(--accent-cyan); background: rgba(6, 182, 212, 0.1); border-color: rgba(6, 182, 212, 0.3); }
   @keyframes pulse-hot { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
   
   .card h2 { font-size: 1.15rem; font-weight: 800; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -159,6 +160,8 @@
 
   .auth-input { width: 100%; padding: 12px 16px; margin-bottom: 12px; background: var(--bg); border: 1px solid var(--glass-border); border-radius: 10px; color: var(--text-main); font-family: inherit; font-size: 1rem; outline: none; transition: 0.3s; }
   .auth-input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+
+  .modal-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
 
   @media (max-width: 768px) {
     .header-inner { padding: 12px 16px; }
@@ -295,12 +298,11 @@
 <!-- مودال خبر -->
 <div class="modal-overlay" id="modal">
   <div class="modal" id="modalBox">
-    <!-- اینجا دکمه بستن را به تابع closeModal وصل کردیم تا باگ اسکرول رفع شود -->
     <button class="modal-close" onclick="closeModal()">✕</button>
     <button class="modal-star" id="modalStar">☆</button>
     <img class="modal-hero" id="modalHero" style="display:none" alt="">
     <div class="modal-content">
-      <div class="modal-meta" id="modalMeta" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;"></div>
+      <div class="modal-meta" id="modalMeta"></div>
       <h1 id="modalTitle"></h1>
       <div class="tts-controls" id="ttsControls" style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
         <button class="btn" id="ttsPlayBtn" style="padding:8px 16px;">🔊 خواندن</button>
@@ -324,16 +326,17 @@
         </div>
       </div>
 
+      <!-- بخش اشتراک‌گذاری جدید -->
       <div style="margin-top:30px;padding-top:24px;border-top:1px solid var(--glass-border);">
-        <div class="share-grid">
-          <button class="share-btn telegram" data-share="telegram"><svg viewBox="0 0 24 24" fill="#0088cc"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span>تلگرام</span></button>
-          <button class="share-btn whatsapp" data-share="whatsapp"><svg viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg><span>واتساپ</span></button>
-          <button class="share-btn twitter" data-share="twitter"><svg viewBox="0 0 24 24" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span>توییتر</span></button>
-          <button class="share-btn copy" id="modalCopyBtn"><svg viewBox="0 0 24 24" fill="var(--accent-blue)"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg><span>کپی لینک</span></button>
-        </div>
-        <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
+        
+        <button class="btn" id="modalCopyBtn" style="width: 100%; justify-content: center; background: rgba(59,130,246,0.1); border-color: var(--accent-blue); color: var(--accent-blue); margin-bottom: 15px;">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px;"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+          کپی لینک خبر
+        </button>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <a class="btn btn-primary" id="modalSourceBtn" target="_blank" rel="noopener" style="flex:1;justify-content:center;">🔗 مشاهده در منبع</a>
-          <button class="btn" id="modalStarBtn">⭐ ذخیره</button>
+          <button class="btn" id="modalStarBtn" style="flex:1; justify-content:center;">⭐ ذخیره خبر</button>
         </div>
       </div>
     </div>
@@ -356,7 +359,8 @@ const MANUAL_NEWS_API = `${BASE_API}/manual-news`;
 const INITIAL_COUNT = 10; const DISPLAY_STEP = 10; const DISPLAY_INTERVAL = 5000; const TRENDING_VIEW_THRESHOLD = 1000;
 
 let newsViews = {}; 
-let newsLikes = {}; // برای ذخیره تعداد لایک‌ها
+let newsLikes = {}; 
+let newsComments = {}; // برای ذخیره تعداد کامنت‌ها
 let displayLimit = INITIAL_COUNT; let displayTimer = null; let allNews = [];
 let activeMode = 'all'; let activeCategory = 'همه'; let searchQuery = ''; let currentNews = null;
 let isLoading = false; let readLinks = new Set(); let savedLinks = new Set();
@@ -439,7 +443,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupTTS();
     loadAll(); setInterval(loadAll, 5 * 60 * 1000);
     
-    fetchAllLikes(); // دریافت اولیه لایک‌ها
+    fetchAllLikes(); 
 
     if (supabaseClient) {
         try {
@@ -477,7 +481,7 @@ async function fetchAllLikes() {
             data.forEach(item => {
                 newsLikes[item.news_link] = (newsLikes[item.news_link] || 0) + 1;
             });
-            render(); // رندر مجدد برای نمایش تعداد جدید
+            render(); 
         }
     } catch (e) { console.warn("Error fetching likes:", e); }
 }
@@ -577,16 +581,42 @@ function render() {
   updateUI(); 
 }
 function updateUI() { document.getElementById('cntAll').textContent = getFilteredList().length.toLocaleString('fa-IR'); document.getElementById('cntUnread').textContent = allNews.filter(n => !readLinks.has(n.link)).length.toLocaleString('fa-IR'); document.getElementById('cntSaved').textContent = savedLinks.size.toLocaleString('fa-IR'); document.getElementById('cntTrending').textContent = allNews.filter(n => isHotNews(n.link)).length.toLocaleString('fa-IR'); document.getElementById('unreadCount').textContent = allNews.filter(n => !readLinks.has(n.link)).length.toLocaleString('fa-IR'); document.getElementById('savedBadge').style.display = savedLinks.size > 0 ? 'block' : 'none'; document.getElementById('savedBadge').textContent = savedLinks.size; document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === activeMode)); }
+
+function updateModalMetaStats() {
+    const wrap = document.getElementById('modalStatsWrap');
+    if (!wrap || !currentNews) return;
+    
+    const link = currentNews.link;
+    const likes = getLikeCount(link);
+    const comments = newsComments[link] || 0;
+    const views = getViewCount(link);
+
+    let html = '';
+    if (likes > 0) html += `<span class="views-tag like-tag">❤️ ${formatViews(likes)}</span>`;
+    if (comments > 0) html += `<span class="views-tag comment-tag">💬 ${formatViews(comments)}</span>`;
+    if (views > 0) html += `<span class="views-tag">👁 ${formatViews(views)}</span>`;
+    
+    wrap.innerHTML = html;
+}
+
 function openModal(idx) { 
   const news = window.__currentList[idx]; 
   if (!news) return; 
   currentNews = news; 
   if (currentUser) { markAsRead(news.link); updateUI(); } 
+  
   const hero = document.getElementById('modalHero'); 
   if (news.image) { hero.src = news.image; hero.style.display = 'block'; } else hero.style.display = 'none'; 
   document.getElementById('modalTitle').textContent = news.title; 
-  document.getElementById('modalMeta').innerHTML = `<span class="source-tag ${news.is_featured ? 'featured' : (news._manual ? 'manual' : '')}">${news.is_featured ? '⭐ ویژه' : escapeHtml(news.source)}</span><span style="background:var(--glass-border);padding:4px 10px;border-radius:10px;font-size:0.8rem;">🕐 ${formatTime(news.date)}</span>${viewsBadgeHtml(news.link)}`; 
+  
+  document.getElementById('modalMeta').innerHTML = `
+    <span class="source-tag ${news.is_featured ? 'featured' : (news._manual ? 'manual' : '')}">${news.is_featured ? '⭐ ویژه' : escapeHtml(news.source)}</span>
+    <div id="modalStatsWrap" class="stats-tag-group"></div>
+    <span style="background:var(--glass-border);padding:4px 10px;border-radius:10px;font-size:0.8rem;">🕐 ${formatTime(news.date)}</span>
+  `; 
+  
   document.getElementById('modalBody').innerHTML = cleanContent(news.content || news.plain || ''); 
+  
   const srcBtn = document.getElementById('modalSourceBtn'); 
   if (news._manual && (!news.link || news.link.startsWith('manual:'))) srcBtn.style.display = 'none'; else { srcBtn.style.display = 'flex'; srcBtn.href = news.link; } 
   
@@ -595,11 +625,13 @@ function openModal(idx) {
   
   document.getElementById('modalStar').textContent = savedLinks.has(news.link) ? '★' : '☆'; 
   document.getElementById('modalStar').classList.toggle('saved', savedLinks.has(news.link)); 
+  
+  updateModalMetaStats(); 
+  
   incrementView(news.link); 
-  loadEngagement(news.link); 
+  loadEngagement(news.link);
 }
 
-// **این تابع مشکل قفل شدن اسکرول را حل می‌کند**
 function closeModal() { 
   document.getElementById('modal').classList.remove('open'); 
   document.body.style.overflow = ''; 
@@ -627,6 +659,7 @@ document.getElementById('statsBtn').onclick = () => { document.getElementById('s
 
 async function loadEngagement(link) { 
   if (!supabaseClient) return; 
+  
   const { count } = await supabaseClient.from('likes').select('*', { count: 'exact', head: true }).eq('news_link', link); 
   document.getElementById('likeCount').textContent = count || 0; 
   newsLikes[link] = count || 0; 
@@ -640,6 +673,10 @@ async function loadEngagement(link) {
   const commentsList = document.getElementById('commentsList'); 
   commentsList.innerHTML = 'در حال بارگذاری...'; 
   const { data: comments } = await supabaseClient.from('comments').select('*').eq('news_link', link).order('created_at', { ascending: false }); 
+  
+  newsComments[link] = comments ? comments.length : 0;
+  updateModalMetaStats(); 
+
   if (!comments || comments.length === 0) { 
     commentsList.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">اولین دیدگاه را شما ثبت کنید!</p>'; 
   } else { 
@@ -663,6 +700,7 @@ document.getElementById('likeBtn').onclick = async () => {
   } 
   
   document.getElementById('likeCount').textContent = newsLikes[currentNews.link];
+  updateModalMetaStats(); 
   
   const cardElement = document.querySelector(`.card[data-link="${CSS.escape(currentNews.link)}"]`);
   if (cardElement) {
@@ -713,8 +751,23 @@ document.getElementById('loginForm').onsubmit = async (e) => {
 async function checkNotifs() { if (!supabaseClient) return; let q = supabaseClient.from('notifications').select('*').gt('created_at', lastCheck); if (currentUser) { const username = currentUser.email.replace(EMAIL_DOMAIN, ''); q = q.or(`target_user.eq.all,target_user.eq.${username}`); } else { q = q.eq('target_user', 'all'); } const { data } = await q; if (data && data.length > 0) { data.forEach(m => showToast('🔔 پیام: ' + m.message)); lastCheck = new Date().toISOString(); const badge = document.getElementById('notifBadge'); badge.style.display = 'block'; badge.textContent = parseInt(badge.textContent || 0) + data.length; } }
 document.getElementById('notifBtn').onclick = async () => { document.getElementById('notifModal').classList.add('open'); document.getElementById('notifBadge').style.display = 'none'; document.getElementById('notifBadge').textContent = '0'; if (!supabaseClient) return; let q = supabaseClient.from('notifications').select('*').order('created_at', { ascending: false }).limit(20); if (currentUser) { const username = currentUser.email.replace(EMAIL_DOMAIN, ''); q = q.or(`target_user.eq.all,target_user.eq.${username}`); } else { q = q.eq('target_user', 'all'); } const { data } = await q; const list = document.getElementById('notifList'); if (data && data.length > 0) { list.innerHTML = data.map(m => `<div style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; border-right:3px solid var(--accent-blue); font-size:0.9rem;">${m.message}</div>`).join(''); } else { list.innerHTML = '<p style="text-align:center; color:var(--text-muted);">پیامی ندارید.</p>'; } };
 
-document.querySelectorAll('[data-share]').forEach(btn => { btn.onclick = () => { if (!currentNews) return; const url = encodeURIComponent(currentNews.link); const text = encodeURIComponent(currentNews.title); let shareUrl = ''; const p = btn.dataset.share; if (p === 'telegram') shareUrl = `https://t.me/share/url?url=${url}&text=${text}`; if (p === 'whatsapp') shareUrl = `https://wa.me/?text=${text}%20${url}`; if (p === 'twitter') shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`; if (shareUrl) window.open(shareUrl, '_blank'); }; });
-document.getElementById('modalCopyBtn').onclick = () => { if (currentNews) navigator.clipboard.writeText(currentNews.link).then(() => showToast('📋 کپی شد')); };
+document.getElementById('modalCopyBtn').onclick = async () => { 
+    if (!currentNews) return; 
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: currentNews.title,
+                url: currentNews.link
+            });
+        } catch (err) {
+            console.log('اشتراک‌گذاری لغو شد');
+        }
+    } else {
+        navigator.clipboard.writeText(currentNews.link)
+            .then(() => showToast('📋 لینک خبر کپی شد!'))
+            .catch(() => showToast('❌ خطا در کپی لینک', true));
+    }
+};
 </script>
 </body>
 </html>
