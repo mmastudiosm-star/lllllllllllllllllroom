@@ -10,7 +10,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  /* ... (همان استایل‌های قبلی) ... */
   :root {
     --bg: #050810; --bg-secondary: #0a0f1c; --glass-bg: rgba(18, 26, 43, 0.6);
     --glass-border: rgba(255, 255, 255, 0.08); --glass-hover: rgba(30, 144, 255, 0.15);
@@ -223,7 +222,7 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v23</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v24</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -339,6 +338,9 @@
 </div>
 
 <script>
+// ==========================================
+// تنظیمات
+// ==========================================
 const SB_URL = 'https://kemwkxuwhqgqqfyfpbmm.supabase.co';
 const SB_KEY = 'sb_publishable_OsUd9T9GvvY6rvyycxlQSA_xFazoXBe';
 const BASE_API = `${SB_URL}/functions/v1`;
@@ -373,6 +375,11 @@ const CATEGORIES = {
 };
 
 function safeParse(str, fallback) { try { return JSON.parse(str); } catch { return fallback; } }
+function saveRead() { if (!currentUser) return; const userId = currentUser.id; try { localStorage.setItem(`lrep_read_${userId}`, JSON.stringify([...readLinks].slice(-3000))); } catch {} }
+function saveSaved() { if (!currentUser) return; const userId = currentUser.id; try { localStorage.setItem(`lrep_saved_${userId}`, JSON.stringify([...savedLinks].slice(-1000))); } catch {} }
+function markAsRead(link) { if (!link || readLinks.has(link) || !currentUser) return false; readLinks.add(link); saveRead(); return true; }
+function toggleSaved(link) { if (!link) return false; if (!currentUser) { showToast('برای ذخیره خبر، لطفاً وارد حساب خود شوید'); document.getElementById('authModal').classList.add('open'); return false; } if (savedLinks.has(link)) { savedLinks.delete(link); saveSaved(); return false; } savedLinks.add(link); saveSaved(); return true; }
+
 function fetchWithTimeout(url, ms = 10000, opts = {}) {
   const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), ms);
   return fetch(url, { signal: ctrl.signal, ...opts }).finally(() => clearTimeout(t));
@@ -435,11 +442,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.getElementById('userBtn').textContent = '👋';
                 document.getElementById('userBtn').title = currentUser.email.replace(EMAIL_DOMAIN, '') + ' (برای خروج کلیک کنید)';
             }
+            loadUserData();
             checkNotifs();
             setInterval(checkNotifs, 20000); 
-        } catch (e) { console.warn("Auth check failed", e); }
+        } catch (e) { console.warn("Auth check failed", e); loadUserData(); }
+    } else {
+        loadUserData();
     }
 });
+
+function loadUserData() {
+  const userId = currentUser ? currentUser.id : 'guest';
+  readLinks = new Set(safeParse(localStorage.getItem(`lrep_read_${userId}`) || '[]', []));
+  savedLinks = new Set(safeParse(localStorage.getItem(`lrep_saved_${userId}`) || '[]', []));
+  newsViews = safeParse(localStorage.getItem('lrep_views_v10') || '{}', {});
+  buildFilters();
+  render();
+  updateUI();
+}
 
 async function fetchAllViews() { try { const res = await fetchWithTimeout(VIEWS_API, 10000); if (res.ok) { const data = await res.json(); if (data && typeof data === 'object') { newsViews = { ...newsViews, ...data }; localStorage.setItem('lrep_views_v10', JSON.stringify(newsViews)); } } } catch {} }
 async function incrementView(link) { if (!link) return 0; newsViews[link] = (newsViews[link] || 0) + 1; updateViewsUI(link); try { const res = await fetchWithTimeout(VIEWS_API, 8000, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ link }) }); if (res.ok) { const data = await res.json(); if (data && typeof data.count === 'number') { newsViews[link] = data.count; updateViewsUI(link); return data.count; } } } catch {} return newsViews[link] || 0; }
@@ -511,24 +531,20 @@ async function loadEngagement(link) { if (!supabaseClient) return; const { count
 document.getElementById('likeBtn').onclick = async () => { if (!currentUser) { showToast('برای لایک ابتدا وارد شوید', true); document.getElementById('authModal').classList.add('open'); return; } const btn = document.getElementById('likeBtn'); const isLiked = btn.classList.contains('liked'); if (isLiked) { await supabaseClient.from('likes').delete().eq('news_link', currentNews.link).eq('user_id', currentUser.id); btn.classList.remove('liked'); } else { await supabaseClient.from('likes').insert([{ news_link: currentNews.link, user_id: currentUser.id }]); btn.classList.add('liked'); } loadEngagement(currentNews.link); };
 document.getElementById('submitCommentBtn').onclick = async () => { if (!currentUser) { showToast('برای ثبت دیدگاه ابتدا وارد شوید', true); document.getElementById('authModal').classList.add('open'); return; } const input = document.getElementById('commentInput'); const text = input.value.trim(); if (!text) return; const username = currentUser.email.replace(EMAIL_DOMAIN, ''); await supabaseClient.from('comments').insert([{ news_link: currentNews.link, username: username, content: text }]); input.value = ''; loadEngagement(currentNews.link); };
 
-// 🌟 سیستم لاگین و ثبت‌نام با هشدارهای دقیق
 function getProperEmail(input) { if (input.includes('@')) return input; return input + EMAIL_DOMAIN; }
 const authModal = document.getElementById('authModal');
-document.getElementById('userBtn').onclick = () => { if (!supabaseClient) return alert('سیستم لاگین در دسترس نیست. اینترنت یا فیلترشکن خود را بررسی کنید.'); if (currentUser) { if (confirm('از حساب خارج می‌شوید؟')) { supabaseClient.auth.signOut().then(() => location.reload()); } } else { authModal.classList.add('open'); } };
+document.getElementById('userBtn').onclick = () => { if (!supabaseClient) return alert('سیستم لاگین در دسترس نیست.'); if (currentUser) { if (confirm('از حساب خارج می‌شوید؟')) { supabaseClient.auth.signOut().then(() => location.reload()); } } else { authModal.classList.add('open'); } };
 document.getElementById('tabLogin').onclick = () => { document.getElementById('loginForm').style.display = 'block'; document.getElementById('registerForm').style.display = 'none'; document.getElementById('tabLogin').classList.add('active'); document.getElementById('tabRegister').classList.remove('active'); };
 document.getElementById('tabRegister').onclick = () => { document.getElementById('loginForm').style.display = 'none'; document.getElementById('registerForm').style.display = 'block'; document.getElementById('tabLogin').classList.remove('active'); document.getElementById('tabRegister').classList.add('active'); };
 
 document.getElementById('registerForm').onsubmit = async (e) => {
   e.preventDefault(); 
-  if (!supabaseClient) return alert('❌ خطا: ارتباط با سرور برقرار نشد. لطفاً فیلترشکن خود را روشن/خاموش کنید و صفحه را رفرش کنید.');
-  
+  if (!supabaseClient) return alert('❌ خطا: ارتباط با سرور برقرار نشد.');
   const btn = document.getElementById('regBtn'); btn.textContent = 'در حال ثبت‌نام...'; btn.disabled = true;
   const userInput = document.getElementById('regUser').value.trim(); 
   const password = document.getElementById('regPass').value.trim();
   const finalEmail = getProperEmail(userInput);
-  
   if (password.length < 6) { alert('رمز عبور باید حداقل ۶ کاراکتر باشد'); btn.textContent = 'ثبت‌نام'; btn.disabled = false; return; }
-  
   const { error } = await supabaseClient.auth.signUp({ email: finalEmail, password });
   if (error) { alert('❌ خطا در ثبت‌نام: ' + error.message); } else { alert('✅ ثبت‌نام موفق! خوش آمدید.'); authModal.classList.remove('open'); location.reload(); }
   btn.textContent = 'ثبت‌نام'; btn.disabled = false;
@@ -536,19 +552,13 @@ document.getElementById('registerForm').onsubmit = async (e) => {
 
 document.getElementById('loginForm').onsubmit = async (e) => {
   e.preventDefault(); 
-  if (!supabaseClient) return alert('❌ خطا: ارتباط با سرور برقرار نشد. لطفاً فیلترشکن خود را روشن/خاموش کنید و صفحه را رفرش کنید.');
-  
+  if (!supabaseClient) return alert('❌ خطا: ارتباط با سرور برقرار نشد.');
   const btn = document.getElementById('loginBtn'); btn.textContent = 'در حال ورود...'; btn.disabled = true;
   const userInput = document.getElementById('loginUser').value.trim(); 
   const password = document.getElementById('loginPass').value.trim();
   const finalEmail = getProperEmail(userInput);
-  
   const { error } = await supabaseClient.auth.signInWithPassword({ email: finalEmail, password });
-  if (error) { 
-      alert('❌ خطا در ورود: ' + (error.message === 'Invalid login credentials' ? 'نام کاربری/ایمیل یا رمز اشتباه است' : error.message)); 
-  } else { 
-      alert('✅ خوش آمدید!'); authModal.classList.remove('open'); location.reload(); 
-  }
+  if (error) { alert('❌ خطا در ورود: ' + (error.message === 'Invalid login credentials' ? 'نام کاربری/ایمیل یا رمز اشتباه است' : error.message)); } else { alert('✅ خوش آمدید!'); authModal.classList.remove('open'); location.reload(); }
   btn.textContent = 'ورود'; btn.disabled = false;
 };
 
