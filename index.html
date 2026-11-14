@@ -4,8 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0e1a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Lreporter">
+<title>Lreporter</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -55,8 +54,6 @@
   .statusbar { max-width: 1400px; margin: 0 auto; padding: 0 24px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-muted); flex-wrap: wrap; gap: 10px; }
   .live-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(16,185,129,0.1); color: var(--accent-green); border-radius: 20px; font-weight: 700; border: 1px solid rgba(16,185,129,0.2); }
   .live-badge .dot { width: 8px; height: 8px; background: var(--accent-green); border-radius: 50%; animation: pulse 1.5s infinite; }
-  .live-badge.loading { background: rgba(245,158,11,0.1); color: var(--accent-gold); border-color: rgba(245,158,11,0.2); }
-  .live-badge.loading .dot { background: var(--accent-gold); }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
   .infobar { max-width: 1400px; margin: 0 auto; padding: 16px 24px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
@@ -227,7 +224,7 @@
 <div class="grid" id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 
 <footer style="text-align:center;padding:40px 20px;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--glass-border);margin-top:40px;">
-  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v19</div>
+  <div style="font-weight:900;font-size:1.2rem;margin-bottom:8px;background:var(--gradient-main);-webkit-background-clip:text;color:transparent;">Lreporter v20</div>
   ساخته‌شده با ❤️ و تکنولوژی‌های مدرن
 </footer>
 
@@ -271,12 +268,12 @@
         <button class="btn" id="tabRegister" style="flex:1; justify-content:center;">ثبت‌نام</button>
       </div>
       <form id="loginForm">
-        <input type="text" id="loginUser" class="auth-input" placeholder="نام کاربری..." required>
+        <input type="text" id="loginUser" class="auth-input" placeholder="نام کاربری یا ایمیل..." required>
         <input type="password" id="loginPass" class="auth-input" placeholder="رمز عبور..." required>
         <button type="submit" class="btn btn-primary" id="loginBtn" style="width:100%; justify-content:center;">ورود</button>
       </form>
       <form id="registerForm" style="display:none;">
-        <input type="text" id="regUser" class="auth-input" placeholder="نام کاربری جدید..." required>
+        <input type="text" id="regUser" class="auth-input" placeholder="نام کاربری یا ایمیل جدید..." required>
         <input type="password" id="regPass" class="auth-input" placeholder="رمز عبور جدید..." required>
         <button type="submit" class="btn btn-primary" id="regBtn" style="width:100%; justify-content:center;">ثبت‌نام</button>
       </form>
@@ -820,6 +817,11 @@ document.getElementById('submitCommentBtn').onclick = async () => {
 // ==========================================
 // سیستم لاگین و پیام‌ها
 // ==========================================
+function getProperEmail(input) {
+    if (input.includes('@')) return input;
+    return input + EMAIL_DOMAIN;
+}
+
 const authModal = document.getElementById('authModal');
 document.getElementById('userBtn').onclick = () => {
   if (!supabaseClient) return showToast('سیستم لاگین در دسترس نیست', true);
@@ -834,10 +836,13 @@ document.getElementById('tabRegister').onclick = () => { document.getElementById
 document.getElementById('registerForm').onsubmit = async (e) => {
   e.preventDefault(); if (!supabaseClient) return;
   const btn = document.getElementById('regBtn'); btn.textContent = 'در حال ثبت‌نام...'; btn.disabled = true;
-  const email = document.getElementById('regUser').value.trim(); const password = document.getElementById('regPass').value.trim();
+  const userInput = document.getElementById('regUser').value.trim(); 
+  const password = document.getElementById('regPass').value.trim();
+  const finalEmail = getProperEmail(userInput);
+  
   if (password.length < 6) { showToast('رمز عبور باید حداقل ۶ کاراکتر باشد', true); btn.textContent = 'ثبت‌نام'; btn.disabled = false; return; }
   
-  const { error } = await supabaseClient.auth.signUp({ email: email + EMAIL_DOMAIN, password });
+  const { error } = await supabaseClient.auth.signUp({ email: finalEmail, password });
   if (error) { showToast('❌ ' + error.message, true); } else { showToast('✅ ثبت‌نام موفق! خوش آمدید.'); authModal.classList.remove('open'); location.reload(); }
   btn.textContent = 'ثبت‌نام'; btn.disabled = false;
 };
@@ -845,9 +850,12 @@ document.getElementById('registerForm').onsubmit = async (e) => {
 document.getElementById('loginForm').onsubmit = async (e) => {
   e.preventDefault(); if (!supabaseClient) return;
   const btn = document.getElementById('loginBtn'); btn.textContent = 'در حال ورود...'; btn.disabled = true;
-  const email = document.getElementById('loginUser').value.trim(); const password = document.getElementById('loginPass').value.trim();
-  const { error } = await supabaseClient.auth.signInWithPassword({ email: email + EMAIL_DOMAIN, password });
-  if (error) { showToast('❌ ' + (error.message === 'Invalid login credentials' ? 'نام کاربری یا رمز اشتباه است' : error.message), true); } else { showToast('✅ خوش آمدید!'); authModal.classList.remove('open'); location.reload(); }
+  const userInput = document.getElementById('loginUser').value.trim(); 
+  const password = document.getElementById('loginPass').value.trim();
+  const finalEmail = getProperEmail(userInput);
+  
+  const { error } = await supabaseClient.auth.signInWithPassword({ email: finalEmail, password });
+  if (error) { showToast('❌ ' + (error.message === 'Invalid login credentials' ? 'نام کاربری/ایمیل یا رمز اشتباه است' : error.message), true); } else { showToast('✅ خوش آمدید!'); authModal.classList.remove('open'); location.reload(); }
   btn.textContent = 'ورود'; btn.disabled = false;
 };
 
