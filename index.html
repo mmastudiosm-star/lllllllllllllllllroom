@@ -64,6 +64,18 @@
   .info-card .label { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; }
   .info-card .value { font-size: 0.95rem; font-weight: 800; }
   .info-card .sub { font-size: 0.75rem; color: var(--text-muted); }
+  .featured-news-wrap { max-width:1400px; margin:14px auto 0; padding:0 24px; }
+  .featured-news-card { width:100%; border:1px solid rgba(245,158,11,.6); border-radius:20px; padding:16px 20px; text-align:right; color:var(--text-main); cursor:pointer; display:flex; flex-direction:column; gap:5px; background:linear-gradient(110deg,rgba(245,158,11,.19),rgba(245,158,11,.06) 48%,var(--glass-bg)); box-shadow:0 8px 28px rgba(245,158,11,.12); position:relative; overflow:hidden; font-family:inherit; }
+  .featured-news-card::after { content:'⭐'; position:absolute; left:22px; top:50%; transform:translateY(-50%); font-size:38px; opacity:.22; }
+  .featured-news-kicker { font-size:.76rem; font-weight:900; color:var(--accent-gold); }
+  .featured-news-title { font-size:1.12rem; font-weight:900; line-height:1.7; padding-left:42px; }
+  .featured-news-summary { color:var(--text-muted); font-size:.88rem; max-width:1000px; }
+  .featured-news-hint { color:var(--accent-gold); font-size:.75rem; font-weight:800; margin-top:3px; }
+  .card.golden { border:2px solid transparent; background:linear-gradient(var(--bg-secondary),var(--bg-secondary)) padding-box,repeating-linear-gradient(135deg,#f59e0b 0 4px,#754600 4px 8px,#fbbf24 8px 12px) border-box; box-shadow:0 8px 28px rgba(245,158,11,.13); }
+  .card.golden .source-tag { background:linear-gradient(135deg,#a16207,#fbbf24); color:#1c1300; }
+  .news-type-tag { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:900; padding:3px 8px; border-radius:20px; }
+  .news-type-tag.golden { color:#fbbf24; background:rgba(245,158,11,.13); border:1px solid rgba(245,158,11,.38); }
+  .news-type-tag.featured { color:#fde68a; background:rgba(245,158,11,.2); border:1px solid rgba(245,158,11,.5); }
 
   .nav-wrap { max-width: 1400px; margin: 0 auto; padding: 16px 24px 8px; display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; }
   .nav-wrap::-webkit-scrollbar { display: none; }
@@ -160,6 +172,19 @@
 
   .auth-input { width: 100%; padding: 12px 16px; margin-bottom: 12px; background: var(--bg); border: 1px solid var(--glass-border); border-radius: 10px; color: var(--text-main); font-family: inherit; font-size: 1rem; outline: none; transition: 0.3s; }
   .auth-input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+  .auth-intro { text-align:center; margin-bottom:18px; }
+  .auth-logo { width:58px; height:58px; margin:0 auto 10px; border-radius:18px; display:grid; place-items:center; color:#fff; font-size:1.65rem; font-weight:900; background:var(--gradient-main); box-shadow:var(--shadow-glow); }
+  .auth-intro p { color:var(--text-muted); font-size:.83rem; }
+  .auth-tabs { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:5px; border:1px solid var(--glass-border); border-radius:14px; background:var(--glass-bg); margin:18px 0; }
+  .auth-tabs .btn { justify-content:center; border:0; padding:10px; }
+  .auth-tabs .btn.active { background:var(--gradient-main); color:#fff; box-shadow:0 4px 14px rgba(59,130,246,.25); }
+  .auth-field { display:block; margin-bottom:12px; }
+  .auth-field > span { display:block; color:var(--text-muted); font-size:.78rem; font-weight:800; margin-bottom:6px; }
+  .auth-password-wrap { position:relative; }
+  .auth-password-wrap .auth-input { padding-left:52px; margin-bottom:0; }
+  .auth-eye { position:absolute; left:6px; top:6px; width:38px; height:38px; padding:0; border:0; background:transparent; color:var(--text-muted); cursor:pointer; }
+  .auth-submit { width:100%; min-height:48px; justify-content:center; margin-top:8px; }
+  .auth-help { font-size:.72rem; color:var(--text-muted); text-align:center; margin-top:14px; line-height:1.8; }
 
   .modal-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
 
@@ -167,6 +192,10 @@
     .header-inner { padding: 12px 16px; }
     .search-box { order: 3; width: 100%; min-width: 100%; margin-top: 8px; }
     .infobar { grid-template-columns: 1fr 1fr; padding: 12px 16px 0; gap: 8px; }
+    .featured-news-wrap { padding:0 16px; }
+    .featured-news-card { padding:14px 15px; }
+    .featured-news-title { font-size:1rem; }
+    .featured-news-card::after { left:12px; font-size:28px; }
     .info-card { padding: 10px 14px; }
     .info-card .label { font-size: 0.65rem; }
     .info-card .value { font-size: 0.85rem; }
@@ -234,6 +263,15 @@
   <div class="info-card"><span class="ico">🪙</span><div class="body"><span class="label">طلای ۱۸ عیار (هر گرم)</span><span class="value" id="goldPrice">—</span><span class="sub" id="goldChange">—</span></div></div>
 </div>
 
+<section class="featured-news-wrap" id="featuredNewsWrap" hidden aria-label="خبر ویژه">
+  <button type="button" class="featured-news-card" id="featuredNewsCard">
+    <span class="featured-news-kicker">⭐ خبر ویژه Lreporter</span>
+    <span class="featured-news-title" id="featuredNewsTitle"></span>
+    <span class="featured-news-summary" id="featuredNewsSummary"></span>
+    <span class="featured-news-hint">برای مطالعه کامل خبر کلیک کنید ←</span>
+  </button>
+</section>
+
 <div class="nav-wrap">
   <button class="nav-btn active" data-mode="all">📰 همه <span class="cnt" id="cntAll">0</span></button>
   <button class="nav-btn" data-mode="unread">📬 نخوانده <span class="cnt" id="cntUnread">0</span></button>
@@ -283,21 +321,26 @@
   <div class="modal" style="max-width:400px;">
     <button class="modal-close" onclick="document.getElementById('authModal').classList.remove('open')">✕</button>
     <div class="modal-content">
-      <h2 style="font-size:1.5rem;margin-bottom:20px;color:var(--accent-cyan);text-align:center;">👤 حساب کاربری</h2>
-      <div style="display:flex; gap:10px; margin-bottom:20px;">
-        <button class="btn active" id="tabLogin" style="flex:1; justify-content:center;">ورود</button>
-        <button class="btn" id="tabRegister" style="flex:1; justify-content:center;">ثبت‌نام</button>
+      <div class="auth-intro">
+        <div class="auth-logo">L</div>
+        <h2 style="font-size:1.45rem;color:var(--text-main);">حساب کاربری Lreporter</h2>
+        <p>برای ذخیره خبرها، لایک و ثبت دیدگاه وارد شوید.</p>
       </div>
-      <form id="loginForm">
-        <input type="text" id="loginUser" class="auth-input" placeholder="نام کاربری یا ایمیل..." required>
-        <input type="password" id="loginPass" class="auth-input" placeholder="رمز عبور..." required>
-        <button type="submit" class="btn btn-primary" id="loginBtn" style="width:100%; justify-content:center;">ورود</button>
+      <div class="auth-tabs">
+        <button type="button" class="btn active" id="tabLogin">ورود به حساب</button>
+        <button type="button" class="btn" id="tabRegister">ساخت حساب</button>
+      </div>
+      <form id="loginForm" autocomplete="on">
+        <label class="auth-field"><span>نام کاربری یا ایمیل</span><input type="text" id="loginUser" class="auth-input" placeholder="نام کاربری یا ایمیل..." autocomplete="username" required></label>
+        <label class="auth-field"><span>رمز عبور</span><div class="auth-password-wrap"><input type="password" id="loginPass" class="auth-input" placeholder="رمز عبور خود را وارد کنید" autocomplete="current-password" required><button type="button" class="auth-eye" data-toggle-password="loginPass" aria-label="نمایش رمز عبور">👁</button></div></label>
+        <button type="submit" class="btn btn-primary auth-submit" id="loginBtn">ورود به Lreporter</button>
       </form>
-      <form id="registerForm" style="display:none;">
-        <input type="text" id="regUser" class="auth-input" placeholder="نام کاربری یا ایمیل جدید..." required>
-        <input type="password" id="regPass" class="auth-input" placeholder="رمز عبور جدید..." required>
-        <button type="submit" class="btn btn-primary" id="regBtn" style="width:100%; justify-content:center;">ثبت‌نام</button>
+      <form id="registerForm" style="display:none;" autocomplete="on">
+        <label class="auth-field"><span>نام کاربری یا ایمیل</span><input type="text" id="regUser" class="auth-input" placeholder="نام کاربری دلخواه یا ایمیل" autocomplete="username" required></label>
+        <label class="auth-field"><span>رمز عبور (حداقل ۶ کاراکتر)</span><div class="auth-password-wrap"><input type="password" id="regPass" class="auth-input" placeholder="یک رمز عبور قوی انتخاب کنید" autocomplete="new-password" minlength="6" required><button type="button" class="auth-eye" data-toggle-password="regPass" aria-label="نمایش رمز عبور">👁</button></div></label>
+        <button type="submit" class="btn btn-primary auth-submit" id="regBtn">ایجاد حساب کاربری</button>
       </form>
+      <p class="auth-help">برای تأیید حساب و بازیابی رمز، استفاده از ایمیل واقعی پیشنهاد می‌شود. نام کاربری ساده در سیستم فعلی به دامنه داخلی Lreporter تبدیل می‌شود.</p>
     </div>
   </div>
 </div>
@@ -347,13 +390,18 @@
       <!-- بخش اشتراک‌گذاری جدید -->
       <div style="margin-top:30px;padding-top:24px;border-top:1px solid var(--glass-border);">
         
-        <button class="btn" id="modalCopyBtn" style="width: 100%; justify-content: center; background: rgba(59,130,246,0.1); border-color: var(--accent-blue); color: var(--accent-blue); margin-bottom: 15px;">
-          <svg viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px;"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-          کپی لینک خبر
-        </button>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
+          <button class="btn" id="modalCopyBtn" style="flex:1; min-width:150px; justify-content:center; background:rgba(59,130,246,0.1); border-color:var(--accent-blue); color:var(--accent-blue);">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+            کپی لینک داخلی
+          </button>
+          <button class="btn" id="modalShareBtn" style="flex:1; min-width:150px; justify-content:center;">
+            ↗ اشتراک‌گذاری خبر
+          </button>
+        </div>
 
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <a class="btn btn-primary" id="modalSourceBtn" target="_blank" rel="noopener" style="flex:1;justify-content:center;">🔗 مشاهده در منبع</a>
+          <a class="btn btn-primary" id="modalSourceBtn" target="_blank" rel="noopener noreferrer" style="flex:1;justify-content:center;">🔗 مشاهده منبع اصلی</a>
           <button class="btn" id="modalStarBtn" style="flex:1; justify-content:center;">⭐ ذخیره خبر</button>
         </div>
       </div>
@@ -389,7 +437,11 @@ let activeMode = 'all';
 let activeCategory = 'همه';
 let searchQuery = '';
 let currentNews = null;
+let lastMissingSharedKey = null;
 let isLoading = false;
+let hasLoadedNews = false;
+let newsLoadError = '';
+let currentFeaturedNews = null;
 let readLinks = new Set();
 let savedLinks = new Set();
 let ttsSpeaking = false;
@@ -507,6 +559,45 @@ function safeImageUrl(value) {
   const input = String(value).trim();
   if (/^data:image\/(png|jpeg|jpg|webp|gif);base64,/i.test(input)) return input;
   return safeWebUrl(input, false);
+}
+
+// Share links always point back to this Lreporter page, never to the publisher.
+function createInternalNewsUrl(news) {
+  if (!news?.link) return '';
+  const url = new URL(window.location.href);
+  url.searchParams.delete('article');
+  url.searchParams.set('news', String(news.link));
+  url.hash = '';
+  return url.href;
+}
+function syncAddressToNews(news) {
+  const permalink = createInternalNewsUrl(news);
+  if (!permalink || !window.history?.replaceState) return;
+  window.history.replaceState(window.history.state, '', permalink);
+}
+function clearNewsAddress() {
+  if (!window.history?.replaceState) return;
+  const url = new URL(window.location.href);
+  if (!url.searchParams.has('news') && !url.searchParams.has('article')) return;
+  url.searchParams.delete('news');
+  url.searchParams.delete('article');
+  window.history.replaceState(window.history.state, '', url.href);
+}
+function openSharedNewsFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const sharedKey = params.get('news') || params.get('article');
+  if (!sharedKey) return;
+  const news = allNews.find((item) => String(item.link) === sharedKey);
+  if (news) {
+    if (!$('modal').classList.contains('open') || currentNews?.link !== news.link) {
+      openNewsModal(news, { syncAddress: false });
+    }
+    return;
+  }
+  if (lastMissingSharedKey !== sharedKey) {
+    lastMissingSharedKey = sharedKey;
+    showToast('این خبر در فهرست فعلی اخبار پیدا نشد. ممکن است از خروجی منبع حذف شده باشد.', 7000);
+  }
 }
 function showToast(message, duration = 4000) {
   const toast = document.createElement('div');
@@ -821,23 +912,42 @@ function extractArray(data, key) {
   if (data && Array.isArray(data.data)) return data.data;
   return [];
 }
+function isNewsExpired(news) {
+  const expiry = news?.expiresAt || news?.expires_at || news?.expiry_at;
+  if (!expiry) return false;
+  const timestamp = new Date(expiry).getTime();
+  return Number.isFinite(timestamp) && timestamp <= Date.now();
+}
 function normalizeNews(item, isManual = false) {
   if (!item || typeof item !== 'object') return null;
   const title = String(item.title || item.name || '').trim();
   if (!title) return null;
+  const manual = isManual || item._manual === true;
   const id = item._id ?? item.id ?? item.news_id;
-  let link = String(item.link || '').trim();
-  if (!link && isManual && id != null) link = `manual:${id}`;
-  if (!link && isManual) link = `manual:${encodeURIComponent(title.toLowerCase().slice(0, 80))}`;
+  let link = String(item.link || item.guid || (!manual ? item.url : '') || '').trim();
+  if (!link && manual && id != null) link = `manual:${id}`;
+  if (!link && manual) link = `manual:${encodeURIComponent(title.toLowerCase().slice(0, 80))}`;
   if (!link) return null;
   const content = item.content || item.description || item.summary || '';
   const plain = String(item.plain || plainTextFromHtml(content) || item.summary || '').trim();
   const category = String(item.category || detectCategory(`${title} ${plain}`));
+  // Publisher URL stays separate from the internal Lreporter permalink.
+  const sourceCandidate = item.source_url || item.sourceUrl || item.original_url || item.source_link || (!manual ? (item.link || item.url || item.guid) : '');
+  const sourceUrl = safeWebUrl(sourceCandidate, false);
+  const rawType = String(item.news_type || item.newsType || (manual ? item.type : '') || '').toLowerCase();
+  const newsType = ['simple', 'golden', 'featured'].includes(rawType)
+    ? rawType
+    : ((item.is_golden === true || item.is_golden === 'true') ? 'golden'
+      : ((item.is_featured === true || item.is_featured === 'true') ? 'featured' : 'simple'));
+  const expiresAt = item.expires_at || item.expiresAt || item.expiry_at || null;
+  const expiryMs = expiresAt ? new Date(expiresAt).getTime() : NaN;
+  if (Number.isFinite(expiryMs) && expiryMs <= Date.now()) return null;
   return {
     ...item,
     link,
+    sourceUrl,
     title,
-    source: String(item.source || (isManual ? 'خبر دستی' : 'منبع خبری')),
+    source: String(item.source || (manual ? 'خبر دستی' : 'منبع خبری')),
     summary: String(item.summary || plain.slice(0, 260)),
     plain,
     content: String(content || plain),
@@ -845,8 +955,11 @@ function normalizeNews(item, isManual = false) {
     date: item.date || item.pubDate || item.published_at || item.created_at || new Date().toISOString(),
     image: item.image || item.image_url || '',
     textLength: Number(item.textLength || plain.length) || 0,
-    _manual: isManual || item._manual === true,
-    is_featured: isManual ? (item.is_featured === true || item.is_featured === 'true') : item.is_featured === true
+    _manual: manual,
+    newsType,
+    expiresAt,
+    is_golden: newsType === 'golden',
+    is_featured: newsType === 'featured'
   };
 }
 function getTrendingNews(limit = 30, sourceList = allNews) {
@@ -867,7 +980,10 @@ async function loadAll() {
       fetchWithTimeout(MANUAL_NEWS_API, 12000, { headers: apiHeaders() })
     ]);
     let successfulFeeds = 0;
-    const merged = new Map(allNews.map((news) => [news.link, news]));
+    let automaticFeedLoaded = false;
+    let manualFeedLoaded = false;
+    const previousNews = [...allNews];
+    const merged = new Map();
 
     if (newsResult.status === 'fulfilled' && newsResult.value.ok) {
       try {
@@ -877,6 +993,7 @@ async function loadAll() {
           if (normalized) merged.set(normalized.link, { ...(merged.get(normalized.link) || {}), ...normalized });
         });
         successfulFeeds += 1;
+        automaticFeedLoaded = true;
       } catch (error) { console.warn('Main news feed could not be parsed:', error); }
     }
     if (manualResult.status === 'fulfilled' && manualResult.value.ok) {
@@ -887,23 +1004,34 @@ async function loadAll() {
           if (normalized) merged.set(normalized.link, { ...(merged.get(normalized.link) || {}), ...normalized });
         });
         successfulFeeds += 1;
+        manualFeedLoaded = true;
       } catch (error) { console.warn('Manual news feed could not be parsed:', error); }
     }
     if (!successfulFeeds) throw new Error('هیچ‌کدام از منابع خبر پاسخ معتبر ندادند.');
-    allNews = [...merged.values()].sort((a, b) => {
+    // Preserve only the feed that failed; successful feeds replace their previous snapshot,
+    // so manually deleted or expired articles disappear on the next refresh.
+    if (!automaticFeedLoaded) previousNews.filter((news) => !news._manual).forEach((news) => merged.set(news.link, news));
+    if (!manualFeedLoaded) previousNews.filter((news) => news._manual).forEach((news) => merged.set(news.link, news));
+    allNews = [...merged.values()].filter((news) => !isNewsExpired(news)).sort((a, b) => {
       if (a.is_featured && !b.is_featured) return -1;
       if (!a.is_featured && b.is_featured) return 1;
       return (new Date(b.date || 0).getTime() || 0) - (new Date(a.date || 0).getTime() || 0);
     });
-    await fetchAllViews();
+    // Render immediately after the news feeds arrive; view statistics must not delay the news list.
+    hasLoadedNews = true;
+    newsLoadError = '';
     buildFilters();
     render();
+    openSharedNewsFromUrl();
     $('status').textContent = `آخرین بروزرسانی: ${new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })}`;
     startProgressiveDisplay();
+    fetchAllViews().then(() => render());
   } catch (error) {
     console.error('News refresh failed:', error);
+    hasLoadedNews = true;
+    newsLoadError = error.message || 'خطا در دریافت اخبار';
     $('status').textContent = '⚠️ دریافت خبر با مشکل روبه‌رو شد';
-    if (!allNews.length) $('content').textContent = `خطا در دریافت اخبار: ${error.message}`;
+    render();
   } finally {
     isLoading = false;
     if (badge) badge.innerHTML = '<span class="dot"></span> زنده';
@@ -921,7 +1049,7 @@ function startProgressiveDisplay() {
   }, 5000);
 }
 function getModeList() {
-  let list = [...allNews];
+  let list = allNews.filter((news) => !isNewsExpired(news));
   if (activeMode === 'unread') list = list.filter((news) => !readLinks.has(news.link));
   else if (activeMode === 'saved') list = list.filter((news) => savedLinks.has(news.link));
   else if (activeMode === 'trending') list = getTrendingNews(1000, list);
@@ -959,15 +1087,39 @@ function getFilteredList() {
   if (query) list = list.filter((news) => `${news.title || ''} ${news.plain || ''} ${news.source || ''}`.toLocaleLowerCase('fa').includes(query));
   return list;
 }
+function updateFeaturedNewsBanner() {
+  const wrap = $('featuredNewsWrap');
+  if (!wrap) return;
+  currentFeaturedNews = allNews
+    .filter((news) => news.newsType === 'featured' && (!news.expiresAt || new Date(news.expiresAt).getTime() > Date.now()))
+    .sort((a, b) => (new Date(b.date || 0).getTime() || 0) - (new Date(a.date || 0).getTime() || 0))[0] || null;
+  wrap.hidden = !currentFeaturedNews;
+  if (!currentFeaturedNews) return;
+  $('featuredNewsTitle').textContent = currentFeaturedNews.title || '';
+  $('featuredNewsSummary').textContent = currentFeaturedNews.summary || currentFeaturedNews.plain || 'برای مشاهده متن کامل خبر وارد شوید.';
+}
+$('featuredNewsCard').addEventListener('click', () => {
+  if (currentFeaturedNews) openNewsModal(currentFeaturedNews, { syncAddress: true });
+});
+
 function render() {
+  updateFeaturedNewsBanner();
   const list = getFilteredList();
   const box = $('content');
   box.replaceChildren();
   if (!list.length) {
     window.__currentList = [];
     const empty = document.createElement('div');
-    empty.style.cssText = 'grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);font-size:1.1rem;';
-    empty.textContent = activeMode === 'trending' ? `🔥 هنوز خبری به ${TRENDING_VIEW_THRESHOLD.toLocaleString('fa-IR')} بازدید نرسیده است.` : '📭 خبری یافت نشد';
+    empty.style.cssText = 'grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-muted);font-size:1.05rem;';
+    if (!hasLoadedNews) {
+      empty.innerHTML = '<div style="font-size:1.7rem;margin-bottom:12px;">⏳</div><strong>در حال دریافت آخرین خبرها...</strong><div style="font-size:.82rem;margin-top:6px;">لطفاً چند لحظه صبر کنید.</div>';
+    } else if (newsLoadError && !allNews.length) {
+      empty.textContent = `دریافت اخبار ناموفق بود: ${newsLoadError}`;
+    } else {
+      empty.textContent = activeMode === 'trending'
+        ? `🔥 هنوز خبری به ${TRENDING_VIEW_THRESHOLD.toLocaleString('fa-IR')} بازدید نرسیده است.`
+        : (allNews.length ? '📭 خبری با این فیلتر پیدا نشد.' : '📭 هنوز خبری منتشر نشده است.');
+    }
     box.appendChild(empty);
     updateUI();
     return;
@@ -977,9 +1129,10 @@ function render() {
   display.forEach((news, index) => {
     const isRead = readLinks.has(news.link);
     const isSaved = savedLinks.has(news.link);
-    const isFeatured = news.is_featured === true;
+    const isFeatured = news.newsType === 'featured' || news.is_featured === true;
+    const isGolden = news.newsType === 'golden' || news.is_golden === true;
     const article = document.createElement('article');
-    article.className = `card${isRead ? ' read' : ''}${isSaved ? ' saved' : ''}${isFeatured ? ' featured' : ''}`;
+    article.className = `card${isRead ? ' read' : ''}${isSaved ? ' saved' : ''}${isFeatured ? ' featured' : ''}${isGolden ? ' golden' : ''}`;
     article.dataset.link = news.link;
     article.dataset.idx = String(index);
 
@@ -1004,7 +1157,7 @@ function render() {
     const top = document.createElement('div'); top.className = 'card-top';
     const source = document.createElement('span');
     source.className = `source-tag${isFeatured ? ' featured' : ''}`;
-    source.textContent = isFeatured ? '⭐ خبر ویژه' : (news.source || 'منبع خبری');
+    source.textContent = isFeatured ? '⭐ خبر ویژه' : (isGolden ? '✦ خبر طلایی' : (news.source || 'منبع خبری'));
     const stats = document.createElement('div'); stats.className = 'stats-tag-group';
     stats.innerHTML = `${likesBadgeHtml(news.link)}${viewsBadgeHtml(news.link)}`;
     top.append(source, stats);
@@ -1051,7 +1204,12 @@ function updateModalMetaStats() {
 function openModal(index) {
   const news = window.__currentList?.[index];
   if (!news) return;
+  openNewsModal(news, { syncAddress: true });
+}
+function openNewsModal(news, { syncAddress = true } = {}) {
+  if (!news) return;
   currentNews = news;
+  if (syncAddress) syncAddressToNews(news);
   if (markAsRead(news.link)) { updateUI(); render(); }
 
   const hero = $('modalHero');
@@ -1063,8 +1221,8 @@ function openModal(index) {
   $('modalBody').innerHTML = cleanContent(news.content || news.plain || '');
 
   const sourceButton = $('modalSourceBtn');
-  const sourceUrl = safeWebUrl(news.link, false);
-  if (!sourceUrl || news.link.startsWith('manual:')) {
+  const sourceUrl = safeWebUrl(news.sourceUrl || (!news._manual ? news.link : ''), false);
+  if (!sourceUrl) {
     sourceButton.style.display = 'none'; sourceButton.removeAttribute('href');
   } else {
     sourceButton.style.display = 'flex'; sourceButton.href = sourceUrl;
@@ -1080,6 +1238,7 @@ function openModal(index) {
 function closeModal() {
   $('modal').classList.remove('open');
   document.body.style.overflow = '';
+  clearNewsAddress();
   stopTTS();
 }
 
@@ -1266,6 +1425,15 @@ $('userBtn').addEventListener('click', async () => {
     }
   } else authModal.classList.add('open');
 });
+document.querySelectorAll('[data-toggle-password]').forEach((toggle) => {
+  toggle.addEventListener('click', () => {
+    const input = $(toggle.dataset.togglePassword);
+    if (!input) return;
+    input.type = input.type === 'password' ? 'text' : 'password';
+    toggle.textContent = input.type === 'password' ? '👁' : '🙈';
+    toggle.setAttribute('aria-label', input.type === 'password' ? 'نمایش رمز عبور' : 'مخفی کردن رمز عبور');
+  });
+});
 $('tabLogin').addEventListener('click', () => {
   $('loginForm').style.display = 'block'; $('registerForm').style.display = 'none';
   $('tabLogin').classList.add('active'); $('tabRegister').classList.remove('active');
@@ -1368,19 +1536,53 @@ $('notifBtn').addEventListener('click', async () => {
     });
   } catch (error) { list.textContent = `دریافت پیام‌ها ناموفق بود: ${error.message}`; }
 });
-$('modalCopyBtn').addEventListener('click', async () => {
+async function copyInternalNewsLink() {
   if (!currentNews?.link) return;
-  const link = safeWebUrl(currentNews.link, false);
-  if (!link) return showToast('برای این خبر لینک مستقیمی وجود ندارد.');
+  const permalink = createInternalNewsUrl(currentNews);
+  if (!permalink) return showToast('ساخت لینک داخلی این خبر ممکن نشد.', 5000);
   try {
-    if (!navigator.clipboard?.writeText) throw new Error('clipboard unavailable');
-    await navigator.clipboard.writeText(link);
-    showToast('📋 لینک خبر کپی شد.');
-  } catch {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(permalink);
+    } else {
+      const temporary = document.createElement('textarea');
+      temporary.value = permalink;
+      temporary.setAttribute('readonly', '');
+      temporary.style.position = 'fixed'; temporary.style.opacity = '0';
+      document.body.appendChild(temporary); temporary.select();
+      const copied = document.execCommand('copy');
+      temporary.remove();
+      if (!copied) throw new Error('copy command failed');
+    }
+    showToast('📋 لینک داخلی Lreporter کپی شد.');
+  } catch (error) {
+    console.warn('Copy internal news link failed:', error);
+    showToast('کپی لینک انجام نشد؛ مجوز Clipboard مرورگر را بررسی کنید.', 6000);
+  }
+}
+$('modalCopyBtn').addEventListener('click', copyInternalNewsLink);
+$('modalShareBtn').addEventListener('click', async () => {
+  if (!currentNews?.link) return;
+  const permalink = createInternalNewsUrl(currentNews);
+  if (!permalink) return showToast('ساخت لینک داخلی این خبر ممکن نشد.', 5000);
+  const shareData = {
+    title: currentNews.title || 'خبر در Lreporter',
+    text: currentNews.summary || 'مشاهده این خبر در Lreporter',
+    url: permalink
+  };
+  try {
     if (navigator.share) {
-      try { await navigator.share({ title: currentNews.title, url: link }); }
-      catch (error) { if (error.name !== 'AbortError') showToast('اشتراک‌گذاری انجام نشد.', 5000); }
-    } else showToast('کپی لینک در این مرورگر در دسترس نیست.', 5000);
+      await navigator.share(shareData);
+    } else if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(permalink);
+      showToast('امکان اشتراک‌گذاری مستقیم نیست؛ لینک داخلی کپی شد.');
+    } else {
+      await copyInternalNewsLink();
+    }
+  } catch (error) {
+    if (error?.name !== 'AbortError') {
+      console.warn('Native share failed:', error);
+      showToast('اشتراک‌گذاری انجام نشد.', 5000);
+    }
   }
 });
 
@@ -1400,6 +1602,13 @@ function initLreporter() {
   setupTTS();
   loadUserData();
   loadAll(); window.setInterval(loadAll, 5 * 60 * 1000);
+  window.setInterval(() => {
+    const remaining = allNews.filter((news) => !isNewsExpired(news));
+    if (remaining.length !== allNews.length) {
+      allNews = remaining;
+      buildFilters(); render();
+    }
+  }, 15000);
   fetchAllLikes();
 
   if (supabaseClient) {
@@ -1426,6 +1635,7 @@ function initLreporter() {
     if (event.key === 'Escape') {
       document.querySelectorAll('.modal-overlay.open').forEach((modal) => modal.classList.remove('open'));
       document.body.style.overflow = '';
+      clearNewsAddress();
       stopTTS();
     }
   });
