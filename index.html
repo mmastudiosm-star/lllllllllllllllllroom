@@ -73,8 +73,11 @@
   .featured-info-card .label { color:var(--accent-gold); }
   .featured-info-card .value { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; overflow-wrap:anywhere; line-height:1.5; }
   .featured-info-card .sub { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:1; overflow:hidden; overflow-wrap:anywhere; }
-  .card.golden { border:2px solid transparent; background:linear-gradient(var(--bg-secondary),var(--bg-secondary)) padding-box,repeating-linear-gradient(135deg,#f59e0b 0 4px,#754600 4px 8px,#fbbf24 8px 12px) border-box; box-shadow:0 8px 28px rgba(245,158,11,.13); }
-  .card.golden .source-tag { background:linear-gradient(135deg,#a16207,#fbbf24); color:#1c1300; }
+  /* Gold news: a clearly visible hatched gold frame, including hover/saved states. */
+  .card.golden { border:3px solid transparent; background:linear-gradient(var(--glass-bg),var(--glass-bg)) padding-box,repeating-linear-gradient(135deg,#f59e0b 0 4px,#754600 4px 7px,#fbbf24 7px 10px) border-box; box-shadow:0 8px 28px rgba(245,158,11,.18); }
+  .card.golden:hover, .card.golden.saved { border-color:transparent; box-shadow:0 8px 30px rgba(245,158,11,.24); }
+  .card.golden .source-tag, .source-tag.golden { background:linear-gradient(135deg,#a16207,#fbbf24); color:#1c1300; }
+  .card.golden .card-body { position:relative; }
   .news-type-tag { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:900; padding:3px 8px; border-radius:20px; }
   .news-type-tag.golden { color:#fbbf24; background:rgba(245,158,11,.13); border:1px solid rgba(245,158,11,.38); }
   .news-type-tag.featured { color:#fde68a; background:rgba(245,158,11,.2); border:1px solid rgba(245,158,11,.5); }
@@ -915,6 +918,23 @@ function isNewsExpired(news) {
   const timestamp = new Date(expiry).getTime();
   return Number.isFinite(timestamp) && timestamp <= Date.now();
 }
+function flagIsTrue(value) {
+  return value === true || value === 1 || (typeof value === 'string' && /^(true|1|yes|on)$/i.test(value.trim()));
+}
+function canonicalNewsType(item, manual = false) {
+  if (!item || typeof item !== 'object') return 'simple';
+  const rawValues = [item.news_type, item.newsType, item.type, item.kind, item.news_kind, item.priority_type];
+  for (const raw of rawValues) {
+    if (raw == null || raw === '') continue;
+    const value = String(raw).trim().toLowerCase().replace(/[ـ\s_-]+/g, '');
+    if (['featured','special','highlight','breaking','topnews','خبر ویژه','ویژه','خبرمهم'].includes(value) || value.includes('ویژه')) return 'featured';
+    if (['golden','gold','goldnews','goldennews','premium','خبر طلایی','طلایی'].includes(value) || value.includes('طلایی')) return 'golden';
+  }
+  // Positive legacy flags must override a database default such as news_type='simple'.
+  if ([item.is_featured, item.isFeatured, item.featured, item.is_special, item.special].some(flagIsTrue)) return 'featured';
+  if ([item.is_golden, item.isGolden, item.is_gold, item.isGold, item.golden, item.gold].some(flagIsTrue)) return 'golden';
+  return 'simple';
+}
 function normalizeNews(item, isManual = false) {
   if (!item || typeof item !== 'object') return null;
   const title = String(item.title || item.name || '').trim();
@@ -931,11 +951,7 @@ function normalizeNews(item, isManual = false) {
   // Publisher URL stays separate from the internal Lreporter permalink.
   const sourceCandidate = item.source_url || item.sourceUrl || item.original_url || item.source_link || (!manual ? (item.link || item.url || item.guid) : '');
   const sourceUrl = safeWebUrl(sourceCandidate, false);
-  const rawType = String(item.news_type || item.newsType || (manual ? item.type : '') || '').toLowerCase();
-  const newsType = ['simple', 'golden', 'featured'].includes(rawType)
-    ? rawType
-    : ((item.is_golden === true || item.is_golden === 'true') ? 'golden'
-      : ((item.is_featured === true || item.is_featured === 'true') ? 'featured' : 'simple'));
+  const newsType = canonicalNewsType(item, manual);
   const expiresAt = item.expires_at || item.expiresAt || item.expiry_at || null;
   const expiryMs = expiresAt ? new Date(expiresAt).getTime() : NaN;
   if (Number.isFinite(expiryMs) && expiryMs <= Date.now()) return null;
@@ -1010,8 +1026,8 @@ async function loadAll() {
     if (!automaticFeedLoaded) previousNews.filter((news) => !news._manual).forEach((news) => merged.set(news.link, news));
     if (!manualFeedLoaded) previousNews.filter((news) => news._manual).forEach((news) => merged.set(news.link, news));
     allNews = [...merged.values()].filter((news) => !isNewsExpired(news)).sort((a, b) => {
-      if (a.is_featured && !b.is_featured) return -1;
-      if (!a.is_featured && b.is_featured) return 1;
+      if (a.newsType === 'featured' && b.newsType !== 'featured') return -1;
+      if (a.newsType !== 'featured' && b.newsType === 'featured') return 1;
       return (new Date(b.date || 0).getTime() || 0) - (new Date(a.date || 0).getTime() || 0);
     });
     // Render immediately after the news feeds arrive; view statistics must not delay the news list.
@@ -1088,7 +1104,7 @@ function updateFeaturedNewsBanner() {
   const card = $('featuredNewsCard');
   if (!card) return;
   currentFeaturedNews = allNews
-    .filter((news) => news.newsType === 'featured' && (!news.expiresAt || new Date(news.expiresAt).getTime() > Date.now()))
+    .filter((news) => (news.newsType === 'featured' || flagIsTrue(news.is_featured) || flagIsTrue(news.isFeatured)) && (!news.expiresAt || new Date(news.expiresAt).getTime() > Date.now()))
     .sort((a, b) => (new Date(b.date || 0).getTime() || 0) - (new Date(a.date || 0).getTime() || 0))[0] || null;
   card.hidden = !currentFeaturedNews;
   if (!currentFeaturedNews) {
@@ -1158,8 +1174,9 @@ function render() {
     const body = document.createElement('div'); body.className = 'card-body';
     const top = document.createElement('div'); top.className = 'card-top';
     const source = document.createElement('span');
-    source.className = `source-tag${isFeatured ? ' featured' : ''}`;
+    source.className = `source-tag${isFeatured ? ' featured' : (isGolden ? ' golden' : '')}`;
     source.textContent = isFeatured ? '⭐ خبر ویژه' : (isGolden ? '✦ خبر طلایی' : (news.source || 'منبع خبری'));
+    article.dataset.newsType = news.newsType || 'simple';
     const stats = document.createElement('div'); stats.className = 'stats-tag-group';
     stats.innerHTML = `${likesBadgeHtml(news.link)}${viewsBadgeHtml(news.link)}`;
     top.append(source, stats);
@@ -1219,7 +1236,10 @@ function openNewsModal(news, { syncAddress = true } = {}) {
   if (imageUrl) { hero.src = imageUrl; hero.alt = news.title; hero.style.display = 'block'; }
   else { hero.removeAttribute('src'); hero.style.display = 'none'; }
   $('modalTitle').textContent = news.title || '';
-  $('modalMeta').innerHTML = `<span class="source-tag${news.is_featured ? ' featured' : ''}">${escapeHtml(news.is_featured ? '⭐ خبر ویژه' : news.source || 'منبع خبری')}</span><div id="modalStatsWrap" class="stats-tag-group"></div><span style="background:var(--glass-border);padding:4px 10px;border-radius:10px;font-size:.8rem;">🕐 ${escapeHtml(formatTime(news.date))}</span>`;
+  const modalType = news.newsType || 'simple';
+  const modalTypeClass = modalType === 'featured' ? ' featured' : (modalType === 'golden' ? ' golden' : '');
+  const modalTypeLabel = modalType === 'featured' ? '⭐ خبر ویژه' : (modalType === 'golden' ? '✦ خبر طلایی' : (news.source || 'منبع خبری'));
+  $('modalMeta').innerHTML = `<span class="source-tag${modalTypeClass}">${escapeHtml(modalTypeLabel)}</span><div id="modalStatsWrap" class="stats-tag-group"></div><span style="background:var(--glass-border);padding:4px 10px;border-radius:10px;font-size:.8rem;">🕐 ${escapeHtml(formatTime(news.date))}</span>`;
   $('modalBody').innerHTML = cleanContent(news.content || news.plain || '');
 
   const sourceButton = $('modalSourceBtn');
