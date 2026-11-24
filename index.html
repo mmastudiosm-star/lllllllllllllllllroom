@@ -64,13 +64,15 @@
   .info-card .label { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; }
   .info-card .value { font-size: 0.95rem; font-weight: 800; }
   .info-card .sub { font-size: 0.75rem; color: var(--text-muted); }
-  .featured-news-wrap { max-width:1400px; margin:14px auto 0; padding:0 24px; }
-  .featured-news-card { width:100%; border:1px solid rgba(245,158,11,.6); border-radius:20px; padding:16px 20px; text-align:right; color:var(--text-main); cursor:pointer; display:flex; flex-direction:column; gap:5px; background:linear-gradient(110deg,rgba(245,158,11,.19),rgba(245,158,11,.06) 48%,var(--glass-bg)); box-shadow:0 8px 28px rgba(245,158,11,.12); position:relative; overflow:hidden; font-family:inherit; }
-  .featured-news-card::after { content:'⭐'; position:absolute; left:22px; top:50%; transform:translateY(-50%); font-size:38px; opacity:.22; }
-  .featured-news-kicker { font-size:.76rem; font-weight:900; color:var(--accent-gold); }
-  .featured-news-title { font-size:1.12rem; font-weight:900; line-height:1.7; padding-left:42px; }
-  .featured-news-summary { color:var(--text-muted); font-size:.88rem; max-width:1000px; }
-  .featured-news-hint { color:var(--accent-gold); font-size:.75rem; font-weight:800; margin-top:3px; }
+  /* خبر ویژه دقیقاً مانند کارت‌های تاریخ، آب‌وهوا، دلار و طلا در همان نوار اطلاعات */
+  .featured-info-card { width:100%; min-width:0; appearance:none; -webkit-appearance:none; border:1px solid rgba(245,158,11,.62); color:var(--text-main); text-align:right; font:inherit; cursor:pointer; background:linear-gradient(115deg,rgba(245,158,11,.17),rgba(245,158,11,.055) 55%,var(--glass-bg)); box-shadow:0 6px 22px rgba(245,158,11,.10); }
+  .featured-info-card:hover { border-color:var(--accent-gold); box-shadow:0 8px 26px rgba(245,158,11,.18); transform:translateY(-2px); }
+  .featured-info-card[hidden] { display:none !important; }
+  .featured-info-card .ico { width:38px; height:38px; flex:0 0 38px; display:grid; place-items:center; border-radius:12px; background:rgba(245,158,11,.16); color:var(--accent-gold); }
+  .featured-info-card .body { min-width:0; flex:1; gap:2px; }
+  .featured-info-card .label { color:var(--accent-gold); }
+  .featured-info-card .value { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; overflow-wrap:anywhere; line-height:1.5; }
+  .featured-info-card .sub { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:1; overflow:hidden; overflow-wrap:anywhere; }
   .card.golden { border:2px solid transparent; background:linear-gradient(var(--bg-secondary),var(--bg-secondary)) padding-box,repeating-linear-gradient(135deg,#f59e0b 0 4px,#754600 4px 8px,#fbbf24 8px 12px) border-box; box-shadow:0 8px 28px rgba(245,158,11,.13); }
   .card.golden .source-tag { background:linear-gradient(135deg,#a16207,#fbbf24); color:#1c1300; }
   .news-type-tag { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:900; padding:3px 8px; border-radius:20px; }
@@ -192,10 +194,6 @@
     .header-inner { padding: 12px 16px; }
     .search-box { order: 3; width: 100%; min-width: 100%; margin-top: 8px; }
     .infobar { grid-template-columns: 1fr 1fr; padding: 12px 16px 0; gap: 8px; }
-    .featured-news-wrap { padding:0 16px; }
-    .featured-news-card { padding:14px 15px; }
-    .featured-news-title { font-size:1rem; }
-    .featured-news-card::after { left:12px; font-size:28px; }
     .info-card { padding: 10px 14px; }
     .info-card .label { font-size: 0.65rem; }
     .info-card .value { font-size: 0.85rem; }
@@ -261,16 +259,15 @@
   <div class="info-card"><span class="ico">🌡️</span><div class="body"><span class="label">آب و هوای تهران</span><span class="value" id="weatherTemp">—</span><span class="sub" id="weatherDesc">—</span></div></div>
   <div class="info-card"><span class="ico">💵</span><div class="body"><span class="label">قیمت دلار (بازار آزاد)</span><span class="value" id="dollarPrice">—</span><span class="sub" id="dollarChange">—</span></div></div>
   <div class="info-card"><span class="ico">🪙</span><div class="body"><span class="label">طلای ۱۸ عیار (هر گرم)</span><span class="value" id="goldPrice">—</span><span class="sub" id="goldChange">—</span></div></div>
-</div>
-
-<section class="featured-news-wrap" id="featuredNewsWrap" hidden aria-label="خبر ویژه">
-  <button type="button" class="featured-news-card" id="featuredNewsCard">
-    <span class="featured-news-kicker">⭐ خبر ویژه Lreporter</span>
-    <span class="featured-news-title" id="featuredNewsTitle"></span>
-    <span class="featured-news-summary" id="featuredNewsSummary"></span>
-    <span class="featured-news-hint">برای مطالعه کامل خبر کلیک کنید ←</span>
+  <button type="button" class="info-card featured-info-card" id="featuredNewsCard" hidden aria-label="مشاهده خبر ویژه">
+    <span class="ico">⭐</span>
+    <span class="body">
+      <span class="label">خبر ویژه Lreporter</span>
+      <span class="value" id="featuredNewsTitle"></span>
+      <span class="sub" id="featuredNewsSummary">برای مطالعه کامل خبر کلیک کنید</span>
+    </span>
   </button>
-</section>
+</div>
 
 <div class="nav-wrap">
   <button class="nav-btn active" data-mode="all">📰 همه <span class="cnt" id="cntAll">0</span></button>
@@ -1088,15 +1085,20 @@ function getFilteredList() {
   return list;
 }
 function updateFeaturedNewsBanner() {
-  const wrap = $('featuredNewsWrap');
-  if (!wrap) return;
+  const card = $('featuredNewsCard');
+  if (!card) return;
   currentFeaturedNews = allNews
     .filter((news) => news.newsType === 'featured' && (!news.expiresAt || new Date(news.expiresAt).getTime() > Date.now()))
     .sort((a, b) => (new Date(b.date || 0).getTime() || 0) - (new Date(a.date || 0).getTime() || 0))[0] || null;
-  wrap.hidden = !currentFeaturedNews;
-  if (!currentFeaturedNews) return;
+  card.hidden = !currentFeaturedNews;
+  if (!currentFeaturedNews) {
+    $('featuredNewsTitle').textContent = '';
+    $('featuredNewsSummary').textContent = '';
+    return;
+  }
   $('featuredNewsTitle').textContent = currentFeaturedNews.title || '';
-  $('featuredNewsSummary').textContent = currentFeaturedNews.summary || currentFeaturedNews.plain || 'برای مشاهده متن کامل خبر وارد شوید.';
+  $('featuredNewsSummary').textContent = currentFeaturedNews.summary || currentFeaturedNews.plain || 'برای مطالعه کامل خبر کلیک کنید.';
+  card.setAttribute('aria-label', `مشاهده خبر ویژه: ${currentFeaturedNews.title || ''}`);
 }
 $('featuredNewsCard').addEventListener('click', () => {
   if (currentFeaturedNews) openNewsModal(currentFeaturedNews, { syncAddress: true });
